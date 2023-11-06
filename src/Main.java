@@ -155,8 +155,7 @@ class TaskList extends VBox {
 
 class Footer extends HBox {
 
-    private Button addButton;
-    private Button clearButton;
+     private Button clearButton;
     // TODO: Add a button called "loadButton" to load tasks from file
     // TODO: Add a button called "saveButton" to save tasks to a file
     // TODO: Add a button called "sortButton" to sort the tasks lexicographically
@@ -169,20 +168,16 @@ class Footer extends HBox {
         // set a default style for buttons - background color, font size, italics
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
 
-        addButton = new Button("Add Task"); // text displayed on add button
-        addButton.setStyle(defaultButtonStyle); // styling the button
         clearButton = new Button("Clear finished"); // text displayed on clear tasks button
         clearButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().addAll(addButton, clearButton); // adding buttons to footer
+        this.getChildren().addAll(clearButton); // adding buttons to footer
         this.setAlignment(Pos.CENTER); // aligning the buttons to center
 
         // TODO: Create loadButton, saveButton and sortButton to the footer
     }
 
-    public Button getAddButton() {
-        return addButton;
-    }
+    
 
     public Button getClearButton() {
         return clearButton;
@@ -210,7 +205,6 @@ class AppFrame extends BorderPane{
     private Footer footer;
     private TaskList taskList;
 
-    private Button addButton;
     private Button clearButton;
     private Button newRecipeButton;
 
@@ -239,7 +233,6 @@ class AppFrame extends BorderPane{
         this.setBottom(footer);
 
         // Initialise Button Variables through the getters in Footer
-        addButton = footer.getAddButton();
         newRecipeButton = taskList.newRecipeButton();
         clearButton = footer.getClearButton();
 
@@ -249,7 +242,7 @@ class AppFrame extends BorderPane{
 
     public void addListeners()
     {
-
+        /* 
         // Add button functionality
         addButton.setOnAction(e -> {
             // Create a new task
@@ -264,7 +257,7 @@ class AppFrame extends BorderPane{
             });
             // Update task indices
             taskList.updateTaskIndices();
-        });
+        }); */
 
         newRecipeButton.setOnAction(e -> {
             // Create a new task
