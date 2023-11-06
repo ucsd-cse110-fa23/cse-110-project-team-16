@@ -2,6 +2,7 @@ package src;
 // Hello Guy Testing
 // Hello Guy Variant Testing
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -264,8 +265,13 @@ class AppFrame extends BorderPane{
             // Add doneButtonToggle to the Done button
             Button doneButton = task.getDoneButton();
             doneButton.setOnAction(e1 -> {
+            	 AppFrame root = new AppFrame();
                 // Call toggleDone on click
-                task.toggleDone();
+            	//root = FXMLLoader.load(getClass().getClassLoader().getResource("C:\\Users\\wumbo\\OneDrive\\Desktop\\javafx-sdk-21.0.1\\lib"), resources);
+                Stage stage = new Stage();
+                stage.setTitle("My New Stage Title");
+                stage.setScene(new Scene(root, 450, 450));
+                stage.show();
             });
             // Update task indices
             taskList.updateTaskIndices();
