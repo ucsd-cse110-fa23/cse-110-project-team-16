@@ -177,17 +177,6 @@ class TaskList extends VBox {
         System.out.println("savetasks() not implemented!");
     }
 
-    // TODO: Complete this method
-    /*
-     * Sort the tasks lexicographically
-     */
-    public void sortTasks() {
-        // hint 1: this.getChildren() gets the list of tasks
-        // hint 2: Collections.sort() can be used to sort the tasks
-        // hint 3: task.getTaskName().setText() sets the text of the task
-
-         System.out.println("sorttasks() not implemented!");
-    }
 }
 
 class Footer extends HBox {
@@ -195,8 +184,7 @@ class Footer extends HBox {
     private Button addButton;
     private Button clearButton;
     // TODO: Add a button called "loadButton" to load tasks from file
-    // TODO: Add a button called "saveButton" to save tasks to a file
-    // TODO: Add a button called "sortButton" to sort the tasks lexicographically
+    // TODO: Add a button called "saveButton" to save tasks to a file    
 
     Footer() {
         this.setPrefSize(500, 60);
@@ -249,6 +237,7 @@ class AppFrame extends BorderPane{
     private Button newRecipeButton;
     private Button addButton;
     private Button clearButton;
+    private ScrollPane scrollPane;
 
     AppFrame()
     {
@@ -257,21 +246,16 @@ class AppFrame extends BorderPane{
 
         // Create a tasklist Object to hold the tasks
         taskList = new TaskList();
+        scrollPane = new ScrollPane(taskList);
         
         // Initialise the Footer Object
-       // footer = new Footer();
+       // footer = new Footer();                
         
-        // TODO: Add a Scroller to the Task List
-        // hint 1: ScrollPane() is the Pane Layout used to add a scroller - it will take the tasklist as a parameter
-        // hint 2: setFitToWidth, and setFitToHeight attributes are used for setting width and height
-        // hint 3: The center of the AppFrame layout should be the scroller window instead  of tasklist
-
-
-        // Add header to the top of the BorderPane
         this.setRight(recipeDetails);
-        // Add scroller to the centre of the BorderPane
-        this.setLeft(taskList);
-        // Add footer to the bottom of the BorderPane
+
+        // this.setLeft(taskList);
+
+        this.setLeft(scrollPane);
        // this.setBottom(footer);
         
         // Initialise Button Variables through the getters in Footer

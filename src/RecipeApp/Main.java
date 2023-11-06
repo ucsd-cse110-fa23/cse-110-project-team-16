@@ -163,11 +163,6 @@ class RecipeList extends VBox {
         this.updateRecipeIndices();
     }
 
-    // TODO: Complete this method
-    /*
-     * Load tasks from a file called "tasks.txt"
-     * Add the tasks to the children of tasklist component
-     */
     public void loadRecipes() {
         // hint 1: use try-catch block
         // hint 2: use BufferedReader and FileReader
@@ -199,14 +194,7 @@ class RecipeList extends VBox {
         }
     }
 
-    // TODO: Complete this method
-    /*
-     * Save tasks to a file called "tasks.txt"
-     */
     public void saveRecipe() {
-        // hint 1: use try-catch block
-        // hint 2: use FileWriter
-        // hint 3: this.getChildren() gets the list of tasks
 
         try (FileWriter tasksWriter = new FileWriter("src/recipes.txt", false)){
             for (int i = 0; i < this.getChildren().size(); ++i){
@@ -322,7 +310,7 @@ class AppFrame extends BorderPane{
         this.setRight(recipeDetails);
         
         // Add scroller to the centre of the BorderPane
-        this.setLeft(scrollPane);
+        // this.setLeft(scrollPane);
         
 
         // Initialise Button Variables through the getters in recipeFunctions
