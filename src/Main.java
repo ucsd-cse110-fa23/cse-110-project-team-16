@@ -23,12 +23,12 @@ class Task extends HBox {
 
     private Label index;
     private TextField taskName;
-    private Button doneButton;
+    //private Button doneButton;
 
     private boolean markedDone;
 
     Task() {
-        this.setPrefSize(500, 20); // sets size of task
+        this.setPrefSize(40, 40); // sets size of task
         this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
         markedDone = false;
 
@@ -45,6 +45,7 @@ class Task extends HBox {
         index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
         taskName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         this.getChildren().add(taskName); // add textlabel to task
+<<<<<<< Updated upstream
 
         doneButton = new Button("Done"); // creates a button for marking the task as done
         doneButton.setPrefSize(100, 20);
@@ -52,6 +53,15 @@ class Task extends HBox {
         doneButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // sets style of button
 
         this.getChildren().add(doneButton);
+=======
+        
+//        doneButton = new Button("Done"); // creates a button for marking the task as done
+//        doneButton.setPrefSize(100, 20);
+//        doneButton.setPrefHeight(Double.MAX_VALUE);
+//        doneButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // sets style of button
+//
+//        this.getChildren().add(doneButton);
+>>>>>>> Stashed changes
     }
 
     public void setTaskIndex(int num) {
@@ -63,9 +73,9 @@ class Task extends HBox {
         return this.taskName;
     }
 
-    public Button getDoneButton() {
-        return this.doneButton;
-    }
+//    public Button getDoneButton() {
+//        return this.doneButton;
+//    }
 
     public boolean isMarkedDone() {
         return this.markedDone;
@@ -81,6 +91,39 @@ class Task extends HBox {
     }
 }
 
+
+
+
+class recipeBox extends HBox {
+	
+	 private Task recipeName;
+	 private Task ingredients;
+    
+	recipeBox() {
+        this.setSpacing(5); // sets spacing between tasks
+        this.setPrefSize(400, 560);
+        //this.setStyle("-fx-background-color: #FFFF00;");
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+       
+        recipeName = new Task(); // create task name text field
+//        recipeName.setPrefSize(500, 200); // set size of text field
+//        recipeName.setStyle("-fx-background-color: #F0F8FF; -fx-border-width: 0;"); // set background color of texfield
+//        recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        //this.getChildren().add(recipeName);
+        
+        ingredients = new Task(); // create task name text field
+//        ingredients.setPrefSize(500, 200); // set size of text field
+//        ingredients.setStyle("-fx-background-color: #F0F8FF; -fx-border-width: 0;"); // set background color of texfield
+//        ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        //this.getChildren().add(recipeName);
+        this.getChildren().addAll(recipeName,ingredients);
+        
+        
+    }
+    
+
+    
+}
 class TaskList extends VBox {
 
     TaskList() {
@@ -144,11 +187,18 @@ class TaskList extends VBox {
 
 class Footer extends HBox {
 
+<<<<<<< Updated upstream
     private Button addButton;
     private Button clearButton;
     // TODO: Add a button called "loadButton" to load tasks from file
     // TODO: Add a button called "saveButton" to save tasks to a file
     // TODO: Add a button called "sortButton" to sort the tasks lexicographically
+=======
+
+    private Button saveButton;
+    private Button cancelButton;
+
+>>>>>>> Stashed changes
 
     Footer() {
         this.setPrefSize(500, 60);
@@ -157,6 +207,7 @@ class Footer extends HBox {
 
         // set a default style for buttons - background color, font size, italics
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+<<<<<<< Updated upstream
 
         addButton = new Button("Add Task"); // text displayed on add button
         addButton.setStyle(defaultButtonStyle); // styling the button
@@ -164,13 +215,29 @@ class Footer extends HBox {
         clearButton.setStyle(defaultButtonStyle);
 
         this.getChildren().addAll(addButton, clearButton); // adding buttons to footer
+=======
+        saveButton = new Button("Save"); // text displayed on add button
+        saveButton.setStyle(defaultButtonStyle); // styling the button
+        cancelButton = new Button("Cancel"); // text displayed on clear tasks button
+        cancelButton.setStyle(defaultButtonStyle);
+        
+
+        this.getChildren().addAll(saveButton,cancelButton); // adding buttons to footer
+>>>>>>> Stashed changes
         this.setAlignment(Pos.CENTER); // aligning the buttons to center
 
         // TODO: Create loadButton, saveButton and sortButton to the footer
     }
 
+<<<<<<< Updated upstream
     public Button getAddButton() {
         return addButton;
+=======
+
+    
+    public Button getSaveButton() {
+        return saveButton;
+>>>>>>> Stashed changes
     }
 
     public Button getClearButton() {
@@ -240,6 +307,7 @@ class AppFrame extends BorderPane{
         // Add button functionality
         addButton.setOnAction(e -> {
             // Create a new task
+<<<<<<< Updated upstream
             Task task = new Task();
             // Add task to tasklist
             taskList.getChildren().add(task);
@@ -251,6 +319,16 @@ class AppFrame extends BorderPane{
             });
             // Update task indices
             taskList.updateTaskIndices();
+=======
+    		EditFrame root = new EditFrame();
+            // Call toggleDone on click
+        	//root = FXMLLoader.load(getClass().getClassLoader().getResource("C:\\Users\\wumbo\\OneDrive\\Desktop\\javafx-sdk-21.0.1\\lib"), resources);
+            Stage stage = new Stage();
+            stage.setTitle("Create New Recipe");
+            stage.setScene(new Scene(root, 450, 450));
+            stage.show();
+            
+>>>>>>> Stashed changes
         });
         
         // Clear finished tasks
@@ -260,6 +338,38 @@ class AppFrame extends BorderPane{
     }
 }
 
+<<<<<<< Updated upstream
+=======
+class EditFrame extends BorderPane{
+	private Button saveButton;
+	private Button cancelButton;
+   private Footer footer;
+   private TaskList taskList;	
+   private recipeBox recipes;
+    EditFrame()
+    {
+    	footer=new Footer();
+    	recipes=new recipeBox();
+    	this.setCenter(recipes);
+    	this.setBottom(footer);
+    	saveButton=footer.getSaveButton();
+    	cancelButton=footer.getCancelButton();
+        addListeners();
+    }
+
+    public void addListeners()
+    {
+    	saveButton.setOnAction(e -> {
+            // Create a new task
+    		Task task = new Task();
+    		
+    		taskList.getChildren().add(task);
+            
+        });
+        
+    }
+}
+>>>>>>> Stashed changes
 public class Main extends Application {
 
     @Override
