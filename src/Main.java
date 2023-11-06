@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 class Task extends HBox {
-    //test
-	//test again
-	//test 3
 
     private Label index;
     private TextField taskName;
