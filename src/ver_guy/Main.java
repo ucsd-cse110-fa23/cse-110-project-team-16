@@ -78,8 +78,13 @@ class Task extends HBox {
 class recipeBox extends HBox {
 	
 <<<<<<< Updated upstream:src/ver_guy/Main.java
+<<<<<<< Updated upstream:src/ver_guy/Main.java
 	 private Task recipeName;
 	 private Task ingredients;
+=======
+	 private TextField recipeName;
+	 private TextField ingredients;
+>>>>>>> Stashed changes:src/Main.java
 =======
 	 private TextField recipeName;
 	 private TextField ingredients;
@@ -116,17 +121,31 @@ class recipeBox extends HBox {
         recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
         recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         this.getChildren().add(recipeName); // add textlabel to task
+<<<<<<< Updated upstream:src/ver_guy/Main.java
         
+=======
+>>>>>>> Stashed changes:src/Main.java
         ingredients = new TextField(); // create task name text field
         ingredients.setPrefSize(380, 20); // set size of text field
         ingredients.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
         ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+<<<<<<< Updated upstream:src/ver_guy/Main.java
         this.getChildren().add(ingredients); // add textlabel to task
+=======
+        this.getChildren().add(ingredients);
+        //ingredients = new Task(); // create task name text field
+//        ingredients.setPrefSize(500, 200); // set size of text field
+//        ingredients.setStyle("-fx-background-color: #F0F8FF; -fx-border-width: 0;"); // set background color of texfield
+//        ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        //this.getChildren().add(recipeName);
+        //this.getChildren().addAll(recipeName,ingredients);
+>>>>>>> Stashed changes:src/Main.java
     }
 	
 	public TextField getRecipeName() {
         return this.recipeName;
     }
+<<<<<<< Updated upstream:src/ver_guy/Main.java
 	public void setRecipeName(TextField newRecipeName) {
 		this.recipeName=newRecipeName;
     }
@@ -136,6 +155,18 @@ class recipeBox extends HBox {
 	public void setIngredientsName(TextField newIngredientsName) {
 		this.ingredients=newIngredientsName;
     }
+>>>>>>> Stashed changes:src/Main.java
+=======
+	public void setRecipeName(TextField newName) {
+        this.recipeName=newName;
+    }
+	public TextField getIngredientsName() {
+        return this.ingredients;
+    }
+	public void setIngredientsName(TextField newName) {
+		 this.ingredients=newName;
+    }
+
 >>>>>>> Stashed changes:src/Main.java
     
 }

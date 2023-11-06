@@ -25,9 +25,15 @@ class MainTest {
 	 @Test
 	    void testGetIndredientsName() {
 		 TextField testName = null;
+<<<<<<< Updated upstream
 		 testName.setText("Onion,Stock,Salt,Carrot,Cumin");
 		 recipesCheck.setIngredientsName(testName);
 	        assertEquals("Onion,Stock,Salt,Carrot,Cumin", recipesCheck.getIndredientsName());
+=======
+		 testName.setText("Onion,S,Salt,Carrot,");
+		 recipesCheck.setIngredientsName(testName);
+	        assertEquals("Onion Garlic Soup", recipesCheck.getRecipeName());
+>>>>>>> Stashed changes
 	    }
 
 }
