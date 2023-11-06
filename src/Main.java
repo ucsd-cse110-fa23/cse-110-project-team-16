@@ -81,13 +81,25 @@ class Task extends HBox {
 }
 
 class TaskList extends VBox {
+	
+	
+	
+	private Button newRecipe;
 
+    
     TaskList() {
         this.setSpacing(5); // sets spacing between tasks
-        this.setPrefSize(500, 560);
-        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setPrefSize(150, 560);
+        this.setStyle("-fx-background-color: #FFFF00;");
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        newRecipe = new Button("+ New Recipe"); // text displayed on add button
+        newRecipe.setStyle(defaultButtonStyle);
+        this.getChildren().addAll(newRecipe);
+        
     }
-
+    public Button newRecipeButton() {
+        return newRecipe;
+    }
     public void updateTaskIndices() {
         int index = 1;
         for (int i = 0; i < this.getChildren().size(); i++) {
@@ -183,7 +195,7 @@ class Header extends HBox {
 
     Header() {
         this.setPrefSize(500, 60); // Size of the header
-        this.setStyle("-fx-background-color: #F0F8FF;");
+        this.setStyle("-fx-background-color: #0000FF;");
 
         Text titleText = new Text("To Do List"); // Text of the Header
         titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
@@ -219,9 +231,9 @@ class AppFrame extends BorderPane{
 
 
         // Add header to the top of the BorderPane
-        this.setTop(header);
+        this.setRight(header);
         // Add scroller to the centre of the BorderPane
-        this.setCenter(taskList);
+        this.setLeft(taskList);
         // Add footer to the bottom of the BorderPane
         this.setBottom(footer);
 
