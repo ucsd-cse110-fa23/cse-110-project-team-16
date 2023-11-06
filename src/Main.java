@@ -1,6 +1,6 @@
 package src;
 // Hello Guy Testing
-// Hello Guy Variant
+// Hello Guy Variant Testing
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
