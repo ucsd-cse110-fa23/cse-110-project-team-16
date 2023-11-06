@@ -46,12 +46,6 @@ class Task extends HBox {
         taskName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         this.getChildren().add(taskName); // add textlabel to task
         
-//        doneButton = new Button("Done"); // creates a button for marking the task as done
-//        doneButton.setPrefSize(100, 20);
-//        doneButton.setPrefHeight(Double.MAX_VALUE);
-//        doneButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // sets style of button
-//
-//        this.getChildren().add(doneButton);
     }
 
     public void setTaskIndex(int num) {
@@ -63,9 +57,6 @@ class Task extends HBox {
         return this.taskName;
     }
 
-//    public Button getDoneButton() {
-//        return this.doneButton;
-//    }
 
     public boolean isMarkedDone() {
         return this.markedDone;
@@ -86,8 +77,13 @@ class Task extends HBox {
 
 class recipeBox extends HBox {
 	
+<<<<<<< Updated upstream:src/ver_guy/Main.java
 	 private Task recipeName;
 	 private Task ingredients;
+=======
+	 private TextField recipeName;
+	 private TextField ingredients;
+>>>>>>> Stashed changes:src/Main.java
     
 	recipeBox() {
         this.setSpacing(5); // sets spacing between tasks
@@ -95,6 +91,7 @@ class recipeBox extends HBox {
         //this.setStyle("-fx-background-color: #FFFF00;");
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
        
+<<<<<<< Updated upstream:src/ver_guy/Main.java
         recipeName = new Task(); // create task name text field
 //        recipeName.setPrefSize(500, 200); // set size of text field
 //        recipeName.setStyle("-fx-background-color: #F0F8FF; -fx-border-width: 0;"); // set background color of texfield
@@ -112,6 +109,34 @@ class recipeBox extends HBox {
     }
     
 
+=======
+        
+        recipeName = new TextField(); // create task name text field
+        recipeName.setPrefSize(380, 20); // set size of text field
+        recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
+        recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        this.getChildren().add(recipeName); // add textlabel to task
+        
+        ingredients = new TextField(); // create task name text field
+        ingredients.setPrefSize(380, 20); // set size of text field
+        ingredients.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
+        ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        this.getChildren().add(ingredients); // add textlabel to task
+    }
+	
+	public TextField getRecipeName() {
+        return this.recipeName;
+    }
+	public void setRecipeName(TextField newRecipeName) {
+		this.recipeName=newRecipeName;
+    }
+	public TextField getIndredientsName() {
+        return this.ingredients;
+    }
+	public void setIngredientsName(TextField newIngredientsName) {
+		this.ingredients=newIngredientsName;
+    }
+>>>>>>> Stashed changes:src/Main.java
     
 }
 class TaskList extends VBox {
@@ -305,8 +330,21 @@ class EditFrame extends BorderPane{
 
     public void addListeners()
     {
+<<<<<<< Updated upstream:src/ver_guy/Main.java
     		
         
+=======
+    	// Add button functionality
+    	saveButton.setOnAction(e -> {
+            // Create a new task
+            Task task = new Task();
+            task.setTaskName(recipes.getRecipeName().getText());
+            
+            taskList.getChildren().add(task);
+            
+            taskList.updateTaskIndices();
+        });
+>>>>>>> Stashed changes:src/Main.java
     }
 }
 public class Main extends Application {
