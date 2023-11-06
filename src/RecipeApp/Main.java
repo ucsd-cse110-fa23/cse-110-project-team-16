@@ -1,4 +1,4 @@
-package RecipeApp;
+package src.RecipeApp;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
