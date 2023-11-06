@@ -44,7 +44,7 @@ class Task extends HBox {
         index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
         taskName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         this.getChildren().add(taskName); // add textlabel to task
-
+        
         doneButton = new Button("Done"); // creates a button for marking the task as done
         doneButton.setPrefSize(100, 20);
         doneButton.setPrefHeight(Double.MAX_VALUE);
@@ -54,8 +54,8 @@ class Task extends HBox {
     }
 
     public void setTaskIndex(int num) {
-        this.index.setText(num + ""); // num to String
-        this.taskName.setPromptText("Task " + num);
+        //this.index.setText(num + ""); // num to String
+        this.taskName.setPromptText("Recipe " + num);
     }
 
     public TextField getTaskName() {
@@ -85,6 +85,7 @@ class TaskList extends VBox {
 	
 	
 	private Button newRecipe;
+	private Button editRecipe;
 
     
     TaskList() {
@@ -94,11 +95,17 @@ class TaskList extends VBox {
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
         newRecipe = new Button("+ New Recipe"); // text displayed on add button
         newRecipe.setStyle(defaultButtonStyle);
+        editRecipe = new Button("Edit Recipe"); // text displayed on add button
+        editRecipe.setStyle(defaultButtonStyle);
         this.getChildren().addAll(newRecipe);
+        this.getChildren().addAll(editRecipe);
         
     }
     public Button getNewRecipeButton() {
         return newRecipe;
+    }
+    public Button getEditRecipeButton() {
+        return editRecipe;
     }
     public void updateTaskIndices() {
         int index = 1;
@@ -197,9 +204,9 @@ class Header extends HBox {
         this.setPrefSize(500, 60); // Size of the header
         this.setStyle("-fx-background-color: #0000FF;");
 
-        Text titleText = new Text("To Do List"); // Text of the Header
-        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
-        this.getChildren().add(titleText);
+        //Text titleText = new Text("To Do List"); // Text of the Header
+        //titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        //this.getChildren().add(titleText);
         this.setAlignment(Pos.CENTER); // Align the text to the Center
     }
 }
@@ -207,7 +214,7 @@ class Header extends HBox {
 class AppFrame extends BorderPane{
 
     private Header header;
-    private Footer footer;
+   // private Footer footer;
     private TaskList taskList;
     private Button newRecipeButton;
     private Button addButton;
@@ -222,7 +229,7 @@ class AppFrame extends BorderPane{
         taskList = new TaskList();
         
         // Initialise the Footer Object
-        footer = new Footer();
+       // footer = new Footer();
         
         // TODO: Add a Scroller to the Task List
         // hint 1: ScrollPane() is the Pane Layout used to add a scroller - it will take the tasklist as a parameter
@@ -235,11 +242,11 @@ class AppFrame extends BorderPane{
         // Add scroller to the centre of the BorderPane
         this.setLeft(taskList);
         // Add footer to the bottom of the BorderPane
-        this.setBottom(footer);
+       // this.setBottom(footer);
         
         // Initialise Button Variables through the getters in Footer
         //addButton = footer.getAddButton();
-        clearButton = footer.getClearButton();
+       // clearButton = footer.getClearButton();
         newRecipeButton=taskList.getNewRecipeButton();
         // Call Event Listeners for the Buttons
         addListeners();
@@ -265,9 +272,9 @@ class AppFrame extends BorderPane{
         });
         
         // Clear finished tasks
-        clearButton.setOnAction(e -> {
-            taskList.removeCompletedTasks();
-        });
+//        clearButton.setOnAction(e -> {
+//            taskList.removeCompletedTasks();
+//        });
     }
 }
 
@@ -280,7 +287,7 @@ public class Main extends Application {
         AppFrame root = new AppFrame();
 
         // Set the title of the app
-        primaryStage.setTitle("To Do List");
+      //  primaryStage.setTitle("To Do List");
         // Create scene of mentioned size with the border pane
         primaryStage.setScene(new Scene(root, 500, 600));
         // Make window non-resizable
