@@ -212,6 +212,7 @@ class AppFrame extends BorderPane{
 
     private Button addButton;
     private Button clearButton;
+    private Button newRecipeButton;
 
     AppFrame()
     {
@@ -239,6 +240,7 @@ class AppFrame extends BorderPane{
 
         // Initialise Button Variables through the getters in Footer
         addButton = footer.getAddButton();
+        newRecipeButton = taskList.newRecipeButton();
         clearButton = footer.getClearButton();
 
         // Call Event Listeners for the Buttons
@@ -262,6 +264,16 @@ class AppFrame extends BorderPane{
             });
             // Update task indices
             taskList.updateTaskIndices();
+        });
+
+        newRecipeButton.setOnAction(e -> {
+            // Create a new task
+            Task task = new Task();
+            // Add task to tasklist
+            taskList.getChildren().add(task);
+            // Update task indices
+            taskList.updateTaskIndices();
+        
         });
         
         // Clear finished tasks
