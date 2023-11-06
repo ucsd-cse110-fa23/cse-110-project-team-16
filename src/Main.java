@@ -97,7 +97,7 @@ class TaskList extends VBox {
         this.getChildren().addAll(newRecipe);
         
     }
-    public Button newRecipeButton() {
+    public Button getNewRecipeButton() {
         return newRecipe;
     }
     public void updateTaskIndices() {
@@ -209,7 +209,7 @@ class AppFrame extends BorderPane{
     private Header header;
     private Footer footer;
     private TaskList taskList;
-
+    private Button newRecipeButton;
     private Button addButton;
     private Button clearButton;
 
@@ -223,7 +223,7 @@ class AppFrame extends BorderPane{
         
         // Initialise the Footer Object
         footer = new Footer();
-
+        
         // TODO: Add a Scroller to the Task List
         // hint 1: ScrollPane() is the Pane Layout used to add a scroller - it will take the tasklist as a parameter
         // hint 2: setFitToWidth, and setFitToHeight attributes are used for setting width and height
@@ -236,11 +236,11 @@ class AppFrame extends BorderPane{
         this.setLeft(taskList);
         // Add footer to the bottom of the BorderPane
         this.setBottom(footer);
-
+        
         // Initialise Button Variables through the getters in Footer
-        addButton = footer.getAddButton();
+        //addButton = footer.getAddButton();
         clearButton = footer.getClearButton();
-
+        newRecipeButton=taskList.getNewRecipeButton();
         // Call Event Listeners for the Buttons
         addListeners();
     }
@@ -249,7 +249,7 @@ class AppFrame extends BorderPane{
     {
 
         // Add button functionality
-        addButton.setOnAction(e -> {
+    	newRecipeButton.setOnAction(e -> {
             // Create a new task
             Task task = new Task();
             // Add task to tasklist
