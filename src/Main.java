@@ -62,6 +62,10 @@ class Task extends HBox {
     public TextField getTaskName() {
         return this.taskName;
     }
+    
+    public void setTaskName(String name) {
+        taskName.setText(name);
+    }
 
 //    public Button getDoneButton() {
 //        return this.doneButton;
@@ -86,7 +90,7 @@ class Task extends HBox {
 
 class recipeBox extends HBox {
 	
-	 private Task recipeName;
+	 private TextField recipeName;
 	 private Task ingredients;
     
 	recipeBox() {
@@ -95,22 +99,29 @@ class recipeBox extends HBox {
         //this.setStyle("-fx-background-color: #FFFF00;");
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
        
-        recipeName = new Task(); // create task name text field
+        //recipeName = new Task(); // create task name text field
 //        recipeName.setPrefSize(500, 200); // set size of text field
 //        recipeName.setStyle("-fx-background-color: #F0F8FF; -fx-border-width: 0;"); // set background color of texfield
 //        recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         //this.getChildren().add(recipeName);
         
-        ingredients = new Task(); // create task name text field
+        recipeName = new TextField(); // create task name text field
+        recipeName.setPrefSize(380, 20); // set size of text field
+        recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
+        recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        this.getChildren().add(recipeName); // add textlabel to task
+        
+        //ingredients = new Task(); // create task name text field
 //        ingredients.setPrefSize(500, 200); // set size of text field
 //        ingredients.setStyle("-fx-background-color: #F0F8FF; -fx-border-width: 0;"); // set background color of texfield
 //        ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         //this.getChildren().add(recipeName);
-        this.getChildren().addAll(recipeName,ingredients);
-        
-        
+        //this.getChildren().addAll(recipeName,ingredients);
     }
-    
+	
+	public TextField getRecipeName() {
+        return this.recipeName;
+    }
 
     
 }
@@ -274,7 +285,7 @@ class AppFrame extends BorderPane{
         // Add button functionality
     	newRecipeButton.setOnAction(e -> {
             // Create a new task
-    		EditFrame root = new EditFrame();
+    		EditFrame root = new EditFrame(taskList);
             // Call toggleDone on click
         	//root = FXMLLoader.load(getClass().getClassLoader().getResource("C:\\Users\\wumbo\\OneDrive\\Desktop\\javafx-sdk-21.0.1\\lib"), resources);
             Stage stage = new Stage();
@@ -292,8 +303,11 @@ class EditFrame extends BorderPane{
 	private Button cancelButton;
    private Footer footer;
    private recipeBox recipes;
-    EditFrame()
+   
+   private TaskList taskList;
+    EditFrame(TaskList _tasklist)
     {
+    	taskList = _tasklist;
     	footer=new Footer();
     	recipes=new recipeBox();
     	this.setCenter(recipes);
@@ -305,8 +319,22 @@ class EditFrame extends BorderPane{
 
     public void addListeners()
     {
-    		
-        
+    	// Add button functionality
+    	saveButton.setOnAction(e -> {
+            // Create a new task
+            Task task = new Task();
+            task.setTaskName(recipes.getRecipeName().getText());
+            // Add task to tasklist
+            taskList.getChildren().add(task);
+            // Add selectButtonToggle to the Done button
+            //Button selectButton = task.getSelectButton();
+            //selectButton.setOnAction(e1 -> {
+                // Call toggleDone on click
+            //    task.toggleSelect();
+            //});
+            // Update task indices
+            taskList.updateTaskIndices();
+        });
     }
 }
 public class Main extends Application {
