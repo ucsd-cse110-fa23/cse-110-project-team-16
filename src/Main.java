@@ -22,8 +22,10 @@ import java.util.Collections;
 class Task extends HBox {
 
     private Label index;
-    private TextField taskName;
+    private TextField recipeName;
     private Button doneButton;
+    private String recipeIngredients;
+    private String recipeDetails;
 
     private boolean markedDone;
 
