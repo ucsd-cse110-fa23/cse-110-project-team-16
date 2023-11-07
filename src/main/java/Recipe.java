@@ -18,26 +18,15 @@ import javafx.scene.paint.Color;
 
 public class Recipe extends HBox {
 
-	private Label index;
     private String recipeName;
-    private Button selectButton;
     private Text text;
     
     private boolean isSelected;
 
     public Recipe() {
-    	this.setPrefSize(500, 20); // sets size of task
+    	this.setPrefSize(500, 40); // sets size of task
         this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
         isSelected = false;
-
-        /*
-        index = new Label();
-        index.setText(""); // create index label
-        index.setPrefSize(40, 20); // set size of Index label
-        index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
-        index.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the task
-        this.getChildren().add(index); // add index label to task
-        */
 
         text = new Text(); // create task name text field
         text.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
@@ -45,13 +34,6 @@ public class Recipe extends HBox {
         text.setTextAlignment(TextAlignment.CENTER); // set alignment of text field
         text.setFill(Color.WHITE);
         this.getChildren().add(text); // add textlabel to task
-
-        /*
-        selectButton = new Button("Done"); // creates a button for marking the task as done
-        selectButton.setPrefSize(100, 20);
-        selectButton.setPrefHeight(Double.MAX_VALUE);
-        selectButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // sets style of button
-        */
         
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         	toggleSelect();
@@ -83,9 +65,6 @@ public class Recipe extends HBox {
 
     }
 
-    public void setRecipeIndex(int num) {
-
-    }
 
     public String getRecipeName() {
         return this.recipeName;
@@ -97,10 +76,6 @@ public class Recipe extends HBox {
     
     public void updateText() {
     	text.setText(recipeName);
-    }
-    
-    public Button getSelectButton() {
-        return this.selectButton;
     }
     
     public boolean isSelected() {
@@ -141,16 +116,6 @@ class RecipeList extends VBox {
     }
     public Button getEditRecipeButton() {
         return actionsList.getEditRecipeButton();
-    }
-    
-    public void updateRecipeIndices() {
-        int index = 1;
-        for (int i = 0; i < this.getChildren().size(); i++) {
-            if (this.getChildren().get(i) instanceof Recipe) {
-                ((Recipe) this.getChildren().get(i)).setRecipeIndex(index);
-                index++;
-            }
-        }
     }
 }
 

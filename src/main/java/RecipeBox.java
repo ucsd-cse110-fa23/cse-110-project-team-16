@@ -69,15 +69,7 @@ class EditFrame extends BorderPane {
                 recipe.setRecipeName(recipeName);
                 recipe.updateText();
                 recipeList.getChildren().add(recipe);
-
-                // Add isSelectToggle to the select button
-                Button selectButton = recipe.getSelectButton();
-                selectButton.setOnAction(e1 -> {                
-                    recipe.toggleSelect();
-                });
             
-                //recipeList.updateTaskIndices();
-
                 // writing to recipes text files
                 try {
                     FileWriter writer = new FileWriter(filename);
