@@ -1,4 +1,4 @@
-package ver_guy;
+package RecipeApp;
 // Hello Guy Testing
 // Hello Guy Variant Testing
 import javafx.application.Application;
