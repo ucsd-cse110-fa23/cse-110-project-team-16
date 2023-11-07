@@ -12,7 +12,7 @@ java {
 
 javafx {
     version = "14"
-    modules = [ 'javafx.controls', 'javafx.fxml']
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.scene', 'javafx.geometry', 'javafx.stage', 'javafx.application']
 }
 
 repositories {
