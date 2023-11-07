@@ -8,11 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RecipeTests {
-	private RecipeBox recipeBox;
+	//private RecipeBox recipeBox;
 	
 	@BeforeEach
 	void setUp() {
-		recipeBox = new RecipeBox();
+		//recipeBox = new RecipeBox();
 	}
 	
 	@Test
