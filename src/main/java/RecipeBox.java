@@ -34,6 +34,7 @@ class EditFrame extends BorderPane {
             // Create a new recipe
             Recipe recipe = new Recipe();
             recipe.setRecipeName(recipes.getRecipeName());
+            recipe.updateText();
             // Add recipe to recipelist
             recipeList.getChildren().add(recipe);
             // Update recipe indices

@@ -7,54 +7,62 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-class Recipe extends HBox {
+public class Recipe extends HBox {
 
     private Label index;
-    private TextField recipeName;
+    private String recipeName;
+    private Text text;
 
-    Recipe() {
+    public Recipe() {
         this.setPrefSize(500, 50); // sets size of recipe
         this.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of recipe
 
+        /*
         index = new Label();
         index.setText(""); // create index label
         index.setPrefSize(40, 20); // set size of Index label
         index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
         index.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the recipe
         this.getChildren().add(index); // add index label to recipe
+        */
 
-        recipeName = new TextField(); // create recipe name text field
-        recipeName.setPrefSize(380, 20); // set size of text field
-        recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        index.setTextAlignment(TextAlignment.LEFT); // set alignment of text field
-        recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        this.getChildren().add(recipeName); // add textlabel to recipe
+        text = new Text(recipeName);
+        //recipeName.setPrefSize(380, 20); // set size of text field
+        text.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
+        
+        //recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        this.getChildren().add(text); // add textlabel to recipe
 
     }
 
     public void setRecipeIndex(int num) {
-        this.recipeName.setPromptText("Recipe " + num);
+        //this.recipeName.setPromptText("Recipe " + num);
     }
 
-    public TextField getRecipeName() {
+    public String getRecipeName() {
         return this.recipeName;
     }
     
     public void setRecipeName(String name) {
-        recipeName.setText(name);
+        recipeName = name;
+    }
+    
+    public void updateText() {
+    	text.setText(recipeName);
     }
 
 }
 
 
-public class RecipeList extends VBox {
+class RecipeList extends VBox {
 	
 	private Button newRecipe;
 	private Button editRecipe;
 
-    public RecipeList() {
+    RecipeList() {
     	this.setPadding(new Insets(10, 0, 10, 0)); 
         this.setSpacing(5); // sets spacing between recipes
         this.setPrefSize(150, 560);

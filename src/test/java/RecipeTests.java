@@ -8,24 +8,26 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RecipeTests {
-	//private RecipeBox recipeBox;
+	private Recipe recipe;
 	
 	@BeforeEach
 	void setUp() {
-		//recipeBox = new RecipeBox();
+		recipe = new Recipe();
 	}
 	
 	@Test
 	void testGetRecipeName() {
-		//recipeBox.setRecipeName("Onion Garlic Soup");
-		//assertEquals("Onion Garlic Soup", recipeBox.getRecipeName());
-		assertEquals("test", "test");
+		recipe.setRecipeName("Onion Garlic Soup");
+		assertEquals("Onion Garlic Soup", recipe.getRecipeName());
+		//assertEquals("test", "test");
 	}
- 
+	
+	/*
 	@Test
 	void testGetIndredients() {
-		//recipeBox.setIngredients("Onion,Stock,Salt,Carrot,Cumin");
-		//assertEquals("Onion,Stock,Salt,Carrot,Cumin", recipeBox.getIngredients());
+		recipe.setIngredients("Onion,Stock,Salt,Carrot,Cumin");
+		assertEquals("Onion,Stock,Salt,Carrot,Cumin", recipe.getIngredients());
 		assertEquals("test", "test");
 	}
+	*/
 }
