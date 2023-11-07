@@ -1,13 +1,11 @@
-package src.test;
+package src.test.java;
 
-import src.java.*;
+import src.main.java.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import javafx.scene.control.TextField;
 
 public class RecipeTests {
 	private RecipeBox recipeBox;
@@ -18,10 +16,10 @@ public class RecipeTests {
 	}
 	
 	@Test
-    void testGetRecipeName() {
+	void testGetRecipeName() {
 		recipeBox.setRecipeName("Onion Garlic Soup");
-        assertEquals("Onion Garlic Soup", recipeBox.getRecipeName());
-    }
+		assertEquals("Onion Garlic Soup", recipeBox.getRecipeName());
+	}
  
 	@Test
 	void testGetIndredients() {
