@@ -30,12 +30,14 @@ public class Recipe extends HBox {
         this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of task
         isSelected = false;
 
+        /*
         index = new Label();
         index.setText(""); // create index label
         index.setPrefSize(40, 20); // set size of Index label
         index.setTextAlignment(TextAlignment.CENTER); // Set alignment of index label
         index.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the task
         this.getChildren().add(index); // add index label to task
+        */
 
         text = new Text(); // create task name text field
         text.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
@@ -44,10 +46,12 @@ public class Recipe extends HBox {
         text.setFill(Color.WHITE);
         this.getChildren().add(text); // add textlabel to task
 
+        /*
         selectButton = new Button("Done"); // creates a button for marking the task as done
         selectButton.setPrefSize(100, 20);
         selectButton.setPrefHeight(Double.MAX_VALUE);
         selectButton.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // sets style of button
+        */
         
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         	toggleSelect();
