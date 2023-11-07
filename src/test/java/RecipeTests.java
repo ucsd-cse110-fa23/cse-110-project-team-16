@@ -19,7 +19,12 @@ public class RecipeTests {
 	void testGetRecipeName() {
 		recipe.setRecipeName("Onion Garlic Soup");
 		assertEquals("Onion Garlic Soup", recipe.getRecipeName());
-		//assertEquals("test", "test");
+	}
+	
+	@Test
+	void testGetRecipeName2() {
+		recipe.setRecipeName("Lemon Chicken");
+		assertEquals("Lemon Chicken", recipe.getRecipeName());
 	}
 	
 	/*
