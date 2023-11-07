@@ -1,22 +1,12 @@
 package src.main.java;
 
+import java.util.Optional;
+
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.TextAlignment;
-import javafx.geometry.Insets;
-import javafx.scene.text.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
 
 // Main Method - Runs application
 public class Main extends Application {
@@ -28,9 +18,9 @@ public class Main extends Application {
         AppFrame root = new AppFrame();
 
         // Set the title of the app
-        primaryStage.setTitle("Recipes");
+        primaryStage.setTitle("Recipes v1");
         // Create scene of mentioned size with the border pane
-        primaryStage.setScene(new Scene(root, 500, 600));
+        primaryStage.setScene(new Scene(root, 1200, 600));
         // Make window non-resizable
         primaryStage.setResizable(false);
         // Show the app
@@ -45,21 +35,21 @@ public class Main extends Application {
 // Application - using JavaFX
 class AppFrame extends BorderPane{
 
-    private Header header;
+    private RecipeDetails recipeDetails;
     private RecipeList recipeList;
     private Button newRecipeButton;
-    private Button addButton;
-    private Button clearButton;
+    //private Button addButton;
+    //private Button clearButton;
 
     AppFrame()
     {
         // Initialise the header Object
-        header = new Header();
+    	recipeDetails = new RecipeDetails(Optional.empty());
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList();
 
-        this.setRight(header);
+        this.setRight(recipeDetails);
         // Add scroller to the centre of the BorderPane
         this.setLeft(recipeList);
         newRecipeButton = recipeList.getNewRecipeButton();
