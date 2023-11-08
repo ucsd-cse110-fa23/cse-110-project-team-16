@@ -49,6 +49,7 @@ class AppFrame extends BorderPane{
     	recipeDetails = new RecipeDetails(Optional.empty());
     	
     	allRecipes = new ArrayList<Recipe>();
+        System.out.println(allRecipes.size());
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList();
@@ -89,8 +90,8 @@ class AppFrame extends BorderPane{
             
         });
         deleteRecipeButton.setOnAction(e -> {
-            DeleteFrame deleteFrame = new DeleteFrame(recipeList, recipeDetails, allRecipes);
             if (allRecipes.size() > 0) {
+                DeleteFrame deleteFrame = new DeleteFrame(recipeList, recipeDetails, allRecipes);
                  Stage stage = new Stage();
                 stage.setTitle("Delete Recipe");
                 stage.setScene(new Scene(deleteFrame, 400, 200));
