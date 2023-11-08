@@ -1,5 +1,6 @@
 package src.main.java;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.application.Application;
@@ -37,6 +38,7 @@ class AppFrame extends BorderPane{
 
     private RecipeDetails recipeDetails;
     private RecipeList recipeList;
+    private ArrayList<Recipe> allRecipes;
     private Button newRecipeButton;
     private Button editRecipeButton;
     //private Button addButton;
@@ -46,6 +48,8 @@ class AppFrame extends BorderPane{
     {
         // Initialise the header Object
     	recipeDetails = new RecipeDetails(Optional.empty());
+    	
+    	allRecipes = new ArrayList<Recipe>();
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList();
@@ -65,7 +69,7 @@ class AppFrame extends BorderPane{
         // Add button functionality
     	newRecipeButton.setOnAction(e -> {
             // Create a new recipe
-    		EditFrame root = new EditFrame(recipeList, recipeDetails, false);
+    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, false);
 
             Stage stage = new Stage();
             stage.setTitle("Create New Recipe");
@@ -76,7 +80,7 @@ class AppFrame extends BorderPane{
         
     	editRecipeButton.setOnAction(e -> {
             // Edit a new recipe
-    		EditFrame root = new EditFrame(recipeList, recipeDetails, true);
+    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
 
             Stage stage = new Stage();
             stage.setTitle("Edit Recipe");

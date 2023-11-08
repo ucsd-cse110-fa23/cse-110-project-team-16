@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,14 +23,15 @@ class EditFrame extends BorderPane {
 	private Button cancelButton;
 	private DialogButtons dialogButtons;
 	private RecipeBox recipes;
-   
+    private ArrayList<Recipe> allRecipes;
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
 	
-    EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, boolean editMode)
+    EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean editMode)
     {
     	recipeList = _recipelist;
     	recipeDetails = _recipeDetails;
+    	allRecipes = _allRecipes;
     	dialogButtons = new DialogButtons();
     	
     	if (!editMode)
@@ -72,12 +74,27 @@ class EditFrame extends BorderPane {
                 String ingredients = recipes.getIngredients();
                 String directions = recipes.getDirections();
                 String filename = "localDB/" + recipeName + ".txt";
-                Recipe recipe = new Recipe(recipeDetails);
+                
+                Recipe recipe = null;
+                boolean exists = false;
+                
+                for(int i = 0; i < allRecipes.size(); i++) {
+                	if(allRecipes.get(i).getRecipeName().equals(recipeName)) {
+                		exists = true;
+                		recipe = allRecipes.get(i);
+                	}
+                }
+                
+                if (!exists) {
+                	recipe = new Recipe(recipeDetails);
+                	allRecipes.add(recipe);
+                }
                 
                 // System.out.println("This is the new recipe name added: " + recipeName);
                 recipe.setRecipeName(recipeName);
                 recipe.updateText();
-                recipeList.getChildren().add(recipe);
+                if (!exists)
+                	recipeList.getChildren().add(recipe);
             
                 // writing to recipes text files
                 try {
