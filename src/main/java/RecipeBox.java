@@ -1,4 +1,5 @@
 package src.main.java;
+import java.io.File; 
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -12,10 +13,18 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 class EditFrame extends BorderPane {
@@ -115,6 +124,77 @@ class EditFrame extends BorderPane {
         });
     }
 }
+
+class DeleteFrame extends GridPane {
+    private Button confirmButton;
+	private Button cancelButton;
+    private ArrayList<Recipe> allRecipes;
+    private RecipeDetails recipeDetails;
+	private RecipeList recipeList;
+    private Label confirmText;
+ 
+    DeleteFrame(RecipeList recipelist,RecipeDetails recipeDetails, ArrayList<Recipe> allRecipes)
+    {
+
+        this.recipeDetails =recipeDetails;
+        confirmText = new Label("Are you sure you want to delete " + recipeDetails.getTitleText().toString()); // create task name text field
+        confirmText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 10));
+        confirmText.setStyle("-fx-background-color: #266024; -fx-border-width: 0;"); // set background color of texfield
+        confirmText.setTextAlignment(TextAlignment.CENTER); // set alignment of text field
+        confirmText.setTextFill(Color.WHITE);
+        this.add(confirmText, 1, 1);
+    	this.recipeList = recipelist;
+    	this.allRecipes = allRecipes;
+    	
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        confirmButton = new Button("Confirm"); // text displayed on add button
+        confirmButton.setStyle(defaultButtonStyle); // styling the button
+        cancelButton = new Button("Cancel"); // text displayed on clear recipes button
+        cancelButton.setStyle(defaultButtonStyle);
+        
+
+        //this.getChildren().add(confirmButton);
+        //this.setCenter(confirmText); // aligning the buttons to center
+    	
+    	//this.setCenter(confirmButton);
+    	this.add(cancelButton, 1 ,2);
+        this.add(confirmButton, 1, 3);
+    	
+    	
+        addListeners();
+    }
+
+    private void addListeners() {
+        confirmButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Recipe recipe;
+                String filename = "localDB/" +  recipeDetails.getTitleText() +".txt";
+                File recipeTextFile = new File(filename);
+
+
+                 for(int i = 0; i < allRecipes.size(); i++) {
+                	if(allRecipes.get(i).getRecipeName().equals(recipeDetails.getTitleText().toString())) 
+                		allRecipes.remove(i);
+                	}
+
+                    recipeTextFile.delete();
+                
+
+
+                Stage stage = (Stage) getScene().getWindow(); // Get the current stage
+                stage.close(); // Close the window
+            }
+        });
+    	
+    	cancelButton.setOnAction(e -> {
+            Stage stage = (Stage) getScene().getWindow();
+            stage.close();
+        });
+    }
+    
+    }
+
 
 class RecipeBox extends VBox {
 	
