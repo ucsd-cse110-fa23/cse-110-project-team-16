@@ -1,6 +1,5 @@
 package src.main.java;
 import java.io.File; 
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -184,10 +183,14 @@ class DeleteFrame extends BorderPane {
                     if (allRecipes.size() > 1) {
                         if (i == 0) {
                             allRecipes.get(i+1).Select();
+                            recipeDetails.showDetails(allRecipes.get(i+1).getRecipeName());
                         }
                         else if (i > 0) {
                             allRecipes.get(i-1).Select();
                         }
+                    }
+                    else {
+                        recipeDetails.resetDetails();
                     }
                     
                 	allRecipes.remove(i);
