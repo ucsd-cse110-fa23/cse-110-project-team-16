@@ -132,12 +132,18 @@ class DeleteFrame extends BorderPane {
     private RecipeDetails recipeDetails;
 	private RecipeList recipeList;
     private Label confirmText;
+    private Recipe currentSelectedRecipe;
  
     DeleteFrame(RecipeList recipelist,RecipeDetails recipeDetails, ArrayList<Recipe> allRecipes)
     {
         
         this.recipeDetails =recipeDetails;
-        confirmText = new Label("Are you sure you want to delete Food" /*+ recipeDetails.getTitleText().toString()*/); // create task name text field
+        for (Recipe recipe: allRecipes) {
+            if (recipe.isSelected() == true) {
+                currentSelectedRecipe = recipe;
+            }
+        }
+        confirmText = new Label("Are you sure you want to delete " + currentSelectedRecipe.getRecipeName()); // create task name text field
         confirmText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
         //confirmText.setStyle("-fx-background-color: #266024; -fx-border-width: 0;"); // set background color of texfield
         confirmText.setTextAlignment(TextAlignment.CENTER); // set alignment of text field
@@ -170,17 +176,15 @@ class DeleteFrame extends BorderPane {
     private void addListeners() {
         confirmButton.setOnAction(e1 -> {
         
-                Recipe recipe;
-                String filename = "localDB/" +  recipeDetails.getTitleText() +".txt";
+                
+                String filename = "localDB/" +  currentSelectedRecipe.getRecipeName() +".txt";
                 File recipeTextFile = new File(filename);
 
-
                  for(int i = 0; i < allRecipes.size(); i++) {
-                	if(allRecipes.get(i).getRecipeName().equals(recipeDetails.getTitleText().toString())) 
-                        System.out.print(allRecipes.get(i));
-                        System.out.print("Hello");
+                	if(allRecipes.get(i).isSelected()) 
                 		allRecipes.remove(i);
                 	}
+                    recipeList.getChildren().remove(currentSelectedRecipe);
 
                     recipeTextFile.delete();
                 
