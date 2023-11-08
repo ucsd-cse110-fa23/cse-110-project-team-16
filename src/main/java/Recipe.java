@@ -75,6 +75,15 @@ public class Recipe extends HBox {
     		_recipe.Select(false);
     	Select(true);
     }
+    public Recipe getSelected() {
+        for (Recipe _recipe: allRecipes) {
+            if (_recipe.isSelected == true) {
+                return _recipe;
+            }
+        }
+        return null;
+
+    }
 
     private void Select(boolean toSelect) {
         
