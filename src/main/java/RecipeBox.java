@@ -180,10 +180,17 @@ class DeleteFrame extends BorderPane {
                 String filename = "localDB/" +  currentSelectedRecipe.getRecipeName() +".txt";
                 File recipeTextFile = new File(filename);
 
-                 for(int i = 0; i < allRecipes.size(); i++) {
-                	if(allRecipes.get(i).isSelected()) 
-                		allRecipes.remove(i);
-                	}
+                    int i = allRecipes.indexOf(currentSelectedRecipe);
+                    if (allRecipes.size() > 1) {
+                        if (i == 0) {
+                            allRecipes.get(i+1).Select();
+                        }
+                        else if (i > 0) {
+                            allRecipes.get(i-1).Select();
+                        }
+                    }
+                    
+                	allRecipes.remove(i);
                     recipeList.getChildren().remove(currentSelectedRecipe);
 
                     recipeTextFile.delete();
