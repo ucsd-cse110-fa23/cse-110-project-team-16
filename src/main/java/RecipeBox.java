@@ -34,12 +34,14 @@ class EditFrame extends BorderPane {
     private ArrayList<Recipe> allRecipes;
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
+    private boolean editMode = false;
 	
     EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean editMode)
     {
     	recipeList = _recipelist;
     	recipeDetails = _recipeDetails;
     	allRecipes = _allRecipes;
+        this.editMode = editMode;
     	dialogButtons = new DialogButtons();
     	
     	if (!editMode)
@@ -74,7 +76,7 @@ class EditFrame extends BorderPane {
                 boolean exists = false;
                 
                 for(int i = 0; i < allRecipes.size(); i++) {
-                	if(allRecipes.get(i).getRecipeName().equals(recipeName)) {
+                	if(allRecipes.get(i).isSelected() && editMode == true) {
                 		exists = true;
                 		recipe = allRecipes.get(i);
                 	}
