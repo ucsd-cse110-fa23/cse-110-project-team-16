@@ -113,6 +113,8 @@ class EditFrame extends BorderPane {
                     // TODO: handle exception
                     System.out.println("Error occured when writing to txt file");
                 }
+                
+                recipeDetails.showDetails(recipeName);
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
                 stage.close(); // Close the window
