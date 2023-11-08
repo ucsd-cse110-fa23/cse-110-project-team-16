@@ -224,6 +224,9 @@ class RecipeDetails extends VBox {
 			e.printStackTrace();
 		}
 	}
+    public void resetDetails () {
+        titleText.setText("Choose a Recipe");
+    }
 	
 	public Text getDisplayType () {
 		return displayType;
