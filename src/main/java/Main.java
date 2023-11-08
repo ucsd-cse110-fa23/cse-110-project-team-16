@@ -1,347 +1,107 @@
 package src.main.java;
-import java.io.File; 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Optional;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 
-class EditFrame extends BorderPane {
-	private Button saveButton;
-	private Button cancelButton;
-	private DialogButtons dialogButtons;
-	private RecipeBox recipes;
-    private ArrayList<Recipe> allRecipes;
-	private RecipeList recipeList;
-	private RecipeDetails recipeDetails;
-	
-    EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean editMode)
-    {
-    	recipeList = _recipelist;
-    	recipeDetails = _recipeDetails;
-    	allRecipes = _allRecipes;
-    	dialogButtons = new DialogButtons();
-    	
-    	if (!editMode)
-    		recipes = new RecipeBox();
-    	else
-    		recipes = new RecipeBox(_recipeDetails);
-    	
-    	this.setCenter(recipes);
-    	this.setBottom(dialogButtons);
-    	
-    	saveButton = dialogButtons.getSaveButton();
-    	cancelButton = dialogButtons.getCancelButton();
-    	
-        addListeners();
+// Main Method - Runs application
+public class Main extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        // Setting the Layout of the Window- Should contain a Header, Footer and the RecipeList
+        AppFrame root = new AppFrame();
+
+        // Set the title of the app
+        primaryStage.setTitle("Recipes v1");
+        // Create scene of mentioned size with the border pane
+        primaryStage.setScene(new Scene(root, 1200, 600));
+        // Make window non-resizable
+        primaryStage.setResizable(false);
+        // Show the app
+        primaryStage.show();
     }
 
-    void addListeners()
-    {
-    	saveButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                String recipeName = recipes.getRecipeName();
-                if (recipeName.length() == 0) {
-                    recipeName = "New recipe added";
-                }
-                String recipeType = recipes.getRecipeType();
-                String ingredients = recipes.getIngredients();
-                String directions = recipes.getDirections();
-                String filename = "localDB/" + recipeName + ".txt";
-                
-                Recipe recipe = null;
-                boolean exists = false;
-                
-                for(int i = 0; i < allRecipes.size(); i++) {
-                	if(allRecipes.get(i).getRecipeName().equals(recipeName)) {
-                		exists = true;
-                		recipe = allRecipes.get(i);
-                	}
-                }
-                
-                if (!exists) {
-                	recipe = new Recipe(recipeDetails, allRecipes);
-                	allRecipes.add(recipe);
-                }
-                
-                // System.out.println("This is the new recipe name added: " + recipeName);
-                recipe.setRecipeName(recipeName);
-                recipe.updateText();
-                if (!exists)
-                	recipeList.getChildren().add(recipe);
-            
-                // writing to recipes text files
-                try {
-                    FileWriter writer = new FileWriter(filename);
-                    writer.write(recipeName);
-                    writer.write("\n");
-                    writer.write(recipeType);
-                    writer.write("\n");
-                    writer.write(ingredients);
-                    writer.write("\n");
-                    writer.write(directions);
-
-                    writer.close();
-
-                } catch (IOException e) {
-                    // TODO: handle exception
-                    System.out.println("Error occured when writing to txt file");
-                }
-                
-                recipeDetails.showDetails(recipeName);
-                recipe.Select();
-
-                Stage stage = (Stage) getScene().getWindow(); // Get the current stage
-                stage.close(); // Close the window
-            }
-        });
-    	
-    	cancelButton.setOnAction(e -> {
-            Stage stage = (Stage) getScene().getWindow();
-            stage.close();
-        });
+    public static void main(String[] args) {
+        launch(args);
     }
 }
 
-class DeleteFrame extends BorderPane {
-    private Button confirmButton;
-	private Button cancelButton;
-    private ArrayList<Recipe> allRecipes;
+// Application - using JavaFX
+class AppFrame extends BorderPane{
+
     private RecipeDetails recipeDetails;
-	private RecipeList recipeList;
-    private Label confirmText;
-    private Recipe currentSelectedRecipe;
- 
-    DeleteFrame(RecipeList recipelist,RecipeDetails recipeDetails, ArrayList<Recipe> allRecipes)
+    private RecipeList recipeList;
+    private ArrayList<Recipe> allRecipes;
+    private Button newRecipeButton;
+    private Button editRecipeButton;
+    private Button deleteRecipeButton;
+
+    AppFrame()
     {
-        
-        this.recipeDetails =recipeDetails;
-        for (Recipe recipe: allRecipes) {
-            if (recipe.isSelected() == true) {
-                currentSelectedRecipe = recipe;
-            }
-        }
-        confirmText = new Label("Are you sure you want to delete " + currentSelectedRecipe.getRecipeName()); // create task name text field
-        confirmText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
-        //confirmText.setStyle("-fx-background-color: #266024; -fx-border-width: 0;"); // set background color of texfield
-        confirmText.setTextAlignment(TextAlignment.CENTER); // set alignment of text field
-        //confirmText.setTextFill(Color.WHITE);
-        confirmText.setMinWidth(50);
-        confirmText.setMinHeight(100);
-        confirmText.setWrapText(true);
-        //confirmText.setAlignment(Pos.CENTER);
-        this.setCenter(confirmText);
-    	this.recipeList = recipelist;
-    	this.allRecipes = allRecipes;
+        // Initialise the header Object
+    	recipeDetails = new RecipeDetails(Optional.empty());
     	
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 15 arial;";
-        confirmButton = new Button("Confirm"); // text displayed on add button
-        confirmButton.setStyle(defaultButtonStyle); // styling the button
-        cancelButton = new Button("Cancel"); // text displayed on clear recipes button
-        cancelButton.setStyle(defaultButtonStyle);
-        
-        //this.setPadding(new Insets(10, 10, 10, 10));
-        
-    	HBox Hbox = new HBox(confirmButton, cancelButton);
-        this.setBottom(Hbox);
-        Hbox.setAlignment(Pos.CENTER);
- 
-    	
-    	
+    	allRecipes = new ArrayList<Recipe>();
+
+
+        // Create a recipelist Object to hold the recipes
+        recipeList = new RecipeList();
+
+        this.setRight(recipeDetails);
+        // Add scroller to the centre of the BorderPane
+        this.setLeft(recipeList);
+        newRecipeButton = recipeList.getNewRecipeButton();
+        editRecipeButton = recipeList.getEditRecipeButton();
+        deleteRecipeButton = recipeList.getDeleteRecipeButton();
+        // Call Event Listeners for the Buttons
         addListeners();
     }
 
-    private void addListeners() {
-        confirmButton.setOnAction(e1 -> {
-        
-                
-                String filename = "localDB/" +  currentSelectedRecipe.getRecipeName() +".txt";
-                File recipeTextFile = new File(filename);
+    public void addListeners()
+    {
 
-                    int i = allRecipes.indexOf(currentSelectedRecipe);
-                    if (allRecipes.size() > 1) {
-                        if (i == 0) {
-                            allRecipes.get(i+1).Select();
-                            recipeDetails.showDetails(allRecipes.get(i+1).getRecipeName());
-                        }
-                        else if (i > 0) {
-                            allRecipes.get(i-1).Select();
-                        }
-                    }
-                    else {
-                        recipeDetails.resetDetails();
-                    }
-                    
-                	allRecipes.remove(i);
-                    recipeList.getChildren().remove(currentSelectedRecipe);
+        // Add button functionality
+    	newRecipeButton.setOnAction(e -> {
+            // Create a new recipe
+    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, false);
 
-                    recipeTextFile.delete();
-                
-
-
-                Stage stage = (Stage) getScene().getWindow(); // Get the current stage
-                stage.close(); // Close the window
+            Stage stage = new Stage();
+            stage.setTitle("Create New Recipe");
+            stage.setScene(new Scene(root, 450, 450));
+            stage.show();
             
         });
-    	
-    	cancelButton.setOnAction(e -> {
-            Stage stage = (Stage) getScene().getWindow();
-            stage.close();
+        
+    	editRecipeButton.setOnAction(e -> {
+            // Edit a new recipe
+    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Recipe");
+            stage.setScene(new Scene(root, 450, 450));
+            stage.show();
+            
         });
-    }
-    
-    }
+        deleteRecipeButton.setOnAction(e -> {
+            System.out.println(allRecipes.size());
+            if (allRecipes.size() > 0) {
+                DeleteFrame deleteFrame = new DeleteFrame(recipeList, recipeDetails, allRecipes);
+                 Stage stage = new Stage();
+                stage.setTitle("Delete Recipe");
+                stage.setScene(new Scene(deleteFrame, 400, 200));
+                stage.show();
+            }
+           
+            
 
-
-class RecipeBox extends VBox {
-	
-    private TextField recipeName;
-    private TextField recipeType;
-    private TextField ingredients;
-    private TextField directions;
-   
-    RecipeBox() {
-        
-        this.setSpacing(5); // sets spacing between tasks
-        this.setPrefSize(400, 560);
-        //this.setStyle("-fx-background-color: #FFFF00;");
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-
-        recipeName = new TextField();
-        recipeName.setPrefSize(380, 20); // set size of text field
-        recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        
-        recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        recipeName.setPromptText("Input Recipe Name here");
-
-        recipeType = new TextField();
-        recipeType.setPrefSize(380, 20); // set size of text field
-        recipeType.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        
-        recipeType.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        recipeType.setPromptText("Input Recipe Type here: Breakfast / Lunch / Dinner");
-       
-        ingredients = new TextField(); // create task name text field
-        ingredients.setPrefSize(380, 130); // set size of text field
-        ingredients.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        ingredients.setPromptText("Input Ingredients here");
-
-
-        directions = new TextField(); // create task name text field
-        directions.setPrefSize(380, 150); // set size of text field
-        directions.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        directions.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        directions.setPromptText("Input Directions here");
-
-        this.getChildren().addAll(recipeName, recipeType, ingredients, directions);              
-    }
-    
-    RecipeBox(RecipeDetails recipeDetails) {
-        
-        this.setSpacing(5); // sets spacing between tasks
-        this.setPrefSize(400, 560);
-        //this.setStyle("-fx-background-color: #FFFF00;");
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-
-        recipeName = new TextField(recipeDetails.getTitleText().getText());
-        recipeName.setPrefSize(380, 20); // set size of text field
-        recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        
-        recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        recipeName.setPromptText("Input Recipe Name here");
-
-        recipeType = new TextField(recipeDetails.getDisplayType().getText());
-        recipeType.setPrefSize(380, 20); // set size of text field
-        recipeType.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        
-        recipeType.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        recipeType.setPromptText("Input Recipe Type here: Breakfast / Lunch / Dinner");
-       
-        ingredients = new TextField(recipeDetails.getDisplayIngredients().getText()); // create task name text field
-        ingredients.setPrefSize(380, 130); // set size of text field
-        ingredients.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        ingredients.setPromptText("Input Ingredients here");
-
-
-        directions = new TextField(recipeDetails.getDisplayDirections().getText()); // create task name text field
-        directions.setPrefSize(380, 150); // set size of text field
-        directions.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        directions.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-        directions.setPromptText("Input Directions here");
-
-        this.getChildren().addAll(recipeName, recipeType, ingredients, directions);              
-    }
-
-    public String getRecipeName() {
-        return this.recipeName.getText();
-    }
-
-    public String getRecipeType() {
-        return this.recipeType.getText();
-    }
-
-    public String getIngredients() {
-        return this.ingredients.getText();
-    }
-
-    public String getDirections() {
-        return this.directions.getText();
-    }
-
-   
-}
-
-// Footer of EditFrame - contains save and cancel buttons
-class DialogButtons extends HBox {
-	
-    private Button saveButton;
-    private Button cancelButton;
-
-    DialogButtons() {
-        this.setPrefSize(500, 60);
-        this.setStyle("-fx-background-color: #F0F8FF;");
-        this.setSpacing(15);
-
-        // set a default style for buttons - background color, font size, italics
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-        saveButton = new Button("Save"); // text displayed on add button
-        saveButton.setStyle(defaultButtonStyle); // styling the button
-        cancelButton = new Button("Cancel"); // text displayed on clear recipes button
-        cancelButton.setStyle(defaultButtonStyle);
-        
-
-        this.getChildren().addAll(saveButton,cancelButton); // adding buttons to footer
-        this.setAlignment(Pos.CENTER); // aligning the buttons to center
-    }
-
-    public Button getSaveButton() {
-        return saveButton;
-    }
-    
-    public Button getCancelButton() {
-        return cancelButton;
+        });
+    	
     }
 }
