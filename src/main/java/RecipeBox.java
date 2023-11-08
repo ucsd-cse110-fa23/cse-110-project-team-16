@@ -125,7 +125,7 @@ class EditFrame extends BorderPane {
     }
 }
 
-class DeleteFrame extends GridPane {
+class DeleteFrame extends BorderPane {
     private Button confirmButton;
 	private Button cancelButton;
     private ArrayList<Recipe> allRecipes;
@@ -135,39 +135,41 @@ class DeleteFrame extends GridPane {
  
     DeleteFrame(RecipeList recipelist,RecipeDetails recipeDetails, ArrayList<Recipe> allRecipes)
     {
-
+        
         this.recipeDetails =recipeDetails;
-        confirmText = new Label("Are you sure you want to delete " + recipeDetails.getTitleText().toString()); // create task name text field
-        confirmText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 10));
-        confirmText.setStyle("-fx-background-color: #266024; -fx-border-width: 0;"); // set background color of texfield
+        confirmText = new Label("Are you sure you want to delete Food" /*+ recipeDetails.getTitleText().toString()*/); // create task name text field
+        confirmText.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        //confirmText.setStyle("-fx-background-color: #266024; -fx-border-width: 0;"); // set background color of texfield
         confirmText.setTextAlignment(TextAlignment.CENTER); // set alignment of text field
-        confirmText.setTextFill(Color.WHITE);
-        this.add(confirmText, 1, 1);
+        //confirmText.setTextFill(Color.WHITE);
+        confirmText.setMinWidth(50);
+        confirmText.setMinHeight(100);
+        confirmText.setWrapText(true);
+        //confirmText.setAlignment(Pos.CENTER);
+        this.setCenter(confirmText);
     	this.recipeList = recipelist;
     	this.allRecipes = allRecipes;
     	
-        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 15 arial;";
         confirmButton = new Button("Confirm"); // text displayed on add button
         confirmButton.setStyle(defaultButtonStyle); // styling the button
         cancelButton = new Button("Cancel"); // text displayed on clear recipes button
         cancelButton.setStyle(defaultButtonStyle);
         
-
-        //this.getChildren().add(confirmButton);
-        //this.setCenter(confirmText); // aligning the buttons to center
-    	
-    	//this.setCenter(confirmButton);
-    	this.add(cancelButton, 1 ,2);
-        this.add(confirmButton, 1, 3);
+        //this.setPadding(new Insets(10, 10, 10, 10));
+        
+    	HBox Hbox = new HBox(confirmButton, cancelButton);
+        this.setBottom(Hbox);
+        Hbox.setAlignment(Pos.CENTER);
+ 
     	
     	
         addListeners();
     }
 
     private void addListeners() {
-        confirmButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        confirmButton.setOnAction(e1 -> {
+        
                 Recipe recipe;
                 String filename = "localDB/" +  recipeDetails.getTitleText() +".txt";
                 File recipeTextFile = new File(filename);
@@ -175,6 +177,8 @@ class DeleteFrame extends GridPane {
 
                  for(int i = 0; i < allRecipes.size(); i++) {
                 	if(allRecipes.get(i).getRecipeName().equals(recipeDetails.getTitleText().toString())) 
+                        System.out.print(allRecipes.get(i));
+                        System.out.print("Hello");
                 		allRecipes.remove(i);
                 	}
 
@@ -184,7 +188,7 @@ class DeleteFrame extends GridPane {
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
                 stage.close(); // Close the window
-            }
+            
         });
     	
     	cancelButton.setOnAction(e -> {
