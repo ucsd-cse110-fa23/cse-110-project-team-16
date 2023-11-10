@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.geometry.Insets;
@@ -94,12 +95,21 @@ public class Recipe extends HBox {
         
         if (!this.isSelected) {
             isSelected = true;
-            this.setStyle("-fx-background-color: #3AA037; -fx-border-width: 0; -fx-font-weight: bold;");
+            this.setStyle("-fx-background-color: #3AA037; -fx-border-width: 0; -fx-font-weight: bold;");            
+            
+            // Unselect other selected recipes
+            ArrayList<Recipe> allRecipes = recipeDetails.getAllRecipes();
+            for (int i = 0; i < allRecipes.size(); i++) {
+            	if (allRecipes.get(i).isSelected() && allRecipes.get(i) != this) {
+            		allRecipes.get(i).toggleSelect();
+            	}
+            }
             recipeDetails.showDetails(this.getRecipeName());
 
         } else {
             isSelected = false;
-            this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;");     
+            this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); 
+            recipeDetails.defaultView();
         }
     }
 
@@ -167,13 +177,18 @@ class ActionsList extends HBox {
 
 class RecipeDetails extends VBox {
 	
+	private ArrayList<Recipe> allRecipes;
+	
 	private Text titleText;
 	private Text displayType;
 	private Text displayIngredients;
 	private Text displayDirections;
 	
 	
-	public RecipeDetails (Optional<String> recipeName) {
+	public RecipeDetails (Optional<String> recipeName, ArrayList<Recipe> _allRecipes) {
+		
+		allRecipes = _allRecipes;
+		
         String currDisplay = recipeName.orElse("Default");
         this.setPrefSize(900, 60); // Size of the header
         this.setStyle("-fx-background-color: #BCE29E;");
@@ -260,5 +275,8 @@ class RecipeDetails extends VBox {
 	
 	public Text getDisplayDirections () {
 		return displayDirections;
+	}
+	public ArrayList<Recipe> getAllRecipes () {
+		return allRecipes;
 	}
 }

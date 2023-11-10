@@ -27,12 +27,14 @@ class EditFrame extends BorderPane {
     private ArrayList<Recipe> allRecipes;
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
+	private boolean editMode;
 	
-    EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean editMode)
+    EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean _editMode)
     {
     	recipeList = _recipelist;
     	recipeDetails = _recipeDetails;
     	allRecipes = _allRecipes;
+    	editMode = _editMode;
     	dialogButtons = new DialogButtons();
     	
     	if (!editMode)
@@ -116,7 +118,12 @@ class EditFrame extends BorderPane {
                     System.out.println("Error occured when writing to txt file");
                 }
                 
-                recipeDetails.showDetails(recipeName);
+                if (!editMode) {
+                	recipeDetails.defaultView(); 
+                }
+                else {
+                	recipeDetails.showDetails(recipeName);
+                }
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
                 stage.close(); // Close the window

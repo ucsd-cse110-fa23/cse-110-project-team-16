@@ -47,10 +47,11 @@ class AppFrame extends BorderPane{
 
     AppFrame()
     {
-        // Initialise the header Object
-    	recipeDetails = new RecipeDetails(Optional.empty());
     	
     	allRecipes = new ArrayList<Recipe>();
+    	
+        // Initialise the header Object
+    	recipeDetails = new RecipeDetails(Optional.empty(), allRecipes);
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList();
