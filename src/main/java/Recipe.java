@@ -126,11 +126,15 @@ class RecipeList extends VBox {
     public Button getEditRecipeButton() {
         return actionsList.getEditRecipeButton();
     }
+    public Button getDeleteRecipeButton() {
+        return actionsList.getDeleteRecipeButton();
+    }
 }
 
 class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
+    private Button deleteRecipeButton;
     
     ActionsList() {
         this.setPrefSize(300, 50);
@@ -142,8 +146,10 @@ class ActionsList extends HBox {
         newRecipeButton.setStyle(defaultButtonStyle);
         editRecipeButton = new Button("Edit Recipe");
         editRecipeButton.setStyle(defaultButtonStyle);
+        deleteRecipeButton = new Button("Delete Recipe");
+        deleteRecipeButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -152,6 +158,9 @@ class ActionsList extends HBox {
     }
     public Button getEditRecipeButton() {
         return editRecipeButton;
+    }
+    public Button getDeleteRecipeButton() {
+        return deleteRecipeButton;
     }
 }
 
@@ -228,6 +237,13 @@ class RecipeDetails extends VBox {
 				// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void defaultView () {
+		titleText.setText("Choose a recipe");
+		displayType.setText(" ");
+		displayIngredients.setText(" ");
+		displayDirections.setText(" ");
 	}
 	
 	public Text getDisplayType () {

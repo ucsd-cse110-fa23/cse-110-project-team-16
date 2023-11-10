@@ -41,6 +41,7 @@ class AppFrame extends BorderPane{
     private ArrayList<Recipe> allRecipes;
     private Button newRecipeButton;
     private Button editRecipeButton;
+    private Button deleteRecipeButton;
     //private Button addButton;
     //private Button clearButton;
 
@@ -59,6 +60,7 @@ class AppFrame extends BorderPane{
         this.setLeft(recipeList);
         newRecipeButton = recipeList.getNewRecipeButton();
         editRecipeButton = recipeList.getEditRecipeButton();
+        deleteRecipeButton = recipeList.getDeleteRecipeButton();
         // Call Event Listeners for the Buttons
         addListeners();
     }
@@ -87,6 +89,17 @@ class AppFrame extends BorderPane{
             stage.setScene(new Scene(root, 450, 450));
             stage.show();
             
+        });
+
+    	deleteRecipeButton.setOnAction(e -> {
+            // Delete all toggled recipes
+    		for (int i = 0; i < allRecipes.size(); i++) {
+    			if (allRecipes.get(i).isSelected()) {
+    				recipeList.getChildren().remove(allRecipes.get(i));
+    				allRecipes.remove(i);
+    			}
+    		}
+    		recipeDetails.defaultView();
         });
     	
     }
