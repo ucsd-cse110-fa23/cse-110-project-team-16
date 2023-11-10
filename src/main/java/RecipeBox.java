@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 class EditFrame extends BorderPane {
 	private Button saveButton;
 	private Button cancelButton;
+	private Button chatGPTButton;
 	private DialogButtons dialogButtons;
 	private RecipeBox recipes;
     private ArrayList<Recipe> allRecipes;
@@ -44,6 +45,7 @@ class EditFrame extends BorderPane {
     	
     	saveButton = dialogButtons.getSaveButton();
     	cancelButton = dialogButtons.getCancelButton();
+    	chatGPTButton = dialogButtons.getChatGPTButton();
     	
         addListeners();
     }
@@ -122,6 +124,11 @@ class EditFrame extends BorderPane {
         });
     	
     	cancelButton.setOnAction(e -> {
+            Stage stage = (Stage) getScene().getWindow();
+            stage.close();
+        });
+    	
+    	chatGPTButton.setOnAction(e -> {
             Stage stage = (Stage) getScene().getWindow();
             stage.close();
         });
@@ -276,6 +283,7 @@ class DialogButtons extends HBox {
 	
     private Button saveButton;
     private Button cancelButton;
+    private Button chatGPTButton;
 
     DialogButtons() {
         this.setPrefSize(500, 60);
@@ -288,9 +296,11 @@ class DialogButtons extends HBox {
         saveButton.setStyle(defaultButtonStyle); // styling the button
         cancelButton = new Button("Cancel"); // text displayed on clear recipes button
         cancelButton.setStyle(defaultButtonStyle);
+        chatGPTButton = new Button("ChatGPT"); // text displayed on clear recipes button
+        chatGPTButton.setStyle(defaultButtonStyle);
         
 
-        this.getChildren().addAll(saveButton,cancelButton); // adding buttons to footer
+        this.getChildren().addAll(saveButton,cancelButton,chatGPTButton); // adding buttons to footer
         this.setAlignment(Pos.CENTER); // aligning the buttons to center
     }
 
@@ -300,5 +310,9 @@ class DialogButtons extends HBox {
     
     public Button getCancelButton() {
         return cancelButton;
+    }
+
+    public Button getChatGPTButton() {
+        return chatGPTButton;
     }
 }
