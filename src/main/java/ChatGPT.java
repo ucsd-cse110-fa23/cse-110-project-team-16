@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import java.net.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
+// Test for Guy
 public class ChatGPT extends Application {
 	private static final String API_ENDPOINT = "https://api.openai.com/v1/completions";
 	private static final String API_KEY = "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";
