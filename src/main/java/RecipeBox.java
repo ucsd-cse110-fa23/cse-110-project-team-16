@@ -129,8 +129,22 @@ class EditFrame extends BorderPane {
         });
     	
     	chatGPTButton.setOnAction(e -> {
-            Stage stage = (Stage) getScene().getWindow();
-            stage.close();
+            ChatGPT chatgpt=new ChatGPT();           
+           String[] recipe = null;
+		try {
+			recipe = chatgpt.generatedRecipe("mango,shrimp,broccoli,bread");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		recipes.setRecipeName(recipe[0]);
+		recipes.setIngredients(recipe[1]);
+		recipes.setDirections(recipe[2]);
         });
     }
 }
@@ -230,6 +244,21 @@ class RecipeBox extends VBox {
 
     public String getDirections() {
         return this.directions.getText();
+    }
+    public void setRecipeName(String newText) {
+       this.recipeName.setText(newText);
+    }
+
+    public void setRecipeType(String newText) {
+    	 this.recipeType.setText(newText);
+    }
+
+    public void setIngredients(String newText) {
+    	 this.ingredients.setText(newText);
+    }
+
+    public void setDirections(String newText) {
+    	 this.directions.setText(newText);
     }
 
    
