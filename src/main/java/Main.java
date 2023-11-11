@@ -1,5 +1,6 @@
 package src.main.java;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.application.Application;
@@ -37,14 +38,20 @@ class AppFrame extends BorderPane{
 
     private RecipeDetails recipeDetails;
     private RecipeList recipeList;
+    private ArrayList<Recipe> allRecipes;
     private Button newRecipeButton;
+    private Button editRecipeButton;
+    private Button deleteRecipeButton;
     //private Button addButton;
     //private Button clearButton;
 
     AppFrame()
     {
+    	
+    	allRecipes = new ArrayList<Recipe>();
+    	
         // Initialise the header Object
-    	recipeDetails = new RecipeDetails(Optional.empty());
+    	recipeDetails = new RecipeDetails(Optional.empty(), allRecipes);
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList();
@@ -53,6 +60,8 @@ class AppFrame extends BorderPane{
         // Add scroller to the centre of the BorderPane
         this.setLeft(recipeList);
         newRecipeButton = recipeList.getNewRecipeButton();
+        editRecipeButton = recipeList.getEditRecipeButton();
+        deleteRecipeButton = recipeList.getDeleteRecipeButton();
         // Call Event Listeners for the Buttons
         addListeners();
     }
@@ -63,7 +72,7 @@ class AppFrame extends BorderPane{
         // Add button functionality
     	newRecipeButton.setOnAction(e -> {
             // Create a new recipe
-    		EditFrame root = new EditFrame(recipeList);
+    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, false);
 
             Stage stage = new Stage();
             stage.setTitle("Create New Recipe");
@@ -72,6 +81,28 @@ class AppFrame extends BorderPane{
             
         });
         
+    	editRecipeButton.setOnAction(e -> {
+            // Edit a new recipe
+    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Recipe");
+            stage.setScene(new Scene(root, 450, 450));
+            stage.show();
+            
+        });
+
+    	deleteRecipeButton.setOnAction(e -> {
+            // Delete all toggled recipes
+    		for (int i = 0; i < allRecipes.size(); i++) {
+    			if (allRecipes.get(i).isSelected()) {
+    				recipeList.getChildren().remove(allRecipes.get(i));
+    				allRecipes.remove(i);
+    			}
+    		}
+    		recipeDetails.defaultView();
+        });
+    	
     }
 }
 
