@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+javafx {
+    version = "17"
+    modules = [ 'javafx.base','javafx.controls', 'javafx.fxml']
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def junitVersion = '5.8.1'
+
+    // This provides the JUnit API.
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    // This provides the TestEngine to actually run the tests.
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+}
+
+test {
+    useJUnitPlatform()
+}
