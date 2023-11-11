@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 
 // Main Method - Runs application
@@ -42,6 +43,8 @@ class AppFrame extends BorderPane{
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private ScrollPane scrollPane;
+    private ActionsList actionsList;
     //private Button addButton;
     //private Button clearButton;
 
@@ -51,17 +54,30 @@ class AppFrame extends BorderPane{
     	allRecipes = new ArrayList<Recipe>();
     	
         // Initialise the header Object
-    	recipeDetails = new RecipeDetails(Optional.empty(), allRecipes);
+    	recipeDetails = new RecipeDetails(Optional.empty());
 
         // Create a recipelist Object to hold the recipes
-        recipeList = new RecipeList();
+        recipeList = new RecipeList(recipeDetails, allRecipes);
 
+        actionsList = new ActionsList();
+        scrollPane = new ScrollPane(recipeList);
+        // scrollPane.setMaxHeight(500.0);
+        scrollPane.setFitToHeight(true);
+                
+        this.setTop(actionsList);
+                
         this.setRight(recipeDetails);
         // Add scroller to the centre of the BorderPane
-        this.setLeft(recipeList);
-        newRecipeButton = recipeList.getNewRecipeButton();
-        editRecipeButton = recipeList.getEditRecipeButton();
-        deleteRecipeButton = recipeList.getDeleteRecipeButton();
+        
+        // this.setLeft(recipeList);
+        this.setLeft(scrollPane);
+        // newRecipeButton = recipeList.getNewRecipeButton();
+        // editRecipeButton = recipeList.getEditRecipeButton();
+        // deleteRecipeButton = recipeList.getDeleteRecipeButton();
+
+        newRecipeButton = actionsList.getNewRecipeButton();
+        editRecipeButton = actionsList.getEditRecipeButton();
+        deleteRecipeButton = actionsList.getDeleteRecipeButton();
         // Call Event Listeners for the Buttons
         addListeners();
     }
