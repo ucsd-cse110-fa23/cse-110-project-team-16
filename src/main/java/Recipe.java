@@ -59,7 +59,12 @@ public class Recipe extends HBox {
     }
     
     public void updateText() {
-    	text.setText(recipeName);
+    	if (recipeName.length() > 20) {
+            text.setText(recipeName.substring(0,20) + "...");
+        } 
+    	else {
+            text.setText(recipeName);
+        }
     }
     
     public boolean isSelected() {
@@ -115,7 +120,7 @@ class RecipeList extends VBox {
         // this.getChildren().add(actionsList);
         localRecipeDetails = details;
         allRecipes = recipeArray;
-        loadRecipes(db_dir);
+        loadRecipes();
         //this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         //	changeRecipeSelect();
         //	event.consume();
@@ -123,7 +128,7 @@ class RecipeList extends VBox {
     }
     
     //* Adds recipes from local database to recipeList*/
-    public void loadRecipes(String db_dir) {
+    public void loadRecipes() {
         Set<String> recipeFiles = listRecipeFiles(db_dir);
         // System.out.println("Current recipe files in db:");
         
@@ -259,6 +264,7 @@ class RecipeDetails extends VBox {
 	private Text displayType;
 	private Text displayIngredients;
 	private Text displayDirections;
+    private String db_dir = "localDB/";
 	
 	
 	public RecipeDetails (Optional<String> recipeName) {				
@@ -306,7 +312,7 @@ class RecipeDetails extends VBox {
     }
 	
 	public void showDetails (String recipeName) {
-		File file = new File("localDB/" + recipeName + ".txt");
+		File file = new File(db_dir + recipeName + ".txt");
 	 
 	    BufferedReader br = null;
 	    try {
@@ -320,11 +326,20 @@ class RecipeDetails extends VBox {
             String mealName = br.readLine();
             String mealType = br.readLine();
             String mealIngred = br.readLine();
-            String mealDirections = br.readLine();        
+            String mealDirections = br.readLine();            
+
 			titleText.setText(mealName);
-			displayType.setText("Type: " + mealType);            
-			displayIngredients.setText(mealIngred);
-			displayDirections.setText(mealDirections);
+            titleText.setWrappingWidth(600);
+
+			displayType.setText(mealType + "\n");
+            displayType.setWrappingWidth(400);
+			
+            displayIngredients.setText(mealIngred + "\n");
+            displayIngredients.setWrappingWidth(400);
+			
+            displayDirections.setText(mealDirections);
+            displayDirections.setWrappingWidth(400);
+            this.setPadding(new Insets(10, 0, 10, 0));
 
             // Platform.runLater(() -> {
             //     titleText.setText(mealName);
@@ -333,7 +348,7 @@ class RecipeDetails extends VBox {
 			//     displayDirections.setText(mealDirections);
             // });
             
-            System.out.println("The Try-block of text set runs");
+            System.out.println("RecipeDetails texts are successfully set");
 				
 		} catch (IOException e) {
 			
