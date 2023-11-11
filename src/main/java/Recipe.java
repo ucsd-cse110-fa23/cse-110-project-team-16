@@ -84,7 +84,12 @@ public class Recipe extends HBox {
     }
     
     public void updateText() {
-    	text.setText(recipeName);
+        if (recipeName.length() > 20) {
+            text.setText(recipeName.substring(0,20) + "...");
+        } 
+    	else {
+            text.setText(recipeName);
+        }
     }
     
     public boolean isSelected() {
@@ -218,9 +223,11 @@ class RecipeDetails extends VBox {
             
             displayType = new Text(currDisplay);
             displayType.setFont(Font.font("Arial", 14));
+            
 
             displayIngredients = new Text(currDisplay);
             displayIngredients.setFont(Font.font("Arial", 14));
+            
 
             displayDirections = new Text(currDisplay);
             displayDirections.setFont(Font.font("Arial", 14));
@@ -244,9 +251,13 @@ class RecipeDetails extends VBox {
 	 
 	    try {
 			titleText.setText(br.readLine());
-			displayType.setText(br.readLine());
-			displayIngredients.setText(br.readLine());
+            titleText.setWrappingWidth(400);
+			displayType.setText(br.readLine() + "\n");
+			displayIngredients.setText(br.readLine() + "\n");
+            displayIngredients.setWrappingWidth(400);
 			displayDirections.setText(br.readLine());
+            displayDirections.setWrappingWidth(400);
+            this.setPadding(new Insets(10, 0, 10, 0));
 				
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
