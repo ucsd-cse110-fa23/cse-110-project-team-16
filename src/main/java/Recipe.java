@@ -118,21 +118,26 @@ public class Recipe extends HBox {
         }
     }
 
+
+    public void setIngredients(String ingrediemts) {
+    }
+
 }
 
 
 class RecipeList extends VBox {
 	
 	private ActionsList actionsList;	
-
+    
     RecipeList() {
     	this.setSpacing(5); // sets spacing between tasks
         this.setPrefSize(300, 560);
         this.setStyle("-fx-background-color: #559952;");
+        
         // String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
         
-        actionsList = new ActionsList();
-        this.getChildren().add(actionsList);
+        //actionsList = new ActionsList();
+        //this.getChildren().add(actionsList);
     }
     
     public Button getNewRecipeButton() {
@@ -255,7 +260,14 @@ class RecipeDetails extends VBox {
 			displayType.setText(br.readLine() + "\n");
 			displayIngredients.setText(br.readLine() + "\n");
             displayIngredients.setWrappingWidth(400);
-			displayDirections.setText(br.readLine());
+            int c;
+            StringBuilder parsedDirections= new StringBuilder();
+
+            while ((c = br.read()) != -1) {
+                parsedDirections.append( (char)c ) ;  
+            }
+            String result = parsedDirections.toString();
+			displayDirections.setText(result);
             displayDirections.setWrappingWidth(400);
             this.setPadding(new Insets(10, 0, 10, 0));
 				
