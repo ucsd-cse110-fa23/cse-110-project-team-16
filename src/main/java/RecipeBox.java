@@ -1,35 +1,224 @@
 package src.main.java;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javax.sound.sampled.*;
 
+class CreationFrame extends BorderPane {
+    private Button saveButton;
+	private Button cancelButton;
+    private ArrayList<Recipe> allRecipes;
+	private RecipeList recipeList;
+	private RecipeDetails recipeDetails;
+    private InputBox inputBox;
+
+
+    CreationFrame(RecipeList _recipelist, ArrayList<Recipe> _allRecipes, RecipeDetails recipeDetails) {
+
+
+        recipeList = _recipelist;
+    	allRecipes = _allRecipes;
+        this.recipeDetails = recipeDetails;
+        inputBox = new InputBox();
+
+        saveButton = new Button("Save"); // text displayed on add button
+        cancelButton = new Button("Cancel"); // text displayed on clear recipes button
+        HBox dialogButtons = new HBox(saveButton, cancelButton);
+        dialogButtons.setAlignment(Pos.CENTER);
+        this.setCenter(inputBox);
+        this.setBottom(dialogButtons);
+        addListeners();
+    }
+
+
+    private void addListeners() {
+        saveButton.setOnAction(e -> {
+            if (inputBox.isValid()) {
+
+                ChatGPT chatgpt=new ChatGPT();           
+                String[] recipeString = null;
+		        try {
+			        recipeString = chatgpt.generatedRecipe(inputBox.getType(), inputBox.getIngrediemts());
+		        } catch (IOException e1) {
+			        // TODO Auto-generated catch block
+			        e1.printStackTrace();
+		        } catch (InterruptedException e2) {
+			        // TODO Auto-generated catch block
+			        e2.printStackTrace();
+		        }
+		
+                String recipeName = recipeString[0].strip();
+                System.out.println(recipeName);
+                String recipeType = inputBox.getType();
+                String recipeIngredients = inputBox.getIngrediemts();
+                //System.out.println(recipeString[2]);
+                String recipeDirections = recipeString[2];
+            
+		    
+                //String newRecipe = recipeName.replaceAll("\n","");
+                //System.out.println(newRecipe);
+                Recipe recipe = new Recipe(recipeDetails);
+            
+
+            
+                String filename = "localDB/" + recipeName + ".txt";
+                System.out.println(filename);
+                File newFile = new File(filename);
+                allRecipes.add(recipe);
+                recipe.setRecipeName(recipeName);
+                recipe.updateText();
+                recipeList.getChildren().add(recipe);
+
+                try {
+                    FileWriter writer = new FileWriter(filename);
+                    writer.write(recipeName);
+                    writer.write("\n");
+                    writer.write(recipeType);
+                    writer.write("\n");
+                    writer.write(recipeIngredients);
+                    writer.write("\n");
+                    writer.write(recipeDirections);
+
+                    writer.close();
+
+                } catch (IOException e3) {
+                    // TODO: handle exception
+                    System.out.println("Error occured when writing to txt file");
+                }
+                recipeDetails.showDetails(recipeName);
+
+                Stage stage = (Stage) getScene().getWindow(); // Get the current stage
+                stage.close(); // Close the window
+            }
+            
+            
+
+        });
+        cancelButton.setOnAction(e -> {
+            Stage stage = (Stage) getScene().getWindow(); // Get the current stage
+            stage.close(); // Close the window
+
+        });
+    }
+    
+
+}
+class InputBox extends VBox {
+    private Label typeLabel;
+    private Label typeInput;
+    private Label ingredientsLabel;
+    private Label ingredientsInput;
+    private Button recordType; 
+    private Button recordIngredients;
+    private boolean validType = false;
+    private boolean validIngredients = false;
+
+    InputBox() {
+        
+        this.setSpacing(5); // sets spacing between tasks
+        this.setPrefSize(400, 560);
+        //this.setStyle("-fx-background-color: #FFFF00;");
+                
+        typeLabel = new Label("Recipe Type");
+        typeInput = new Label("Please select your meal type: Breakfast, Lunch or Dinner");
+        recordType = new Button("Record Voice Input");
+        recordIngredients = new Button("Record Voice Input");
+        ingredientsLabel = new Label("Recipe Ingredients");
+        ingredientsInput = new Label("Please input all of the ingredients you have.");
+        ingredientsInput.setWrapText(true);
+        
+        //typeInput.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;");
+        ingredientsInput.setStyle("-fx-border-color: black;");
+        ingredientsInput.setPrefSize(300, 400);
+        ingredientsInput.setAlignment(Pos.TOP_CENTER);
+
+        typeLabel.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        typeInput.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        //recordType.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        //recordIngredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        ingredientsLabel.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+        ingredientsInput.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
+       
+        this.setAlignment(Pos.TOP_CENTER);
+        this.getChildren().addAll(typeLabel, typeInput, recordType, ingredientsLabel, ingredientsInput, recordIngredients);
+        addListeners();
+
+    }
+
+    private void addListeners() {
+
+        recordType.setOnAction(e -> {
+            AudioRecordFrame audioRecorder = new AudioRecordFrame(this, false, true);
+            audioRecorder.showAudioFrame();
+        });
+        recordIngredients.setOnAction(e -> {
+            AudioRecordFrame audioRecorder = new AudioRecordFrame(this, true, false);
+            audioRecorder.showAudioFrame();
+        });
+
+    }
+    public void setType(String newTypeString) {
+        if (newTypeString.contains("Breakfast") || newTypeString.contains("breakfast")) {
+            validType = true;
+            this.typeInput.setText("Breakfast");
+        }
+        else if (newTypeString.contains("Lunch") || newTypeString.contains("lunch")) {
+            validType = true;
+            this.typeInput.setText("Lunch");
+        }
+        else if (newTypeString.contains("Dinner") || newTypeString.contains("dinner")) {
+            validType = true;
+            this.typeInput.setText("Dinner");
+        }
+        else {
+            this.typeInput.setText("Invalid Meal Type, please select from either Breakfast, Lunch, or Dinner");
+            validType = false;
+        }
+        
+    }
+    public void setIngredients(String newIngredientString) {
+        this.ingredientsInput.setText(newIngredientString);
+        validIngredients = true;
+    }
+    public String getType() {
+        return typeInput.getText();
+    }
+    public String getIngrediemts() {
+        return ingredientsInput.getText();
+    }
+    public boolean isValid() {
+        return validType && validIngredients;
+    }
+    
+
+
+} 
 class EditFrame extends BorderPane {
 	private Button saveButton;
 	private Button cancelButton;
 	private Button chatGPTButton;
-    private Button whisperButtonType;
-    private Button whisperButtonIngredients;
 	private DialogButtons dialogButtons;
 	private RecipeBox recipes;
     private ArrayList<Recipe> allRecipes;
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
 	private boolean editMode;
+
 	
     EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean _editMode)
     {
@@ -50,7 +239,6 @@ class EditFrame extends BorderPane {
     	saveButton = dialogButtons.getSaveButton();
     	cancelButton = dialogButtons.getCancelButton();
     	chatGPTButton = dialogButtons.getChatGPTButton();
-    	
         addListeners();
     }
 
@@ -79,7 +267,9 @@ class EditFrame extends BorderPane {
                 String recipeType = recipes.getRecipeType();
                 String ingredients = recipes.getIngredients();
                 String directions = recipes.getDirections();
+                
                 String filename = "localDB/" + recipeName + ".txt";
+                
                 
                 Recipe recipe = null;
                 boolean exists = false;
@@ -136,32 +326,13 @@ class EditFrame extends BorderPane {
             Stage stage = (Stage) getScene().getWindow();
             stage.close();
         });
-        /* 
-        whisperButtonType.setOnAction(e -> {
-            Whisper whisper = new Whisper();
-            String type = null;
-            try {
-			    recipe = chatgpt.generatedRecipe("mango,shrimp,broccoli,bread");
-		    } catch (IOException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-		    } catch (InterruptedException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-		    }
-        });
-        whisperButtonIngredients.setOnAction(e -> {
-            Whisper whisper = new Whisper();
-            String ingredients = null;
-            
-        });
-        */
+         
     	
     	chatGPTButton.setOnAction(e -> {
             ChatGPT chatgpt=new ChatGPT();           
             String[] recipe = null;
 		    try {
-			    recipe = chatgpt.generatedRecipe("mango,shrimp,broccoli,bread");
+			    recipe = chatgpt.generatedRecipe("Breakfast", "Potatos, eggs, rice");
 		    } catch (IOException e1) {
 			    // TODO Auto-generated catch block
 			    e1.printStackTrace();
@@ -184,6 +355,8 @@ class RecipeBox extends VBox {
     private TextField recipeType;
     private TextField ingredients;
     private TextField directions;
+    private Button whisperButtonType; 
+    private Button whisperButtonIngredients;
    
     RecipeBox() {
         
@@ -206,7 +379,7 @@ class RecipeBox extends VBox {
         
         recipeType.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         recipeType.setPromptText("Input Recipe Type here: Breakfast / Lunch / Dinner");
-        Button whisperButtonType = new Button("Voice Input Meal Type");
+        whisperButtonType = new Button("Voice Input Meal Type");
 
 
        
@@ -215,7 +388,7 @@ class RecipeBox extends VBox {
         ingredients.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
         ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         ingredients.setPromptText("Input Ingredients here");
-        Button whisperButtonIngredients = new Button("Voice Input Ingredients");
+        whisperButtonIngredients = new Button("Voice Input Ingredients");
     
         
 
@@ -297,6 +470,13 @@ class RecipeBox extends VBox {
     public void setDirections(String newText) {
     	 this.directions.setText(newText);
     }
+    public Button getWhisperTypeButton() {
+        return this.whisperButtonType;
+    }
+    public Button getWhisperIngredientsButton() {
+        return this.whisperButtonIngredients;
+    }
+
 
    
 }
@@ -350,6 +530,7 @@ class DialogButtons extends HBox {
     private Button saveButton;
     private Button cancelButton;
     private Button chatGPTButton;
+    
 
     DialogButtons() {
         this.setPrefSize(500, 60);
@@ -380,5 +561,168 @@ class DialogButtons extends HBox {
 
     public Button getChatGPTButton() {
         return chatGPTButton;
+    }
+}
+class AudioRecordFrame extends FlowPane {
+    private Button startButton;
+    private Button stopButton;
+    private AudioFormat audioFormat;
+    private TargetDataLine targetDataLine;
+    private Label recordingLabel;
+    private boolean isRecording = false;
+    private String audioString = "";
+    private InputBox inputBox;
+    private boolean ingredientsChange = false;
+    private boolean typeChange = false;
+
+    // Set a default style for buttons and fields - background color, font size,
+    // italics
+    String defaultButtonStyle = "-fx-border-color: #000000; -fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px;";
+    String defaultLabelStyle = "-fx-font: 13 arial; -fx-pref-width: 175px; -fx-pref-height: 50px; -fx-text-fill: red; visibility: hidden";
+
+    AudioRecordFrame(InputBox inputBox, boolean ingredientsChange, boolean typeChange) {
+        this.ingredientsChange = ingredientsChange;
+        this.typeChange = typeChange;
+        this.inputBox = inputBox;
+        // Set properties for the flowpane
+        this.setPrefSize(370, 120);
+        this.setPadding(new Insets(5, 0, 5, 5));
+        this.setVgap(10);
+        this.setHgap(10);
+        this.setPrefWrapLength(170);
+
+        // Add the buttons and text fields
+        startButton = new Button("Start");
+        startButton.setStyle(defaultButtonStyle);
+
+        stopButton = new Button("Stop");
+        stopButton.setStyle(defaultButtonStyle);
+
+        recordingLabel = new Label("Recording...");
+        recordingLabel.setStyle(defaultLabelStyle);
+
+        this.getChildren().addAll(startButton, stopButton, recordingLabel);
+
+        // Get the audio format
+        audioFormat = getAudioFormat();
+
+        // Add the listeners to the buttons
+        addListeners();
+    }
+
+    public void addListeners() {
+        // Start Button
+        startButton.setOnAction(e -> {
+            startRecording();
+        });
+
+        // Stop Button
+        stopButton.setOnAction(e -> {
+            try {
+                stopRecording();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            } catch (URISyntaxException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
+    }
+    public void showAudioFrame() {
+        Stage stage = new Stage();
+            Scene addScene = new Scene(this, 370, 120);
+            //stage.setAlignment(Pos.CENTER);
+            stage.setTitle("Record Audio");
+            stage.setScene(addScene);
+            stage.show();
+    }
+
+    private AudioFormat getAudioFormat() {
+        // the number of samples of audio per second.
+        // 44100 represents the typical sample rate for CD-quality audio.
+        float sampleRate = 44100;
+
+        // the number of bits in each sample of a sound that has been digitized.
+        int sampleSizeInBits = 16;
+
+        // the number of audio channels in this format (1 for mono, 2 for stereo).
+        int channels = 1;
+
+        // whether the data is signed or unsigned.
+        boolean signed = true;
+
+        // whether the audio data is stored in big-endian or little-endian order.
+        boolean bigEndian = false;
+
+        return new AudioFormat(
+                sampleRate,
+                sampleSizeInBits,
+                channels,
+                signed,
+                bigEndian);
+    }
+
+    private void startRecording() {
+        if (isRecording == true) {
+            return;
+        }
+        isRecording = true;
+        Thread t = new Thread(
+        new Runnable() {
+          @Override
+          public void run() {
+        try {
+            // the format of the TargetDataLine
+            DataLine.Info dataLineInfo = new DataLine.Info(
+                    TargetDataLine.class,
+                    audioFormat);
+            // the TargetDataLine used to capture audio data from the microphone
+            targetDataLine = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
+            targetDataLine.open(audioFormat);
+            targetDataLine.start();
+            recordingLabel.setVisible(true);
+
+            // the AudioInputStream that will be used to write the audio data to a file
+            AudioInputStream audioInputStream = new AudioInputStream(
+                    targetDataLine);
+
+            // the file that will contain the audio data
+            File audioFile = new File("recording.wav");
+            AudioSystem.write(
+                    audioInputStream,
+                    AudioFileFormat.Type.WAVE,
+                    audioFile);
+            recordingLabel.setVisible(false);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        }
+    });
+    t.start();
+    }
+
+    private void stopRecording() throws IOException, URISyntaxException {
+        if (targetDataLine == null) {
+            return;
+        }
+        isRecording = false;
+        targetDataLine.stop();
+        targetDataLine.close();
+        Whisper whisper = new Whisper();
+        whisper.generateString();
+        audioString = whisper.getResponseString();
+        if (ingredientsChange) {
+            inputBox.setIngredients(audioString);
+        }
+        else {
+            inputBox.setType(audioString);
+        }
+        Stage stage = (Stage) getScene().getWindow();
+        stage.close();
+        
+    }
+    public String getAudioString() {
+        return this.audioString;
     }
 }
