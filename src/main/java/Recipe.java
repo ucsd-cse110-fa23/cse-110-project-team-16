@@ -102,8 +102,8 @@ public class Recipe extends HBox {
         recipeArray = arry_input;
     }
 
-    public String getDetails (String whichDetail) {
-		File file = new File("localDB/" + recipeName + ".txt");
+    public String getDetails (String name, String whichDetail) {
+		File file = new File("localDB/" + name + ".txt");
 	    BufferedReader br = null;
 	    try {
 			br = new BufferedReader(new FileReader(file));

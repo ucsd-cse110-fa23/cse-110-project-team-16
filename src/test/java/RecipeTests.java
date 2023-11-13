@@ -37,28 +37,19 @@ public class RecipeTests {
 	
 	@Test 
 	void testReadRecipeType() {
-		recipe = new Recipe(null);
-		recipe.setRecipeName("Ham and Cheese Sandwich");
-		
-		String type = recipe.getDetails("type");
+		String type = recipe.getDetails("Ham and Cheese Sandwich", "type");
 		assertEquals("Dinner", type);
 	}
 	
 	@Test 
 	void testReadRecipeIngredients() {
-		recipe = new Recipe(null);
-		recipe.setRecipeName("Ham and Cheese Sandwich");
-		
-		String ingredients = recipe.getDetails("ingredients");
+		String ingredients = recipe.getDetails("Ham and Cheese Sandwich", "ingredients");
 		assertEquals("Ham, bread, cheese, mayo, mustard, oil, vinegar.", ingredients);
 	}
 	
 	@Test 
 	void testReadRecipeDirections() {
-		recipe = new Recipe(null);
-		recipe.setRecipeName("Ham and Cheese Sandwich");
-		
-		String directions = recipe.getDetails("directions");
+		String directions = recipe.getDetails("Ham and Cheese Sandwich", "directions");
 		assertEquals("1. Cut the bread into two medium-sized slices.\n"
 				+ "2. Put a thin layer of mustard on each slice of the bread.\n"
 				+ "3. Heat a pan on medium-high and add some oil.\n"
