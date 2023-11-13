@@ -217,6 +217,8 @@ class EditFrame extends BorderPane {
 	private Button saveButton;
 	private Button cancelButton;
 	private Button chatGPTButton;
+    private Button whisperButtonType;
+    private Button whisperButtonIngredients;
 	private DialogButtons dialogButtons;
 	private RecipeBox recipes;
     private ArrayList<Recipe> allRecipes;
@@ -296,10 +298,12 @@ class EditFrame extends BorderPane {
                 //! This is needed because we need to associate every single recipe
                 //! with the arraylist of total recipes
                 recipe.updateRecipeArray(allRecipes);
-                
+
                 if (!exists)
                 	recipeList.getChildren().add(recipe);
-            
+
+                
+
                 // writing to recipes text files
                 try {
                     FileWriter writer = new FileWriter(filename);
@@ -335,12 +339,13 @@ class EditFrame extends BorderPane {
             Stage stage = (Stage) getScene().getWindow();
             stage.close();
         });
-         
+
     	
     	chatGPTButton.setOnAction(e -> {
             ChatGPT chatgpt=new ChatGPT();           
             String[] recipe = null;
 		    try {
+
 			    recipe = chatgpt.generatedRecipe("Breakfast", "Potatos, eggs, rice");
 		    } catch (IOException e1) {
 			    // TODO Auto-generated catch block
@@ -377,7 +382,7 @@ class RecipeBox extends VBox {
         recipeName = new TextField();
         recipeName.setPrefSize(380, 20); // set size of text field
         recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-                
+
         recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         recipeName.setPromptText("Input Recipe Name here");
 
@@ -387,7 +392,9 @@ class RecipeBox extends VBox {
         
         recipeType.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         recipeType.setPromptText("Input Recipe Type here: Breakfast / Lunch / Dinner");
+
         whisperButtonType = new Button("Voice Input Meal Type");
+
 
 
        
@@ -396,7 +403,9 @@ class RecipeBox extends VBox {
         ingredients.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
         ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         ingredients.setPromptText("Input Ingredients here");
+
         whisperButtonIngredients = new Button("Voice Input Ingredients");
+
     
         
 
@@ -528,6 +537,7 @@ class DialogButtons extends HBox {
         return chatGPTButton;
     }
 }
+
 class AudioRecordFrame extends FlowPane {
     private Button startButton;
     private Button stopButton;

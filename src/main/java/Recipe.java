@@ -26,7 +26,7 @@ public class Recipe extends HBox {
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
     
-    private boolean isSelected;
+    private boolean isSelected;    
 
     public Recipe(RecipeDetails _recipeDetails) {
     	recipeDetails = _recipeDetails;
@@ -59,7 +59,8 @@ public class Recipe extends HBox {
     }
     
     public void updateText() {
-        if (recipeName.length() > 20) {
+
+    	if (recipeName.length() > 20) {
             text.setText(recipeName.substring(0,20) + "...");
         } 
     	else {
@@ -75,8 +76,9 @@ public class Recipe extends HBox {
         
         if (!this.isSelected) {
             isSelected = true;
-            this.setStyle("-fx-background-color: #66b3ff; -fx-border-width: 0; -fx-font-weight: bold;");            
-            
+
+            this.setStyle("-fx-background-color: #66b3ff; -fx-border-width: 0; -fx-font-weight: bold;");
+
             // System.out.println("The current recpie array:");
             // System.out.println(recipeArray);
             for (int i = 0; i < recipeArray.size(); i++) {
@@ -105,11 +107,12 @@ public class Recipe extends HBox {
 
 class RecipeList extends VBox {
 	
-	// private ActionsList actionsList;	
+	// private ActionsList actionsList;
     private String db_dir = "localDB/";
     private RecipeDetails localRecipeDetails;
     private ArrayList<Recipe> allRecipes;
-    
+
+
     RecipeList(RecipeDetails details, ArrayList<Recipe> recipeArray) {
     	this.setSpacing(5); // sets spacing between recipes
         this.setPrefSize(300, 560);
@@ -217,10 +220,11 @@ class RecipeList extends VBox {
     //     return actionsList.getNewRecipeButton();
     // }
     // public Button getEditRecipeButton() {
-        //     return actionsList.getEditRecipeButton();
+
+    //     return actionsList.getEditRecipeButton();
     // }
     // public Button getDeleteRecipeButton() {
-        //     return actionsList.getDeleteRecipeButton();
+    //     return actionsList.getDeleteRecipeButton();
     // }
 }
 
@@ -258,8 +262,12 @@ class ActionsList extends HBox {
 }
 
 
-class RecipeDetails extends VBox {
+
+
 		
+
+class RecipeDetails extends VBox {		
+
 	private Text titleText;
 	private Text displayType;
 	private Text displayIngredients;
@@ -267,8 +275,9 @@ class RecipeDetails extends VBox {
     private String db_dir = "localDB/";
 	
 	
-	public RecipeDetails (Optional<String> recipeName) {
 				
+
+	public RecipeDetails (Optional<String> recipeName) {				
         String currDisplay = recipeName.orElse("Default");
         this.setPrefSize(900, 60);
         this.setStyle("-fx-background-color: #BCE29E;");
@@ -323,6 +332,7 @@ class RecipeDetails extends VBox {
 		}
 	 
 	    try {
+
 			String mealName = br.readLine();
             String mealType = br.readLine();
             String mealIngred = br.readLine();
@@ -361,6 +371,14 @@ class RecipeDetails extends VBox {
             System.out.println("Closing bufferedReader failed: (RecipeDetails.showDetails)");
 			e.printStackTrace();
 		}
+
+        try {
+            br.close();
+        } catch (IOException e) {
+            
+            System.out.println("Closing bufferedReader failed: (RecipeDetails.showDetails)");
+            e.printStackTrace();
+        }
 	}
 	
 	public void defaultView () {

@@ -65,8 +65,10 @@ class AppFrame extends BorderPane{
         // scrollPane.setMaxHeight(500.0);
         scrollPane.setFitToHeight(true);
 
-        this.setTop(actionsList);
 
+                
+        this.setTop(actionsList);
+                
         this.setRight(recipeDetails);
         // Add scroller to the centre of the BorderPane
         
