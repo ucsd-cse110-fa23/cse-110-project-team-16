@@ -12,7 +12,7 @@ public class RecipeTests {
 	
 	@BeforeEach
 	void setUp() {
-		recipe = new Recipe();
+		recipe = new Recipe(null);
 	}
 	
 	@Test
@@ -36,3 +36,4 @@ public class RecipeTests {
 	}
 	*/
 }
+
