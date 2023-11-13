@@ -3,6 +3,7 @@ package src.main.java;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.io.*;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -46,8 +47,7 @@ class AppFrame extends BorderPane{
     private Button deleteRecipeButton;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
-    //private Button addButton;
-    //private Button clearButton;
+    private String db_dir = "localDB/";
 
     AppFrame()
     {
@@ -55,16 +55,18 @@ class AppFrame extends BorderPane{
     	allRecipes = new ArrayList<Recipe>();
     	
         // Initialise the header Object
-    	recipeDetails = new RecipeDetails(Optional.empty(), allRecipes);
+    	recipeDetails = new RecipeDetails(Optional.empty());
 
         // Create a recipelist Object to hold the recipes
-        recipeList = new RecipeList();
+        recipeList = new RecipeList(recipeDetails, allRecipes);
 
         actionsList = new ActionsList();
         scrollPane = new ScrollPane(recipeList);
         // scrollPane.setMaxHeight(500.0);
         scrollPane.setFitToHeight(true);
+
         this.setTop(actionsList);
+
         this.setRight(recipeDetails);
         // Add scroller to the centre of the BorderPane
         
@@ -112,6 +114,10 @@ class AppFrame extends BorderPane{
     		for (int i = 0; i < allRecipes.size(); i++) {
     			if (allRecipes.get(i).isSelected()) {
     				recipeList.getChildren().remove(allRecipes.get(i));
+                    String deletedFileName = db_dir + allRecipes.get(i).getRecipeName() + ".txt";
+                    File deletedFile = new File(deletedFileName);
+                    deletedFile.delete();
+                    System.out.println("Deleted this file: " + deletedFileName);
     				allRecipes.remove(i);
     			}
     		}
@@ -120,3 +126,4 @@ class AppFrame extends BorderPane{
     	
     }
 }
+

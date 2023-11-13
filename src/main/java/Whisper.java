@@ -1,5 +1,5 @@
-
 package src.main.java;
+
 import java.io.*;
 import java.net.*;
 import org.json.*;
@@ -7,7 +7,7 @@ public class Whisper {
     private static final String API_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions";
     private static final String TOKEN = "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";
     private static final String MODEL = "whisper-1";
-    private static final String FILE_PATH = "recording.wav";
+    private static final String FILE_PATH = "recipe_recording.wav";
     private static String responseString = ""; 
 
     // Helper method to write a parameter to the output stream in multipart form data format

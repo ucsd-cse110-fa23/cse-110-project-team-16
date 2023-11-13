@@ -82,6 +82,11 @@ class CreationFrame extends BorderPane {
                 allRecipes.add(recipe);
                 recipe.setRecipeName(recipeName);
                 recipe.updateText();
+
+                //! This is needed because we need to associate every single recipe
+                //! with the arraylist of total recipes
+                recipe.updateRecipeArray(allRecipes);
+
                 recipeList.getChildren().add(recipe);
 
                 try {
@@ -218,7 +223,6 @@ class EditFrame extends BorderPane {
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
 	private boolean editMode;
-
 	
     EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean _editMode)
     {
@@ -239,6 +243,7 @@ class EditFrame extends BorderPane {
     	saveButton = dialogButtons.getSaveButton();
     	cancelButton = dialogButtons.getCancelButton();
     	chatGPTButton = dialogButtons.getChatGPTButton();
+
         addListeners();
     }
 
@@ -267,9 +272,7 @@ class EditFrame extends BorderPane {
                 String recipeType = recipes.getRecipeType();
                 String ingredients = recipes.getIngredients();
                 String directions = recipes.getDirections();
-                
                 String filename = "localDB/" + recipeName + ".txt";
-                
                 
                 Recipe recipe = null;
                 boolean exists = false;
@@ -289,6 +292,11 @@ class EditFrame extends BorderPane {
                 // System.out.println("This is the new recipe name added: " + recipeName);
                 recipe.setRecipeName(recipeName);
                 recipe.updateText();
+
+                //! This is needed because we need to associate every single recipe
+                //! with the arraylist of total recipes
+                recipe.updateRecipeArray(allRecipes);
+                
                 if (!exists)
                 	recipeList.getChildren().add(recipe);
             
@@ -304,6 +312,7 @@ class EditFrame extends BorderPane {
                     writer.write(directions);
 
                     writer.close();
+                    System.out.println("Created file: " + filename);
 
                 } catch (IOException e) {
                     // TODO: handle exception
@@ -368,8 +377,7 @@ class RecipeBox extends VBox {
         recipeName = new TextField();
         recipeName.setPrefSize(380, 20); // set size of text field
         recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-        
-        
+                
         recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
         recipeName.setPromptText("Input Recipe Name here");
 
@@ -481,48 +489,6 @@ class RecipeBox extends VBox {
    
 }
 
-/*
-public class RecipeBox extends HBox {
-	
-	 private TextField recipeName;
-	 private TextField ingredients;
-   
-	 public RecipeBox() {
-		this.setSpacing(5); // sets spacing between recipes
-		this.setPrefSize(400, 560);
-		//this.setStyle("-fx-background-color: #FFFF00;");
-		String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-       
-		recipeName = new TextField(); // create recipe name text field
-       	recipeName.setPrefSize(380, 20); // set size of text field
-       	recipeName.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-       	recipeName.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-       	this.getChildren().add(recipeName); // add textlabel to recipe
-       
-       	ingredients = new TextField(); // create recipe name text field
-       	ingredients.setPrefSize(500, 200); // set size of text field
-       	ingredients.setStyle("-fx-background-color: #DAE5EA; -fx-border-width: 0;"); // set background color of texfield
-       	ingredients.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
-       	this.getChildren().add(ingredients);
-	}
-	
-	public String getRecipeName() {
-       return this.recipeName.getText();
-	}
-
-	public void setRecipeName(String _recipeName) {
-       this.recipeName.setText(_recipeName);
-	}
-	
-	public String getIngredients() {
-       return this.ingredients.getText();
-	}
-	
-	public void setIngredients(String _ingredients) {
-       this.ingredients.setText(_ingredients);
-	}
-}
-*/
 
 // Footer of EditFrame - contains save and cancel buttons
 class DialogButtons extends HBox {
@@ -531,7 +497,6 @@ class DialogButtons extends HBox {
     private Button cancelButton;
     private Button chatGPTButton;
     
-
     DialogButtons() {
         this.setPrefSize(500, 60);
         this.setStyle("-fx-background-color: #F0F8FF;");
