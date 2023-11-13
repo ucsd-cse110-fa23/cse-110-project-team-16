@@ -155,6 +155,34 @@ public class Recipe extends HBox {
         	return "Unknown Detail";
         
 	}
+    
+    // getDetails using MOCK of bufferedReader
+    public String getDetailsMOCK (String name, String whichDetail) {
+	    String mealName = "";
+        String mealType = "Dinner";
+        String mealIngred = "Ham, bread, cheese, mayo, mustard, oil, vinegar.";
+        String mealDirections = "1. Cut the bread into two medium-sized slices. \n"
+        		+ "2. Put a thin layer of mustard on each slice of the bread.\n"
+        		+ "3. Heat a pan on medium-high and add some oil.\n"
+        		+ "4. On one side of the bread, place a few slices of ham and some slices of cheese.\n"
+        		+ "5. Place the other piece of bread on top (mustard side down).\n"
+        		+ "6. Cover the top and let it cook in the pan for a few minutes.\n"
+        		+ "7. Flip the sandwich and let it cook for a few minutes on the other side.\n"
+        		+ "8. Take the sandwich off the pan and spread mayo and vinegar on both sides.\n"
+        		+ "9. Cut the sandwich in half and enjoy.";
+
+        if(whichDetail == "name")
+        	return mealName;
+        else if(whichDetail == "type")
+        	return mealType;
+        else if(whichDetail == "ingredients")
+        	return mealIngred;
+        else if(whichDetail == "directions")
+        	return mealDirections;
+        else
+        	return "Unknown Detail";
+        
+	}
 }
 
 class ActionsList extends HBox {
