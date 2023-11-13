@@ -102,6 +102,59 @@ public class Recipe extends HBox {
         recipeArray = arry_input;
     }
 
+    public String getDetails (String whichDetail) {
+		File file = new File("localDB/" + recipeName + ".txt");
+	    BufferedReader br = null;
+	    try {
+			br = new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+	    
+	    String mealName = "";
+        String mealType = "";
+        String mealIngred = "";
+        String mealDirections = "";
+        
+	    try {			
+			mealName = br.readLine();
+            mealType = br.readLine();
+            mealIngred = br.readLine();
+            
+            // empty space
+            br.readLine();
+            
+            String line = br.readLine();;
+            while (line != null) {
+				mealDirections += line + "\n";
+				line = br.readLine();
+			}
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+        
+        try {
+            br.close();
+        } catch (IOException e) {
+            
+            System.out.println("Closing buffered Reader Failed: (RecipeList.getDetails)");
+            e.printStackTrace();
+        }
+        
+        if(whichDetail == "name")
+        	return mealName;
+        else if(whichDetail == "type")
+        	return mealType;
+        else if(whichDetail == "ingredients")
+        	return mealIngred;
+        else if(whichDetail == "directions")
+        	return mealDirections;
+        else
+        	return "Unknown Detail";
+        
+	}
 }
 
 class ActionsList extends HBox {
