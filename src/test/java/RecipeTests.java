@@ -37,19 +37,19 @@ public class RecipeTests {
 	
 	@Test 
 	void testReadRecipeType() {
-		String type = recipe.getDetails("Ham and Cheese Sandwich", "type");
+		String type = recipe.getDetailsMOCK("Ham and Cheese Sandwich", "type");
 		assertEquals("Dinner", type);
 	}
 	
 	@Test 
 	void testReadRecipeIngredients() {
-		String ingredients = recipe.getDetails("Ham and Cheese Sandwich", "ingredients");
+		String ingredients = recipe.getDetailsMOCK("Ham and Cheese Sandwich", "ingredients");
 		assertEquals("Ham, bread, cheese, mayo, mustard, oil, vinegar.", ingredients);
 	}
 	
 	@Test 
 	void testReadRecipeDirections() {
-		String directions = recipe.getDetails("Ham and Cheese Sandwich", "directions");
+		String directions = recipe.getDetailsMOCK("Ham and Cheese Sandwich", "directions");
 		assertEquals("1. Cut the bread into two medium-sized slices.\n"
 				+ "2. Put a thin layer of mustard on each slice of the bread.\n"
 				+ "3. Heat a pan on medium-high and add some oil.\n"
