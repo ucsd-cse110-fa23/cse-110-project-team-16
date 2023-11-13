@@ -7,33 +7,35 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+
 public class RecipeTests {
 	private Recipe recipe;
+	private RecipeList recipeList;
+	private ArrayList<Recipe> allRecipes;
 	
 	@BeforeEach
 	void setUp() {
+		allRecipes = new ArrayList<Recipe>();
+		recipeList = new RecipeList(null, allRecipes);
+	}
+	
+	@Test
+	void testCreateRecipe() {
+		// CreateRecipe
 		recipe = new Recipe(null);
+		recipe.setRecipeName("Ham and Cheese Sandwich");
+		recipe.updateRecipeArray(allRecipes);
+		allRecipes.add(recipe);
+		
+		//Check recipe has been created
+		String name = "";
+		for (Recipe rec: allRecipes) {
+			if(rec.getRecipeName() == recipe.getRecipeName())
+				name = rec.getRecipeName();
+		}
+		assertEquals("Ham and Cheese Sandwich", name);
 	}
 	
-	@Test
-	void testGetRecipeName() {
-		recipe.setRecipeName("Onion Garlic Soup");
-		assertEquals("Onion Garlic Soup", recipe.getRecipeName());
-	}
-	
-	@Test
-	void testGetRecipeName2() {
-		recipe.setRecipeName("Lemon Chicken");
-		assertEquals("Lemon Chicken", recipe.getRecipeName());
-	}
-	
-	/*
-	@Test
-	void testGetIndredients() {
-		recipe.setIngredients("Onion,Stock,Salt,Carrot,Cumin");
-		assertEquals("Onion,Stock,Salt,Carrot,Cumin", recipe.getIngredients());
-		assertEquals("test", "test");
-	}
-	*/
 }
 

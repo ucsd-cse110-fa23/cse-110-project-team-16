@@ -251,19 +251,6 @@ class EditFrame extends BorderPane {
 
     void addListeners()
     {
-    	/*
-    	// Add button functionality
-    	saveButton.setOnAction(e -> {
-            // Create a new recipe
-            Recipe recipe = new Recipe();
-            recipe.setRecipeName(recipes.getRecipeName());
-            recipe.updateText();
-            // Add recipe to recipelist
-            recipeList.getChildren().add(recipe);
-            // Update recipe indices
-            recipeList.updateRecipeIndices();
-        });
-        */
     	saveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -319,7 +306,6 @@ class EditFrame extends BorderPane {
                     System.out.println("Created file: " + filename);
 
                 } catch (IOException e) {
-                    // TODO: handle exception
                     System.out.println("Error occured when writing to txt file");
                 }
                 
