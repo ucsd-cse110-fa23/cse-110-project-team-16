@@ -102,73 +102,8 @@ public class Recipe extends HBox {
         recipeArray = arry_input;
     }
 
-}
-
-
-class RecipeList extends VBox {
-	
-	// private ActionsList actionsList;
-    private String db_dir = "localDB/";
-    private RecipeDetails localRecipeDetails;
-    private ArrayList<Recipe> allRecipes;
-
-
-    RecipeList(RecipeDetails details, ArrayList<Recipe> recipeArray) {
-    	this.setSpacing(5); // sets spacing between recipes
-        this.setPrefSize(300, 560);
-        this.setStyle("-fx-background-color: #559952;");
-        // String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-        
-        // actionsList = new ActionsList();
-        // this.getChildren().add(actionsList);
-        localRecipeDetails = details;
-        allRecipes = recipeArray;
-        loadRecipes();
-        //this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-        //	changeRecipeSelect();
-        //	event.consume();
-        //});
-    }
-    
-    //* Adds recipes from local database to recipeList*/
-    public void loadRecipes() {
-        Set<String> recipeFiles = listRecipeFiles(db_dir);
-        // System.out.println("Current recipe files in db:");
-        
-        for (String file: recipeFiles) {            
-            Recipe currRecipe = null;
-            String currName = file.substring(0, file.length() - 4);
-                        
-            // System.out.println(currName);
-            ArrayList<String> currMealParams = getDetails(currName);
-            // System.out.println(currMealParams);
-
-            currRecipe = new Recipe(localRecipeDetails);
-            currRecipe.setRecipeName(currName);
-            currRecipe.updateText();
-
-            this.getChildren().add(currRecipe);
-            allRecipes.add(currRecipe);
-            currRecipe.updateRecipeArray(allRecipes);
-        }
-    }
-
-    private Set<String> listRecipeFiles(String db_dir) {
-        Set<String> recipeFiles = new HashSet<String> ();
-        
-        File recipeDir = new File(db_dir);
-        String[] filesArray = recipeDir.list();
-        
-        for (String file: filesArray) {
-            recipeFiles.add(file);
-        }
-
-        return recipeFiles;
-    }
-
-    public ArrayList<String> getDetails (String recipeName) {
-		File file = new File(db_dir + recipeName + ".txt");
-        ArrayList<String> recipeDetails = new ArrayList<String>();
+    public String getDetails (String name, String whichDetail) {
+		File file = new File("localDB/" + name + ".txt");
 	    BufferedReader br = null;
 	    try {
 			br = new BufferedReader(new FileReader(file));
@@ -176,16 +111,25 @@ class RecipeList extends VBox {
 			
 			e.printStackTrace();
 		}
-	 
+	    
+	    String mealName = "";
+        String mealType = "";
+        String mealIngred = "";
+        String mealDirections = "";
+        
 	    try {			
-			String mealName = br.readLine();
-            String mealType = br.readLine();
-            String mealIngred = br.readLine();
-            String mealDirections = br.readLine();
-            recipeDetails.add(mealName);
-            recipeDetails.add(mealType);
-            recipeDetails.add(mealIngred);
-            recipeDetails.add(mealDirections);
+			mealName = br.readLine();
+            mealType = br.readLine();
+            mealIngred = br.readLine();
+            
+            // empty space
+            br.readLine();
+            
+            String line = br.readLine();;
+            while (line != null) {
+				mealDirections += line + "\n";
+				line = br.readLine();
+			}
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -199,33 +143,46 @@ class RecipeList extends VBox {
             e.printStackTrace();
         }
         
-
-        return recipeDetails;
+        if(whichDetail == "name")
+        	return mealName;
+        else if(whichDetail == "type")
+        	return mealType;
+        else if(whichDetail == "ingredients")
+        	return mealIngred;
+        else if(whichDetail == "directions")
+        	return mealDirections;
+        else
+        	return "Unknown Detail";
+        
 	}
-
-    public void changeRecipeSelect() {
-            // Unselect other selected recipes
-            for (int i = 0; i < allRecipes.size(); i++) {
-            	if (allRecipes.get(i).isSelected()) {
-            		allRecipes.get(i).toggleSelect();
-            	}
-            }
-    }
     
-    public ArrayList<Recipe> getAllRecipes () {
-		return allRecipes;
+    // getDetails using MOCK of bufferedReader
+    public String getDetailsMOCK (String name, String whichDetail) {
+	    String mealName = "";
+        String mealType = "Dinner";
+        String mealIngred = "Ham, bread, cheese, mayo, mustard, oil, vinegar.";
+        String mealDirections = "1. Cut the bread into two medium-sized slices.\n"
+        		+ "2. Put a thin layer of mustard on each slice of the bread.\n"
+        		+ "3. Heat a pan on medium-high and add some oil.\n"
+        		+ "4. On one side of the bread, place a few slices of ham and some slices of cheese.\n"
+        		+ "5. Place the other piece of bread on top (mustard side down).\n"
+        		+ "6. Cover the top and let it cook in the pan for a few minutes.\n"
+        		+ "7. Flip the sandwich and let it cook for a few minutes on the other side.\n"
+        		+ "8. Take the sandwich off the pan and spread mayo and vinegar on both sides.\n"
+        		+ "9. Cut the sandwich in half and enjoy.\n";
+
+        if(whichDetail == "name")
+        	return mealName;
+        else if(whichDetail == "type")
+        	return mealType;
+        else if(whichDetail == "ingredients")
+        	return mealIngred;
+        else if(whichDetail == "directions")
+        	return mealDirections;
+        else
+        	return "Unknown Detail";
+        
 	}
-
-    // public Button getNewRecipeButton() {
-    //     return actionsList.getNewRecipeButton();
-    // }
-    // public Button getEditRecipeButton() {
-
-    //     return actionsList.getEditRecipeButton();
-    // }
-    // public Button getDeleteRecipeButton() {
-    //     return actionsList.getDeleteRecipeButton();
-    // }
 }
 
 class ActionsList extends HBox {

@@ -7,6 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX21"/>
-	<classpathentry kind="lib" path="C:/Users/Peter/Downloads/json-20230227.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="D:/Documents/CompSci/CSE110/json-20230227.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
