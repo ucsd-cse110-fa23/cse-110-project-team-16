@@ -46,7 +46,7 @@ public class Recipe extends HBox {
         	toggleSelect();
         	event.consume();
         });
-        
+
     }
 
 
@@ -59,6 +59,7 @@ public class Recipe extends HBox {
     }
     
     public void updateText() {
+
     	if (recipeName.length() > 20) {
             text.setText(recipeName.substring(0,20) + "...");
         } 
@@ -75,8 +76,9 @@ public class Recipe extends HBox {
         
         if (!this.isSelected) {
             isSelected = true;
+
             this.setStyle("-fx-background-color: #66b3ff; -fx-border-width: 0; -fx-font-weight: bold;");
-            
+
             // System.out.println("The current recpie array:");
             // System.out.println(recipeArray);
             for (int i = 0; i < recipeArray.size(); i++) {
@@ -109,6 +111,7 @@ class RecipeList extends VBox {
     private String db_dir = "localDB/";
     private RecipeDetails localRecipeDetails;
     private ArrayList<Recipe> allRecipes;
+
 
     RecipeList(RecipeDetails details, ArrayList<Recipe> recipeArray) {
     	this.setSpacing(5); // sets spacing between recipes
@@ -217,6 +220,7 @@ class RecipeList extends VBox {
     //     return actionsList.getNewRecipeButton();
     // }
     // public Button getEditRecipeButton() {
+
     //     return actionsList.getEditRecipeButton();
     // }
     // public Button getDeleteRecipeButton() {
@@ -232,7 +236,7 @@ class ActionsList extends HBox {
     ActionsList() {
         this.setPrefSize(300, 50);
         this.setSpacing(15);
-        this.setStyle("-fx-background-color: #2B6429;");
+        this.setStyle("-fx-background-color: #996600;");
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
         newRecipeButton = new Button("New Recipe");
@@ -258,8 +262,12 @@ class ActionsList extends HBox {
 }
 
 
+
+
+		
+
 class RecipeDetails extends VBox {		
-	
+
 	private Text titleText;
 	private Text displayType;
 	private Text displayIngredients;
@@ -267,10 +275,11 @@ class RecipeDetails extends VBox {
     private String db_dir = "localDB/";
 	
 	
+				
+
 	public RecipeDetails (Optional<String> recipeName) {				
-		
         String currDisplay = recipeName.orElse("Default");
-        this.setPrefSize(900, 60); // Size of the header
+        this.setPrefSize(900, 60);
         this.setStyle("-fx-background-color: #BCE29E;");
 
         if (currDisplay == "Default") {
@@ -298,10 +307,10 @@ class RecipeDetails extends VBox {
             
             displayType = new Text(currDisplay);
             displayType.setFont(Font.font("Arial", 14));
-
+            
             displayIngredients = new Text(currDisplay);
             displayIngredients.setFont(Font.font("Arial", 14));
-
+            
             displayDirections = new Text(currDisplay);
             displayDirections.setFont(Font.font("Arial", 14));
 
@@ -323,36 +332,43 @@ class RecipeDetails extends VBox {
 		}
 	 
 	    try {
-            String mealName = br.readLine();
+
+			String mealName = br.readLine();
             String mealType = br.readLine();
             String mealIngred = br.readLine();
-            String mealDirections = br.readLine();            
 
 			titleText.setText(mealName);
-            titleText.setWrappingWidth(600);
+            titleText.setWrappingWidth(700);
 
 			displayType.setText(mealType + "\n");
-            displayType.setWrappingWidth(400);
+            displayType.setWrappingWidth(500);
 			
-            displayIngredients.setText(mealIngred + "\n");
-            displayIngredients.setWrappingWidth(400);
-			
-            displayDirections.setText(mealDirections);
-            displayDirections.setWrappingWidth(400);
+			displayIngredients.setText(mealIngred + "\n");
+            displayIngredients.setWrappingWidth(500);
+            int c;
+            StringBuilder parsedDirections= new StringBuilder();
+
+            while ((c = br.read()) != -1) {
+                parsedDirections.append( (char)c ) ;  
+            }
+            String directionString = parsedDirections.toString();
+			displayDirections.setText(directionString);
+            displayDirections.setWrappingWidth(500);
             this.setPadding(new Insets(10, 0, 10, 0));
 
-            // Platform.runLater(() -> {
-            //     titleText.setText(mealName);
-			//     displayType.setText("Type: " + mealType);            
-			//     displayIngredients.setText(mealIngred);
-			//     displayDirections.setText(mealDirections);
-            // });
-            
             System.out.println("RecipeDetails texts are successfully set");
 				
 		} catch (IOException e) {
-			
+				
             System.out.println("bufferedReader read line failed: (RecipeDetails.showDetails)");
+			e.printStackTrace();
+		}
+
+        try {
+            br.close();
+        } catch (IOException e) {
+            
+            System.out.println("Closing bufferedReader failed: (RecipeDetails.showDetails)");
 			e.printStackTrace();
 		}
 

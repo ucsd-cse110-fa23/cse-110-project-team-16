@@ -1,5 +1,6 @@
 package src.main.java;
 
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.io.*;
@@ -63,6 +64,8 @@ class AppFrame extends BorderPane{
         scrollPane = new ScrollPane(recipeList);
         // scrollPane.setMaxHeight(500.0);
         scrollPane.setFitToHeight(true);
+
+
                 
         this.setTop(actionsList);
                 
@@ -88,7 +91,7 @@ class AppFrame extends BorderPane{
         // Add button functionality
     	newRecipeButton.setOnAction(e -> {
             // Create a new recipe
-    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, false);
+    		CreationFrame root = new CreationFrame(recipeList, allRecipes, recipeDetails);
 
             Stage stage = new Stage();
             stage.setTitle("Create New Recipe");
@@ -125,5 +128,4 @@ class AppFrame extends BorderPane{
     	
     }
 }
-
 

@@ -1,4 +1,5 @@
 package src.main.java;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,8 +22,10 @@ public class ChatGPT extends Application {
 //		System.out.println(" IN CONSTRUCTOR");
 //		prompt+=_prompt;
 //	}
-	public String[] generatedRecipe(String _prompt)  throws IOException, InterruptedException{
-		prompt+=_prompt;
+	public String[] generatedRecipe(String type, String ingredients)  throws IOException, InterruptedException{
+		String prompt = "Using the following format: RecipeName;; Ingredients;; Recipe steps" + "\n" +
+		"I want to make " + type + "using these ingredients: " + ingredients + 
+		" and only these ingredients, also please make sure to include the steps and remember the ;; delimiters";
 		JSONObject requestBody = new JSONObject();
 		requestBody.put("model", MODEL);
 		requestBody.put("prompt", prompt);
@@ -56,17 +59,17 @@ public class ChatGPT extends Application {
 	    return recipeDeconstructed;
 	}
 	public static String[] parseRecipe(String generatedText) {
+		System.out.println(generatedText);
+		System.out.println(generatedText);
 		String[] returnString= {" "," "," "};
-		String[] arr=generatedText.split("Ingredients");
-		 String[] arr2=arr[1].split("Instructions");
-		 String title=arr[0];
-		 String temp=arr2[0];
-		 String ingredients=temp.replace(":","");
-		 temp=arr2[1];
-		 String instructions=temp.replace(":","");
-		 returnString[0]=title;
-		 returnString[1]=ingredients;
-		 returnString[2]=instructions;
+		String[] arr=generatedText.split(";;");
+		//System.out.println(arr[0]);
+		//System.out.println(arr[1]);
+		//System.out.println(arr[2]);
+		 
+		 returnString[0]=arr[0];
+		 returnString[1]=arr[1];
+		 returnString[2]=arr[2];
 //		 System.out.println(title+" TITLE ");
 //		 System.out.println(ingredients+" INGREDIENTS ");
 //		 System.out.println(instructions+" INSTRUCTIONS ");
