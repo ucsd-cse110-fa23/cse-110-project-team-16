@@ -19,12 +19,12 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // Setting the Layout of the Window- Should contain a Header, Footer and the RecipeList
-        AppFrame root = new AppFrame();
-
+        //AppFrame root = new AppFrame();
+        LoginFrame root = new LoginFrame(primaryStage);
         // Set the title of the app
-        primaryStage.setTitle("Recipes v1");
+        primaryStage.setTitle("Login");
         // Create scene of mentioned size with the border pane
-        primaryStage.setScene(new Scene(root, 1200, 600));
+        primaryStage.setScene(new Scene(root, 450, 200));
         // Make window non-resizable
         primaryStage.setResizable(false);
         // Show the app
