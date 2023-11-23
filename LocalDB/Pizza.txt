@@ -1,0 +1,11 @@
+Pizza
+images/Pizza.jpg
+Dinner
+dough, pizza sauce, mozzarella, basil, pepperoni, parmesan.
+
+1. Preheat oven to 375°
+2. Roll out dough into a thin layer
+3. Spread pizza sauce on dough
+4. Sprinkle mozzarella and parmesan cheese on top
+5. Place pepperoni and basil on top of cheese
+6. Bake in preheated oven for 15-20 minutes, or until the crust is golden brown and cheese is melted
