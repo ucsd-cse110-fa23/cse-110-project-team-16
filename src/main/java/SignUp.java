@@ -1,5 +1,15 @@
 //package src.main.java;
 
+import java.util.Random;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,11 +21,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 class SignUpFrame extends BorderPane{
+	 String uri = "mongodb+srv://Wumboon:Cowperson10@cluster0.wpppozd.mongodb.net/?retryWrites=true&w=majority";
 	 private Button createAccountButton;
 	 private SignUp signupinfo;
 	 private signupButtons allSignUpButtons;
-	 Stage primaryStage;
-	 SignUpFrame(){
+	 Stage currStage;
+	 SignUpFrame(Stage stage){
+     	 currStage=stage;
 		 signupinfo=new SignUp();
 		 allSignUpButtons = new signupButtons();
 		 this.setCenter(signupinfo);
@@ -25,11 +37,28 @@ class SignUpFrame extends BorderPane{
 	 }
 	 private void addListeners() {
 		 createAccountButton.setOnAction(e -> {
-			 //System.out.println("Hello");
+			 if(signupinfo.getNewPassword().equals(signupinfo.getConfirmedPassword())) {
+				 System.out.println("Account Successfuly Made");
+				 CreateAccount(signupinfo.getNewUsername(),signupinfo.getNewPassword());
+				 currStage.close();
+			 }
+			 else {
+				 System.out.println("Passwords does not match confirmed password");
+			 }
 	        });
 	    }
 	
-
+public void CreateAccount(String username,String password) {
+	try (MongoClient mongoClient = MongoClients.create(uri)) {   	
+    	MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
+        MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
+        Random rand = new Random();
+        Document student = new Document("_id", new ObjectId());
+        student.append("username", username);
+        student.append("password", password);
+        gradesCollection.insertOne(student);
+    	}
+	}
 }
 
 class signupButtons extends HBox{
@@ -87,5 +116,14 @@ public class SignUp extends VBox{
 	        this.setSpacing(15);
 	        this.setAlignment(Pos.CENTER); 
 	        
+	 }
+	 public String getNewUsername() {
+		 return newUserName.getText();
+	 }
+	 public String getNewPassword() {
+		 return newPassword.getText();
+	 }
+	 public String getConfirmedPassword() {
+		 return confirmPassword.getText();
 	 }
 }

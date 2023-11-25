@@ -6,6 +6,14 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.Optional;
+
+import org.bson.Document;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 import java.io.*;
 
 import javafx.application.Application;
@@ -22,6 +30,7 @@ class LoginFrame extends BorderPane{
 	 private Button signUpButton;
 	 private Login logininfo;
 	 private loginButtons allLoginButtons;
+	 String uri = "mongodb+srv://Wumboon:Cowperson10@cluster0.wpppozd.mongodb.net/?retryWrites=true&w=majority";
 	 Stage primaryStage;
 	 LoginFrame(Stage _primaryStage){
 		 primaryStage=_primaryStage;
@@ -35,24 +44,45 @@ class LoginFrame extends BorderPane{
 	 }
 	 private void addListeners() {
 		 signUpButton.setOnAction(e -> {
-			 	SignUpFrame root = new SignUpFrame();
-
-	            Stage stage = new Stage();
+			 Stage stage = new Stage();
+			 	SignUpFrame root = new SignUpFrame(stage);
 	            stage.setTitle("New User Signup");
 	            stage.setScene(new Scene(root, 450, 300));
 	            stage.show(); // Close the window
 
 	        });
 		 loginButton.setOnAction(e -> {
+			 if(checkLogin(logininfo.getUserName(),logininfo.getUserPassword())){ //checks login info returns true if user exists	 
+			 System.out.println("Login Successful");
 			 AppFrame root = new AppFrame();
 			 Stage stage = new Stage();
 	         stage.setTitle("PantryPal");
 	         stage.setScene(new Scene(root, 1200, 600));
 	         stage.show();// Close the window
 	         primaryStage.close();
-	         
+	       }  
+	       else{
+	        System.out.println("No Account Found");                      
+	       		}
 	        });
 	    }
+public boolean checkLogin(String username, String password) {
+	try (MongoClient mongoClient = MongoClients.create(uri)) {
+        MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
+        MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
+        
+        Document student1 = gradesCollection.find(new Document("username", username)).first();                
+        if(student1!=null) {
+        	if(student1.get("password").equals(password)) {
+        		return true;
+        	}
+        	return false;
+        }
+        else
+        	return false;            
+        
+    	}
+	}
 }
 
 
@@ -113,5 +143,11 @@ public class Login extends VBox{
 	        this.setSpacing(15);
 	        this.setAlignment(Pos.CENTER); 
 	        
+	 }
+	 public String getUserName() {
+		 return loginUsername.getText();
+	 }
+	 public String getUserPassword() {
+		 return loginPassword.getText();
 	 }
 }
