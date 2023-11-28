@@ -48,16 +48,27 @@ class SignUpFrame extends BorderPane{
 	        });
 	    }
 	
-public void CreateAccount(String username,String password) {
-	try (MongoClient mongoClient = MongoClients.create(uri)) {   	
-    	MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
-        MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
-        Random rand = new Random();
-        Document student = new Document("_id", new ObjectId());
-        student.append("username", username);
-        student.append("password", password);
-        gradesCollection.insertOne(student);
+	public void CreateAccount(String username,String password) {
+		try (MongoClient mongoClient = MongoClients.create(uri)) {   	
+    		MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
+        	MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
+        	Random rand = new Random();
+        	Document student = new Document("_id", new ObjectId());
+        	student.append("username", username);
+        	student.append("password", password);
+        	gradesCollection.insertOne(student);
     	}
+	}
+
+	public boolean deleteAccount(String username) {
+		try (MongoClient mongoClient = MongoClients.create(uri)) {   	
+    		MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
+        	MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
+        	Random rand = new Random();
+        	Document student = new Document("_id", new ObjectId());
+        	return student.remove("username", username);
+    	}
+		
 	}
 }
 
