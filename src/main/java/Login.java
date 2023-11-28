@@ -32,6 +32,9 @@ class LoginFrame extends BorderPane{
 	 private loginButtons allLoginButtons;
 	 String uri = "mongodb+srv://Wumboon:Cowperson10@cluster0.wpppozd.mongodb.net/?retryWrites=true&w=majority";
 	 Stage primaryStage;
+	 LoginFrame() {
+		
+	 }
 	 LoginFrame(Stage _primaryStage){
 		 primaryStage=_primaryStage;
 		 logininfo=new Login();
