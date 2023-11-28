@@ -43,9 +43,13 @@ class SignUpFrame extends BorderPane{
 	 private void addListeners() {
 		 createAccountButton.setOnAction(e -> {
 			 if(signupinfo.getNewPassword().equals(signupinfo.getConfirmedPassword())) {
-				 System.out.println("Account Successfuly Made");
-				 CreateAccount(signupinfo.getNewUsername(),signupinfo.getNewPassword());
-				 currStage.close();
+				if (CreateAccount(signupinfo.getNewUsername(),signupinfo.getNewPassword())) {
+					currStage.close();
+					System.out.println("Account Successfuly Made");
+				}
+				else {
+					System.out.println("Username already exists");
+				}
 			 }
 			 else {
 				 System.out.println("Passwords does not match confirmed password");
@@ -53,17 +57,25 @@ class SignUpFrame extends BorderPane{
 	        });
 	    }
 	
-	public void CreateAccount(String username,String password) {
+	public boolean CreateAccount(String username,String password) {
 		try (MongoClient mongoClient = MongoClients.create(uri)) {   	
     		MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
         	MongoCollection<Document> userInfo = sampleTrainingDB.getCollection("UserInfo");
-        	Random rand = new Random();
-        	Document student = new Document("_id", new ObjectId());
-        	student.append("username", username);
-        	student.append("password", password);
-        	userInfo.insertOne(student);
-    	}
-	}
+			Document existingStudent = userInfo.find(new Document("username", username)).first();
+			if (existingStudent!=null) {
+        		return false;
+        	}
+        	else {
+				Document student = new Document("_id", new ObjectId());
+        		student.append("username", username);
+        		student.append("password", password);
+        		userInfo.insertOne(student);
+        		return true;            
+    		}
+		}
+        	
+    }
+	
 
 	public boolean deleteAccount(String username) {
 		try (MongoClient mongoClient = MongoClients.create(uri)) {
