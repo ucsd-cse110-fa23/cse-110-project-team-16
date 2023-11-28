@@ -23,7 +23,7 @@
             "name": "App",
             "request": "launch",
             "mainClass": "cse.project.team.Main",
-            "vmArgs": "--module-path '/home/citizenten/cse-110-project-team-16/lib' --add-modules javafx.controls,javafx.fxml",
+            "vmArgs": "--module-path '/home/citizenten/Documents/cse-110-project-team-16/lib' --add-modules javafx.controls,javafx.fxml",
             "projectName": "app"
         }
     ]
