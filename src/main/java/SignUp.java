@@ -3,12 +3,14 @@
 import java.util.Random;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import static com.mongodb.client.model.Filters.eq;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -35,6 +37,9 @@ class SignUpFrame extends BorderPane{
 	     createAccountButton=allSignUpButtons.getCreateAccountButton();
 		 addListeners();
 	 }
+	 SignUpFrame() {
+		
+	 }
 	 private void addListeners() {
 		 createAccountButton.setOnAction(e -> {
 			 if(signupinfo.getNewPassword().equals(signupinfo.getConfirmedPassword())) {
@@ -51,25 +56,33 @@ class SignUpFrame extends BorderPane{
 	public void CreateAccount(String username,String password) {
 		try (MongoClient mongoClient = MongoClients.create(uri)) {   	
     		MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
-        	MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
+        	MongoCollection<Document> userInfo = sampleTrainingDB.getCollection("UserInfo");
         	Random rand = new Random();
         	Document student = new Document("_id", new ObjectId());
         	student.append("username", username);
         	student.append("password", password);
-        	gradesCollection.insertOne(student);
+        	userInfo.insertOne(student);
     	}
 	}
 
 	public boolean deleteAccount(String username) {
-		try (MongoClient mongoClient = MongoClients.create(uri)) {   	
-    		MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
-        	MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
-        	Random rand = new Random();
-        	Document student = new Document("_id", new ObjectId());
-        	return student.remove("username", username);
+		try (MongoClient mongoClient = MongoClients.create(uri)) {
+        MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
+        MongoCollection<Document> userInfo = sampleTrainingDB.getCollection("UserInfo");
+        
+        Document student1 = userInfo.find(new Document("username", username)).first();                
+        if(student1!=null) {
+        	userInfo.deleteOne(student1);
+			return true;
+        }
+        else
+        	return false;            
+        
     	}
-		
 	}
+            
+		
+	
 }
 
 class signupButtons extends HBox{
