@@ -37,12 +37,23 @@ public class ServerTests {
 
 	@Test 
 	void userAccountLoginisValid() {
+        String username = "Caitlin";
+		String password = "password";
+        signUp.CreateAccount(username, password);
+        assertEquals(true, login.checkLogin(username, password));
 
 	}
 
 	@Test 
+	void userAccountLoginisNotValidPassword() {
+		String username = "Caitlin";
+		String password = "password1";
+        assertEquals(false, login.checkLogin(username, password));
+	}
+    @Test 
 	void userAccountLoginisNotValid() {
-		String userName = "IncorrectUserName";
-		String password = "IncorrectPassword";
+		String username = "Caitlin1";
+		String password = "password";
+        assertEquals(false, login.checkLogin(username, password));
 	}
 }
