@@ -1,4 +1,4 @@
-package cse.project.team;
+//package src.main.java;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox;
 public class RecipeList extends VBox {
 	
 	// private ActionsList actionsList;
-    private String db_dir = "LocalDB/";
+    private String db_dir = "localDB/";
     private RecipeDetails localRecipeDetails;
     private ArrayList<Recipe> allRecipes;
 

@@ -3,6 +3,7 @@
 .classpath
 .project
 .vscode
+.settings
 
 # Ignore Gradle build output directory
 build

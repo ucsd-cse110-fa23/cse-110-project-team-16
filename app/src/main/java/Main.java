@@ -1,4 +1,4 @@
-package cse.project.team;
+//package src.main.java;
 
 
 import java.util.ArrayList;
@@ -19,12 +19,12 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // Setting the Layout of the Window- Should contain a Header, Footer and the RecipeList
-        AppFrame root = new AppFrame();
-
+        //AppFrame root = new AppFrame();
+        LoginFrame root = new LoginFrame(primaryStage);
         // Set the title of the app
-        primaryStage.setTitle("Recipes v1");
+        primaryStage.setTitle("Login");
         // Create scene of mentioned size with the border pane
-        primaryStage.setScene(new Scene(root, 1200, 600));
+        primaryStage.setScene(new Scene(root, 450, 200));
         // Make window non-resizable
         primaryStage.setResizable(false);
         // Show the app
@@ -55,7 +55,7 @@ class AppFrame extends BorderPane{
     	allRecipes = new ArrayList<Recipe>();
     	
         // Initialise the header Object
-    	recipeDetails = new RecipeDetails(Optional.empty());
+    	recipeDetails = new RecipeDetails();
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList(recipeDetails, allRecipes);
@@ -116,10 +116,18 @@ class AppFrame extends BorderPane{
     		for (int i = 0; i < allRecipes.size(); i++) {
     			if (allRecipes.get(i).isSelected()) {
     				recipeList.getChildren().remove(allRecipes.get(i));
+                    // delete txt file
                     String deletedFileName = db_dir + allRecipes.get(i).getRecipeName() + ".txt";
                     File deletedFile = new File(deletedFileName);
                     deletedFile.delete();
                     System.out.println("Deleted this file: " + deletedFileName);
+
+                    // delete jpg file
+                    String image = "images/" + allRecipes.get(i).getRecipeName() + ".jpg";
+                    File imageFile = new File(image);
+                    imageFile.delete();
+                    System.out.println("Deleted this file: " + imageFile);
+                    
     				allRecipes.remove(i);
     			}
     		}

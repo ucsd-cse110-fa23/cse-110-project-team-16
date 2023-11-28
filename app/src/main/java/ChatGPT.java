@@ -1,4 +1,4 @@
-package cse.project.team;
+
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,9 +23,10 @@ public class ChatGPT extends Application {
 //		prompt+=_prompt;
 //	}
 	public String[] generatedRecipe(String type, String ingredients)  throws IOException, InterruptedException{
-		String prompt = "Using the following format: RecipeName;; Ingredients;; Recipe steps" + "\n" +
+		String prompt = "Using the following format: Recipe Name;; Recipe Steps" + "\n" +
 		"I want to make " + type + "using these ingredients: " + ingredients + 
-		" and only these ingredients, also please make sure to include the steps and remember the ;; delimiters";
+		" and only these ingredients, also please make sure to include the steps and remember the ;; delimiters." +
+	 	"Also make sure Recipe Name is one line and the first line and made up of only alphabetical letters.";
 		JSONObject requestBody = new JSONObject();
 		requestBody.put("model", MODEL);
 		requestBody.put("prompt", prompt);
@@ -59,9 +60,11 @@ public class ChatGPT extends Application {
 	    return recipeDeconstructed;
 	}
 	public static String[] parseRecipe(String generatedText) {
+		System.out.println("==== ChatGPT Response ====");
 		System.out.println(generatedText);
-		System.out.println(generatedText);
-		String[] returnString= {" "," "," "};
+		System.out.println("==========================");
+		//System.out.println(generatedText);
+		String[] returnString= {" "," "};
 		String[] arr=generatedText.split(";;");
 		//System.out.println(arr[0]);
 		//System.out.println(arr[1]);
@@ -69,7 +72,7 @@ public class ChatGPT extends Application {
 		 
 		 returnString[0]=arr[0];
 		 returnString[1]=arr[1];
-		 returnString[2]=arr[2];
+		 //returnString[2]=arr[2];
 //		 System.out.println(title+" TITLE ");
 //		 System.out.println(ingredients+" INGREDIENTS ");
 //		 System.out.println(instructions+" INSTRUCTIONS ");
