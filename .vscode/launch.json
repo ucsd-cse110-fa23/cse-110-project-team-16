@@ -6,16 +6,25 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "vmArgs": "--module-path '/home/citizenten/cse-110-project-team-16/lib' --add-modules javafx.controls,javafx.fxml",
+            "projectName": "app"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
         },
         {
             "type": "java",
-            "name": "Main",
+            "name": "App",
             "request": "launch",
-            "mainClass": "src.Main",
-            "vmArgs": "--module-path '/home/citizenten/Documents/CSE110_FA23_Lab1/lib' --add-modules javafx.controls,javafx.fxml" 
+            "mainClass": "cse.project.team.Main",
+            "vmArgs": "--module-path '/home/citizenten/cse-110-project-team-16/lib' --add-modules javafx.controls,javafx.fxml",
+            "projectName": "app"
         }
     ]
 }
