@@ -1,4 +1,4 @@
-package src.main.java;
+//package src.main.java;
 
 import java.io.*;
 import java.util.*;
@@ -8,6 +8,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -229,52 +231,34 @@ class RecipeDetails extends VBox {
 	private Text displayType;
 	private Text displayIngredients;
 	private Text displayDirections;
+    private ImageView displayImageView;
     private String db_dir = "localDB/";
-	
 	
 				
 
-	public RecipeDetails (Optional<String> recipeName) {				
-        String currDisplay = recipeName.orElse("Default");
+	public RecipeDetails () {
         this.setPrefSize(900, 60);
         this.setStyle("-fx-background-color: #BCE29E;");
 
-        if (currDisplay == "Default") {
-            titleText = new Text("Choose a recipe"); // Text of the Header
-            titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
-            this.getChildren().add(titleText);
-            this.setAlignment(Pos.CENTER); // Align the text to the Center
-            
-            displayType = new Text(" ");
-            displayType.setFont(Font.font("Arial", 14));
+        titleText = new Text("Choose a recipe"); // Text of the Header
+        titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
+        this.getChildren().add(titleText);
+        this.setAlignment(Pos.CENTER); // Align the text to the Center
+        
+        displayType = new Text(" ");
+        displayType.setFont(Font.font("Arial", 14));
 
-            displayIngredients = new Text(" ");
-            displayIngredients.setFont(Font.font("Arial", 14));
+        displayIngredients = new Text(" ");
+        displayIngredients.setFont(Font.font("Arial", 14));
 
-            displayDirections = new Text(" ");
-            displayDirections.setFont(Font.font("Arial", 14));
+        displayDirections = new Text(" ");
+        displayDirections.setFont(Font.font("Arial", 14));
 
-            this.getChildren().addAll(displayType, displayIngredients, displayDirections);
-            this.setAlignment(Pos.CENTER); // Align the text to the Center
-            
-        } else {
-            titleText = new Text(currDisplay); // Text of the Header
-            titleText.setStyle("-fx-font-weight: bold; -fx-font-size: 20;");
-            this.getChildren().add(titleText);
-            
-            displayType = new Text(currDisplay);
-            displayType.setFont(Font.font("Arial", 14));
-            
-            displayIngredients = new Text(currDisplay);
-            displayIngredients.setFont(Font.font("Arial", 14));
-            
-            displayDirections = new Text(currDisplay);
-            displayDirections.setFont(Font.font("Arial", 14));
+        displayImageView = new ImageView();
+        displayImageView.setFitHeight(150);
+        displayImageView.setFitWidth(150);
 
-
-            this.getChildren().addAll(displayType, displayIngredients, displayDirections);
-            this.setAlignment(Pos.CENTER); // Align the text to the Center
-        }
+        this.getChildren().addAll(displayImageView, displayType, displayIngredients, displayDirections);
     }
 	
 	public void showDetails (String recipeName) {
@@ -291,6 +275,7 @@ class RecipeDetails extends VBox {
 	    try {
 
 			String mealName = br.readLine();
+            String imageLocation = br.readLine();
             String mealType = br.readLine();
             String mealIngred = br.readLine();
 
@@ -302,16 +287,20 @@ class RecipeDetails extends VBox {
 			
 			displayIngredients.setText(mealIngred + "\n");
             displayIngredients.setWrappingWidth(500);
+
+            setDisplayImageView(imageLocation);
+
             int c;
             StringBuilder parsedDirections= new StringBuilder();
 
             while ((c = br.read()) != -1) {
-                parsedDirections.append( (char)c ) ;  
+                parsedDirections.append( (char)c ) ;
             }
             String directionString = parsedDirections.toString();
 			displayDirections.setText(directionString);
             displayDirections.setWrappingWidth(500);
-            this.setPadding(new Insets(10, 0, 10, 0));
+            this.setAlignment(Pos.CENTER_LEFT);
+            this.setPadding(new Insets(10, 0, 10, 200));
 
             System.out.println("RecipeDetails texts are successfully set");
 				
@@ -339,10 +328,12 @@ class RecipeDetails extends VBox {
 	}
 	
 	public void defaultView () {
+        this.setAlignment(Pos.CENTER);
 		titleText.setText("Choose a recipe");
 		displayType.setText(" ");
 		displayIngredients.setText(" ");
 		displayDirections.setText(" ");
+        displayImageView.setImage(null);
 	}
 	
 	public Text getDisplayType () {
@@ -361,6 +352,10 @@ class RecipeDetails extends VBox {
 		return displayDirections;
 	}
 
+    public ImageView getDisplayImageView () {
+        return displayImageView;
+    }
+
     public void setDisplayType (String mealType) {
         titleText.setText(mealType);
 	}
@@ -376,5 +371,10 @@ class RecipeDetails extends VBox {
 	public void setDisplayDirections (String mealDirection) {
 		displayDirections.setText(mealDirection);
 	}
+
+    public void setDisplayImageView (String path) {
+        Image image = new Image("file:" + path);
+        displayImageView.setImage(image);
+    }
 
 }

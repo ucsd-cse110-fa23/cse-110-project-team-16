@@ -1,6 +1,6 @@
-package src.test.java;
+//package src.test.java;
 
-import src.main.java.*;
+//import main.java.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;

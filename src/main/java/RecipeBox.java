@@ -1,4 +1,4 @@
-package src.main.java;
+//package src.main.java;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -18,6 +18,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.net.URI;
 
 class CreationFrame extends BorderPane {
     private Button saveButton;
@@ -55,10 +58,8 @@ class CreationFrame extends BorderPane {
 		        try {
 			        recipeString = chatgpt.generatedRecipe(inputBox.getType(), inputBox.getIngrediemts());
 		        } catch (IOException e1) {
-			        // TODO Auto-generated catch block
 			        e1.printStackTrace();
 		        } catch (InterruptedException e2) {
-			        // TODO Auto-generated catch block
 			        e2.printStackTrace();
 		        }
 		
@@ -67,7 +68,7 @@ class CreationFrame extends BorderPane {
                 String recipeType = inputBox.getType();
                 String recipeIngredients = inputBox.getIngrediemts();
                 //System.out.println(recipeString[2]);
-                String recipeDirections = recipeString[2];
+                String recipeDirections = recipeString[1];
             
 		    
                 //String newRecipe = recipeName.replaceAll("\n","");
@@ -78,10 +79,15 @@ class CreationFrame extends BorderPane {
             
                 String filename = "localDB/" + recipeName + ".txt";
                 System.out.println(filename);
-                File newFile = new File(filename);
                 allRecipes.add(recipe);
                 recipe.setRecipeName(recipeName);
                 recipe.updateText();
+                String imageLocation = "";
+                try {
+                    imageLocation = createImage(recipeName);
+                } catch (IOException | InterruptedException | URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
 
                 //! This is needed because we need to associate every single recipe
                 //! with the arraylist of total recipes
@@ -92,6 +98,8 @@ class CreationFrame extends BorderPane {
                 try {
                     FileWriter writer = new FileWriter(filename);
                     writer.write(recipeName);
+                    writer.write("\n");
+                    writer.write(imageLocation);
                     writer.write("\n");
                     writer.write(recipeType);
                     writer.write("\n");
@@ -119,6 +127,20 @@ class CreationFrame extends BorderPane {
             stage.close(); // Close the window
 
         });
+    }
+
+    private String createImage(String recipeName) throws IOException, InterruptedException, URISyntaxException {
+        String url = DallE.generateImage(recipeName);
+        //String url = "https://www.31daily.com/wp-content/uploads/2022/01/md-Chicken-Broccoli-8-1-of-1-840x480.jpg";
+        String path = "images/" + recipeName + ".jpg";
+        try(
+            InputStream in = new URI(url).toURL().openStream()
+        )
+        {
+            Files.copy(in, Paths.get(path));
+        }
+
+        return path;
     }
     
 
