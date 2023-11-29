@@ -13,6 +13,10 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.MongoTimeoutException;
+import com.mongodb.MongoException;
+import javafx.scene.control.Alert;
+
 
 import java.io.*;
 
@@ -70,22 +74,40 @@ class LoginFrame extends BorderPane{
 	        });
 	    }
 public boolean checkLogin(String username, String password) {
-	try (MongoClient mongoClient = MongoClients.create(uri)) {
+    try (MongoClient mongoClient = MongoClients.create(uri)) {
         MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
         MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
         
         Document student1 = gradesCollection.find(new Document("username", username)).first();                
-        if(student1!=null) {
-        	if(student1.get("password").equals(password)) {
-        		return true;
-        	}
-        	return false;
+        if (student1 != null) {
+            if (student1.get("password").equals(password)) {
+                return true;
+            }
+            return false;
+        } else {
+            return false;            
         }
-        else
-        	return false;            
-        
-    	}
-	}
+    } catch (MongoTimeoutException e) {
+        // Handle the case where connection to the MongoDB server times out
+        System.out.println("Error: Unable to connect to the server.");
+        showAlert("Connection Error", "Unable to connect to the server. Please check your connection.");
+        return false;
+    } catch (MongoException e) {
+        // Handle other MongoDB exceptions
+        System.out.println("Database error: " + e.getMessage());
+        showAlert("Database Error", "Error occurred while accessing the database.");
+        return false;
+    }
+}
+
+private void showAlert(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(title);
+    alert.setHeaderText("The Server Is Down");
+    alert.setContentText(message);
+    alert.showAndWait();
+}
+
 }
 
 
