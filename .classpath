@@ -1,35 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" output="bin/test" path="src/test/java">
+		<attributes>
+			<attribute name="gradle_scope" value="test"/>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" output="bin/main" path="src/main/java">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="bin/test" path="src/test/java">
-		<attributes>
-			<attribute name="test" value="true"/>
-			<attribute name="gradle_scope" value="test"/>
-			<attribute name="gradle_used_by_scope" value="test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11/">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11/"/>
 	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
-	<classpathentry kind="lib" path="C:/Users/wumbo/.gradle/caches/modules-2/files-2.1/org.mongodb/bson/4.11.0/16dc64605e39e16d51f5f0327b7f27ab222548da/bson-4.11.0.jar" sourcepath="C:/Users/wumbo/.gradle/caches/modules-2/files-2.1/org.mongodb/bson/4.11.0/559cb6c417fe9af92cd3d8824a34fcb33d5fa73/bson-4.11.0-sources.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/wumbo/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-sync/4.11.0/7e374bcf412e8694c40981dcab7acbe1b675209f/mongodb-driver-sync-4.11.0.jar" sourcepath="C:/Users/wumbo/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-sync/4.11.0/8e293100b40a9b37a422ad55fe3ebe0590ea5a20/mongodb-driver-sync-4.11.0-sources.jar">
-		<attributes>
-			<attribute name="gradle_used_by_scope" value="main,test"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Lab6/gradle/wrapper/gradle-wrapper.jar"/>
-	<classpathentry kind="lib" path="C:/Users/wumbo/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-core/4.11.0/dfda89a72b63d36985e958077503033b29e844bb/mongodb-driver-core-4.11.0.jar" sourcepath="C:/Users/wumbo/.gradle/caches/modules-2/files-2.1/org.mongodb/mongodb-driver-core/4.11.0/505367ea5db27fddf0c83650d9a727e7f7046482/mongodb-driver-core-4.11.0-sources.jar"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>
