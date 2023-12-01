@@ -9,6 +9,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bson.Document;
+
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 import javafx.scene.layout.VBox;
 
 public class RecipeList extends VBox {
@@ -29,7 +37,7 @@ public class RecipeList extends VBox {
         // this.getChildren().add(actionsList);
         localRecipeDetails = details;
         allRecipes = recipeArray;
-        loadRecipes();
+        loadRecipesMongo();
         //this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         //	changeRecipeSelect();
         //	event.consume();
@@ -57,6 +65,38 @@ public class RecipeList extends VBox {
             allRecipes.add(currRecipe);
             currRecipe.updateRecipeArray(allRecipes);
         }
+    }
+
+    public void loadRecipesMongo() {
+        Set<String> recipeFiles = listRecipeFilesMongo();
+        
+        for (String recipe: recipeFiles) {
+            Recipe currRecipe = null;
+
+            currRecipe = new Recipe(localRecipeDetails);
+            currRecipe.setRecipeName(recipe);
+            currRecipe.updateText();
+
+            this.getChildren().add(currRecipe);
+            allRecipes.add(currRecipe);
+            currRecipe.updateRecipeArray(allRecipes);
+        }
+    }
+
+    public Set<String> listRecipeFilesMongo() {
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {   	
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+            FindIterable<Document> documentCursor = userCollection.find();
+			
+            Set<String> recipeFiles = new HashSet<String> ();
+
+            // Iterate over collection
+            for(Document doc : documentCursor)
+                recipeFiles.add((String)doc.get("name"));
+
+            return recipeFiles;
+		}
     }
 
     private Set<String> listRecipeFiles(String db_dir) {

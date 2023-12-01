@@ -23,7 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 class SignUpFrame extends BorderPane{
-	 String uri = "mongodb+srv://Wumboon:Cowperson10@cluster0.wpppozd.mongodb.net/?retryWrites=true&w=majority";
 	 private Button createAccountButton;
 	 private SignUp signupinfo;
 	 private signupButtons allSignUpButtons;
@@ -58,7 +57,7 @@ class SignUpFrame extends BorderPane{
 	    }
 	
 	public boolean CreateAccount(String username,String password) {
-		try (MongoClient mongoClient = MongoClients.create(uri)) {   	
+		try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {   	
     		MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
         	MongoCollection<Document> userInfo = sampleTrainingDB.getCollection("UserInfo");
 			Document existingStudent = userInfo.find(new Document("username", username)).first();
@@ -78,7 +77,7 @@ class SignUpFrame extends BorderPane{
 	
 
 	public boolean deleteAccount(String username) {
-		try (MongoClient mongoClient = MongoClients.create(uri)) {
+		try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
         MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
         MongoCollection<Document> userInfo = sampleTrainingDB.getCollection("UserInfo");
         

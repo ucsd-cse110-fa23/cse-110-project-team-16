@@ -1,5 +1,9 @@
 //package src.main.java;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.*;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -18,9 +22,22 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.net.URI;
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.MongoTimeoutException;
+import com.mongodb.MongoException;
+import javafx.scene.control.Alert;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 class CreationFrame extends BorderPane {
     private Button saveButton;
@@ -53,7 +70,7 @@ class CreationFrame extends BorderPane {
         saveButton.setOnAction(e -> {
             if (inputBox.isValid()) {
 
-                ChatGPT chatgpt=new ChatGPT();           
+                ChatGPT chatgpt=new ChatGPT();
                 String[] recipeString = null;
 		        try {
 			        recipeString = chatgpt.generatedRecipe(inputBox.getType(), inputBox.getIngrediemts());
@@ -69,19 +86,28 @@ class CreationFrame extends BorderPane {
                 String recipeIngredients = inputBox.getIngrediemts();
                 //System.out.println(recipeString[2]);
                 String recipeDirections = recipeString[1];
-            
+                
+                // add recipe to MongoDB
+                addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections);
 		    
                 //String newRecipe = recipeName.replaceAll("\n","");
                 //System.out.println(newRecipe);
                 Recipe recipe = new Recipe(recipeDetails);
             
 
-            
-                String filename = "localDB/" + recipeName + ".txt";
-                System.out.println(filename);
+                
+                //String filename = "localDB/" + recipeName + ".txt";
+                //System.out.println(filename);
+
                 allRecipes.add(recipe);
                 recipe.setRecipeName(recipeName);
                 recipe.updateText();
+
+                //! This is needed because we need to associate every single recipe
+                //! with the arraylist of total recipes
+                recipe.updateRecipeArray(allRecipes);
+                recipeList.getChildren().add(recipe);
+
                 String imageLocation = "";
                 try {
                     imageLocation = createImage(recipeName);
@@ -89,12 +115,7 @@ class CreationFrame extends BorderPane {
                     e1.printStackTrace();
                 }
 
-                //! This is needed because we need to associate every single recipe
-                //! with the arraylist of total recipes
-                recipe.updateRecipeArray(allRecipes);
-
-                recipeList.getChildren().add(recipe);
-
+                /*
                 try {
                     FileWriter writer = new FileWriter(filename);
                     writer.write(recipeName);
@@ -113,7 +134,8 @@ class CreationFrame extends BorderPane {
                     // TODO: handle exception
                     System.out.println("Error occured when writing to txt file");
                 }
-                recipeDetails.showDetails(recipeName);
+                */
+                recipeDetails.showDetailsMongo(recipeName);
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
                 stage.close(); // Close the window
@@ -127,6 +149,26 @@ class CreationFrame extends BorderPane {
             stage.close(); // Close the window
 
         });
+    }
+
+    private boolean addRecipe(String name, String type, String ingredients, String directions) {
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+			Document existingRecipe = userCollection.find(new Document("name", name)).first();
+			if (existingRecipe != null) {
+        		return false;
+        	}
+        	else {
+				Document recipe = new Document("_id", new ObjectId());
+        		recipe.append("name", name);
+        		recipe.append("type", type);
+                recipe.append("ingredients", ingredients);
+                recipe.append("directions", directions);
+        		userCollection.insertOne(recipe);
+        		return true;            
+    		}
+		}
     }
 
     private String createImage(String recipeName) throws IOException, InterruptedException, URISyntaxException {
@@ -239,14 +281,13 @@ class EditFrame extends BorderPane {
 	private Button saveButton;
 	private Button cancelButton;
 	private Button chatGPTButton;
-    private Button whisperButtonType;
-    private Button whisperButtonIngredients;
 	private DialogButtons dialogButtons;
 	private RecipeBox recipes;
     private ArrayList<Recipe> allRecipes;
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
 	private boolean editMode;
+    private String originalName;
 	
     EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean _editMode)
     {
@@ -255,18 +296,19 @@ class EditFrame extends BorderPane {
     	allRecipes = _allRecipes;
     	editMode = _editMode;
     	dialogButtons = new DialogButtons();
+        originalName = recipeDetails.getTitleText().getText();
     	
     	if (!editMode)
     		recipes = new RecipeBox();
     	else
     		recipes = new RecipeBox(_recipeDetails);
-    	
+
     	this.setCenter(recipes);
     	this.setBottom(dialogButtons);
     	
     	saveButton = dialogButtons.getSaveButton();
     	cancelButton = dialogButtons.getCancelButton();
-    	chatGPTButton = dialogButtons.getChatGPTButton();
+    	//chatGPTButton = dialogButtons.getChatGPTButton();
 
         addListeners();
     }
@@ -283,7 +325,7 @@ class EditFrame extends BorderPane {
                 String recipeType = recipes.getRecipeType();
                 String ingredients = recipes.getIngredients();
                 String directions = recipes.getDirections();
-                String filename = "localDB/" + recipeName + ".txt";
+                //String filename = "localDB/" + recipeName + ".txt";
                 
                 Recipe recipe = null;
                 boolean exists = false;
@@ -299,6 +341,8 @@ class EditFrame extends BorderPane {
                 	recipe = new Recipe(recipeDetails);
                 	allRecipes.add(recipe);
                 }
+
+                editRecipe(originalName, recipeName, recipeType, ingredients, directions);
                 
                 // System.out.println("This is the new recipe name added: " + recipeName);
                 recipe.setRecipeName(recipeName);
@@ -312,7 +356,7 @@ class EditFrame extends BorderPane {
                 	recipeList.getChildren().add(recipe);
 
                 
-
+                /*
                 // writing to recipes text files
                 try {
                     FileWriter writer = new FileWriter(filename);
@@ -330,12 +374,13 @@ class EditFrame extends BorderPane {
                 } catch (IOException e) {
                     System.out.println("Error occured when writing to txt file");
                 }
+                */
                 
                 if (!editMode) {
                 	recipeDetails.defaultView(); 
                 }
                 else {
-                	recipeDetails.showDetails(recipeName);
+                	recipeDetails.showDetailsMongo(recipeName);
                 }
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
@@ -348,7 +393,7 @@ class EditFrame extends BorderPane {
             stage.close();
         });
 
-    	
+    	/*
     	chatGPTButton.setOnAction(e -> {
             ChatGPT chatgpt=new ChatGPT();           
             String[] recipe = null;
@@ -368,6 +413,38 @@ class EditFrame extends BorderPane {
 		    recipes.setIngredients(recipe[1]);
 		    recipes.setDirections(recipe[2]);
         });
+        */
+    }
+
+    private boolean editRecipe(String originalName, String name, String type, String ingredients, String directions) {
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+			Document existingRecipe = userCollection.find(new Document("name", originalName)).first();
+
+			if (existingRecipe != null) {
+                Bson filter = eq("name", originalName);
+                Bson newName = set("name", name);
+                Bson newType = set("type", type);
+                Bson newIngredients = set("ingredients", ingredients);
+                Bson newDirections = set("directions", directions);
+
+                Bson updates = combine(newName, newType, newIngredients, newDirections);
+                System.out.println(updates);
+                userCollection.findOneAndUpdate(filter, updates);
+
+        		return true;
+        	}
+        	else {
+				Document recipe = new Document("_id", new ObjectId());
+        		recipe.append("name", name);
+        		recipe.append("type", type);
+                recipe.append("ingredients", ingredients);
+                recipe.append("directions", directions);
+        		userCollection.insertOne(recipe);
+        		return false;            
+    		}
+		}
     }
 }
 
@@ -525,11 +602,11 @@ class DialogButtons extends HBox {
         saveButton.setStyle(defaultButtonStyle); // styling the button
         cancelButton = new Button("Cancel"); // text displayed on clear recipes button
         cancelButton.setStyle(defaultButtonStyle);
-        chatGPTButton = new Button("ChatGPT"); // text displayed on clear recipes button
-        chatGPTButton.setStyle(defaultButtonStyle);
+        //chatGPTButton = new Button("ChatGPT"); // text displayed on clear recipes button
+        //chatGPTButton.setStyle(defaultButtonStyle);
         
 
-        this.getChildren().addAll(saveButton,cancelButton,chatGPTButton); // adding buttons to footer
+        this.getChildren().addAll(saveButton,cancelButton); // adding buttons to footer
         this.setAlignment(Pos.CENTER); // aligning the buttons to center
     }
 

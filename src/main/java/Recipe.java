@@ -21,6 +21,18 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.paint.Color; 
 import javafx.application.Platform;
 
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.MongoTimeoutException;
+import com.mongodb.MongoException;
+import javafx.scene.control.Alert;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+
 public class Recipe extends HBox {
 
     private String recipeName;
@@ -28,7 +40,7 @@ public class Recipe extends HBox {
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
     
-    private boolean isSelected;    
+    private boolean isSelected;
 
     public Recipe(RecipeDetails _recipeDetails) {
     	recipeDetails = _recipeDetails;
@@ -90,7 +102,7 @@ public class Recipe extends HBox {
             }
 
             System.out.println("Current recipe name: " + this.getRecipeName());
-            recipeDetails.showDetails(this.getRecipeName());
+            recipeDetails.showDetailsMongo(this.getRecipeName());
 
         } else {
             isSelected = false;
@@ -260,6 +272,30 @@ class RecipeDetails extends VBox {
 
         this.getChildren().addAll(displayImageView, displayType, displayIngredients, displayDirections);
     }
+
+    public boolean showDetailsMongo (String recipeName) {
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {   	
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+			Document recipe = userCollection.find(new Document("name", recipeName)).first();
+			if (recipe != null) {
+                String name = (String)recipe.get("name");
+                String type = (String)recipe.get("type");
+                String ingredients = (String)recipe.get("ingredients");
+                String directions = (String)recipe.get("directions");
+
+                setTitleText(name);
+                setDisplayType(type);
+                setDisplayIngredients(ingredients);
+                setDisplayDirections(directions);
+
+        		return true;
+        	}
+        	else {
+        		return false;            
+    		}
+		}
+    }
 	
 	public void showDetails (String recipeName) {
 		File file = new File(db_dir + recipeName + ".txt");
@@ -357,19 +393,23 @@ class RecipeDetails extends VBox {
     }
 
     public void setDisplayType (String mealType) {
-        titleText.setText(mealType);
+        displayType.setText(mealType + "\n");
+        displayType.setWrappingWidth(500);
 	}
 	
 	public void setTitleText (String mealName) {
-		titleText.setText(mealName);		
+		titleText.setText(mealName);
+        titleText.setWrappingWidth(700);
 	}
 	
 	public void setDisplayIngredients (String mealIngred) {
-		displayIngredients.setText(mealIngred);
+		displayIngredients.setText(mealIngred + "\n");
+        displayIngredients.setWrappingWidth(500);
 	}
 	
-	public void setDisplayDirections (String mealDirection) {
-		displayDirections.setText(mealDirection);
+	public void setDisplayDirections (String mealDirections) {
+		displayDirections.setText(mealDirections);
+        displayDirections.setWrappingWidth(500);
 	}
 
     public void setDisplayImageView (String path) {
