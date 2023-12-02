@@ -3,7 +3,6 @@
 import java.io.*;
 import java.util.*;
 
-import javafx.beans.binding.StringBinding;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,19 +20,12 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.paint.Color; 
-import javafx.application.Platform;
 
 import org.bson.Document;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.MongoTimeoutException;
-import com.mongodb.MongoException;
-import javafx.scene.control.Alert;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 
 public class Recipe extends HBox {
 
@@ -323,11 +315,16 @@ class RecipeDetails extends VBox {
                 String type = (String)recipe.get("type");
                 String ingredients = (String)recipe.get("ingredients");
                 String directions = (String)recipe.get("directions");
+                String imageLocation = base64ToImg(name, (String)recipe.get("image"));
 
                 setTitleText(name);
                 setDisplayType(type);
                 setDisplayIngredients(ingredients);
                 setDisplayDirections(directions);
+                setDisplayImageView(imageLocation);
+
+                this.setAlignment(Pos.CENTER_LEFT);
+                this.setPadding(new Insets(10, 0, 10, 200));
 
         		return true;
         	}
@@ -335,6 +332,25 @@ class RecipeDetails extends VBox {
         		return false;            
     		}
 		}
+    }
+
+    private String base64ToImg(String name, String base64) {
+        if (base64 == null)
+            return null;
+
+        String path = null;
+
+        byte[] data = Base64.getDecoder().decode(base64);
+        path = "images/" + name + ".jpg";
+        File file = new File(path);
+
+        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
+            oStream.write(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return path;
     }
 	
 	public void showDetails (String recipeName) {
