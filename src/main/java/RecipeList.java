@@ -75,6 +75,8 @@ public class RecipeList extends VBox {
         List<String> recipeFiles = new ArrayList<String>(recipeFiles_);
         List<String> recipeTypes = new ArrayList<String>(recipeTypes_);
         
+        System.out.println(recipeFiles.size() + " " + recipeTypes.size());
+        
         for (int i = 0; i < recipeFiles.size(); i++) {
             Recipe currRecipe = null;
 

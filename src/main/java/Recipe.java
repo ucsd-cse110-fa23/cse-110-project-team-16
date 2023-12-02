@@ -4,9 +4,11 @@ import java.io.*;
 import java.util.*;
 
 import javafx.beans.binding.StringBinding;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -235,6 +237,7 @@ class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private ComboBox filterBox;
     
     ActionsList() {
         this.setPrefSize(300, 50);
@@ -242,6 +245,8 @@ class ActionsList extends HBox {
         this.setStyle("-fx-background-color: #996600;");
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        String[] recipeTypes = {"No Filters", "Breakfast", "Lunch", "Dinner"};
+        filterBox = new ComboBox(FXCollections.observableArrayList(recipeTypes));
         newRecipeButton = new Button("New Recipe");
         newRecipeButton.setStyle(defaultButtonStyle);
         editRecipeButton = new Button("Edit Recipe");
@@ -249,7 +254,7 @@ class ActionsList extends HBox {
         deleteRecipeButton = new Button("Delete Recipe");
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -261,6 +266,9 @@ class ActionsList extends HBox {
     }
     public Button getDeleteRecipeButton() {
         return deleteRecipeButton;
+    }
+    public ComboBox getFilterBox() {
+    	return filterBox;
     }
 }
 
