@@ -26,6 +26,7 @@ public class RecipeList extends VBox {
     private String db_dir = "localDB/";
     private RecipeDetails localRecipeDetails;
     private ArrayList<Recipe> allRecipes;
+    private String filterType;
 
 
     public RecipeList(RecipeDetails details, ArrayList<Recipe> recipeArray) {
@@ -38,6 +39,7 @@ public class RecipeList extends VBox {
         // this.getChildren().add(actionsList);
         localRecipeDetails = details;
         allRecipes = recipeArray;
+        filterType = "No Filters";
         loadRecipesMongo();
         //this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         //	changeRecipeSelect();
@@ -69,6 +71,11 @@ public class RecipeList extends VBox {
     }
 
     public void loadRecipesMongo() {
+    	for (int i = 0; i < allRecipes.size(); i++) {
+    		this.getChildren().remove(allRecipes.get(i));
+    	}
+    	allRecipes.clear();
+    	
         Set<String> recipeFiles_ = listRecipeFilesMongo();
         Set<String> recipeTypes_ = listRecipeTypesMongo();
         
@@ -80,6 +87,13 @@ public class RecipeList extends VBox {
         for (int i = 0; i < recipeFiles.size(); i++) {
             Recipe currRecipe = null;
 
+            System.out.println(filterType);
+            if (!filterType.equals("No Filters")) {
+	            if (!(filterType.equals(recipeTypes.get(i)))) {
+	            	continue;
+	            }
+            }
+            
             currRecipe = new Recipe(localRecipeDetails);
             currRecipe.setRecipeName(recipeFiles.get(i));
             currRecipe.setRecipeType(recipeTypes.get(i));
@@ -186,4 +200,8 @@ public class RecipeList extends VBox {
     public ArrayList<Recipe> getAllRecipes () {
 		return allRecipes;
 	}
+    
+    public void setFilterType (String _filterType) {
+    	filterType = _filterType;
+    }
 }

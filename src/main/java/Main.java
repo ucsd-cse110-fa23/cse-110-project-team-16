@@ -137,6 +137,13 @@ class AppFrame extends BorderPane{
     		recipeDetails.defaultView();
         });
     	
+        // Filter button functionality
+    	filterBox.setOnAction(e -> {
+            // Set Filter Type
+    		recipeList.setFilterType(filterBox.getValue().toString());
+    		recipeList.loadRecipesMongo();
+        });
+    	
     }
 }
 
