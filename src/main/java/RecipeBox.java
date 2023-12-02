@@ -16,10 +16,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
 import java.nio.file.Files;
@@ -32,7 +36,226 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+class PreviewDeails extends VBox{
+	private Text displayType;
+	private Text displayName;
+	private Text displayIngredients;
+	private Text displayDirections;
+    private ImageView displayImageView;
+    private InputBox inputBox;
+	PreviewDeails(InputBox _inputBox){
+		 inputBox=_inputBox;
+		 displayType = new Text(inputBox.getType());
+         displayType.setFont(Font.font("Arial", 14));
+         
+         displayIngredients = new Text(inputBox.getIngrediemts());
+         displayIngredients.setWrappingWidth(450);
+         displayIngredients.setFont(Font.font("Arial", 14));
+         displayName = new Text();
+         displayName.setFont(Font.font("Arial", 14));
+         displayDirections = new Text();
+         displayDirections.setWrappingWidth(450);
+         displayDirections.setFont(Font.font("Arial", 14));
+         displayImageView = new ImageView();
+         displayImageView.setFitHeight(150);
+         displayImageView.setFitWidth(150);
+         this.getChildren().addAll(displayName,displayType,displayImageView,displayIngredients,displayDirections);
+	}
+	
+	public Text getdisplayName() {
+		return displayName;
+	}
+	public Text getdisplayType() {
+		return displayType;
+	}
+	public Text getdisplayIngredients() {
+		return displayIngredients;
+	}
+	public Text getdisplayDirections() {
+		return displayDirections;
+	}
+	public ImageView getdisplayImage() {
+		return displayImageView;
+	}
+}
 
+
+class PreviewFrame extends BorderPane {
+	private PreviewDeails prevDetails;
+	private String recipeName;
+	private String recipeType;
+	private String recipeIngredients;
+	private String recipeDirections;
+	String imageLocation = "";
+    String encodedImg = null;
+    private Button saveButton;
+	private Button refreshButton;
+	private CreationFrame crFrame;
+	private ArrayList<Recipe> allRecipes;
+	private RecipeList recipeList;
+	private RecipeDetails recipeDetails;
+    private InputBox inputBox;
+    private String[] recipeString;
+    private String db_dir = "localDB/";
+    PreviewFrame(RecipeList _recipelist, ArrayList<Recipe> _allRecipes, RecipeDetails _recipeDetails,InputBox _inputBox,String[] _recipeString) {
+    	//vairable
+    	allRecipes=_allRecipes;
+    	recipeList=_recipelist;
+    	recipeDetails=_recipeDetails;
+    	inputBox=_inputBox;
+    	recipeString=_recipeString;
+    	recipeName = recipeString[0].strip();
+        recipeType = inputBox.getType();
+        recipeIngredients = inputBox.getIngrediemts();
+        recipeDirections = recipeString[1];
+    	prevDetails=new PreviewDeails(inputBox);
+    	saveButton = new Button("Save"); // text displayed on add button
+    	refreshButton = new Button("Refresh"); // text displayed on clear recipes button
+    	
+         setPreview(recipeName,recipeDirections);
+    	HBox dialogButtons = new HBox(saveButton, refreshButton);
+    	dialogButtons.setAlignment(Pos.CENTER);
+    	this.setBottom(dialogButtons);
+    	this.setCenter(prevDetails);
+    	//this.getChildren().addAll(displayIngredients, displayDirections);
+        addListeners();
+    }
+
+    
+    private void addListeners() {
+    	saveButton.setOnAction(e -> {
+           recipeName=prevDetails.getdisplayName().getText();
+           recipeDirections=prevDetails.getdisplayDirections().getText();
+                Recipe recipe = new Recipe(recipeDetails);
+                allRecipes.add(recipe);
+                recipe.setRecipeName(recipeName);
+                recipe.setRecipeType(recipeType);
+                recipe.updateText();
+
+                //! This is needed because we need to associate every single recipe
+                //! with the arraylist of total recipes
+                recipe.updateRecipeArray(allRecipes);
+                recipeList.getChildren().add(recipe);
+
+                // add recipe to MongoDB
+                addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
+                recipe.toggleSelect();
+
+                recipeDetails.showDetailsMongo(recipeName);
+
+                Stage stageClose = (Stage) getScene().getWindow(); // Get the current stage
+                stageClose.close(); // Close the window                
+        });
+    	refreshButton.setOnAction(e -> {
+    		String image = "images/" + recipeName + ".jpg";
+            File imageFile = new File(image);
+            imageFile.delete();
+    		ChatGPT chatgpt=new ChatGPT();
+            String[] recipeString = null;
+	        try {
+		        recipeString = chatgpt.generatedRecipe(inputBox.getType(), inputBox.getIngrediemts());
+	        } catch (IOException e1) {
+		        e1.printStackTrace();
+	        } catch (InterruptedException e2) {
+		        e2.printStackTrace();
+	        }
+	        recipeName = recipeString[0].strip();
+	        recipeDirections = recipeString[1];
+	        setPreview(recipeName,recipeDirections);         
+  });
+        
+    }
+    public void setDisplayImageView (String path) {
+        Image image = new Image("file:" + path);
+        prevDetails.getdisplayImage().setImage(image);
+    }
+    
+    public void setPreview(String _displayName, String _displayDirections) {
+    	prevDetails.getdisplayName().setText(_displayName);
+    	prevDetails.getdisplayDirections().setText(_displayDirections);
+    	String imageLocation = "";
+        String encodedImgPreview = null;
+        try {
+            imageLocation = createImage(recipeName);
+            File img = new File(imageLocation);
+            encodedImgPreview = imgToBase64(img);
+        } catch (IOException | InterruptedException | URISyntaxException e1) {
+            e1.printStackTrace();
+        }
+        encodedImg=encodedImgPreview;
+        setDisplayImageView(imageLocation);
+    }
+    
+    private String base64ToImg(String name, String base64) {
+        if (base64 == null)
+            return null;
+
+        String path = null;
+
+        byte[] data = Base64.getDecoder().decode(base64);
+        path = "images/" + name + ".jpg";
+        File file = new File(path);
+
+        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
+            oStream.write(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return path;
+    }
+    
+  private boolean addRecipe(String name, String type, String ingredients, String directions, String image) {
+  try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
+		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+		MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+		Document existingRecipe = userCollection.find(new Document("name", name)).first();
+		if (existingRecipe != null) {
+			return false;
+		}
+		else {
+			Document recipe = new Document("_id", new ObjectId());
+			recipe.append("name", name);
+			recipe.append("type", type);
+			recipe.append("ingredients", ingredients);
+			recipe.append("directions", directions);
+			recipe.append("image", image);
+			userCollection.insertOne(recipe);
+			return true;            
+			}
+		}
+}
+
+  private String imgToBase64(File file) {
+	  String encoded = null;
+
+	  try {
+		  FileInputStream fileInputStream = new FileInputStream(file);
+		  byte[] bytes = new byte[(int)file.length()];
+		  fileInputStream.read(bytes);
+		  encoded = Base64.getEncoder().encodeToString(bytes);
+		  fileInputStream.close();
+	  } catch (IOException e) {
+      e.printStackTrace();
+	  	}
+
+	  return encoded;
+}
+
+private String createImage(String recipeName) throws IOException, InterruptedException, URISyntaxException {
+  String url = DallE.generateImage(recipeName);
+  //String url = "https://www.31daily.com/wp-content/uploads/2022/01/md-Chicken-Broccoli-8-1-of-1-840x480.jpg";
+  String path = "images/" + recipeName + ".jpg";
+  try(
+      InputStream in = new URI(url).toURL().openStream()
+  )
+  	{
+      Files.copy(in, Paths.get(path));
+  	}
+
+  	return path;
+	}
+}
 class CreationFrame extends BorderPane {
     private Button saveButton;
 	private Button cancelButton;
@@ -50,7 +273,7 @@ class CreationFrame extends BorderPane {
         this.recipeDetails = recipeDetails;
         inputBox = new InputBox();
 
-        saveButton = new Button("Save"); // text displayed on add button
+        saveButton = new Button("Preview"); // text displayed on add button
         cancelButton = new Button("Cancel"); // text displayed on clear recipes button
         HBox dialogButtons = new HBox(saveButton, cancelButton);
         dialogButtons.setAlignment(Pos.CENTER);
@@ -63,8 +286,7 @@ class CreationFrame extends BorderPane {
     private void addListeners() {
         saveButton.setOnAction(e -> {
             if (inputBox.isValid()) {
-
-                ChatGPT chatgpt=new ChatGPT();
+            	ChatGPT chatgpt=new ChatGPT();
                 String[] recipeString = null;
 		        try {
 			        recipeString = chatgpt.generatedRecipe(inputBox.getType(), inputBox.getIngrediemts());
@@ -73,44 +295,13 @@ class CreationFrame extends BorderPane {
 		        } catch (InterruptedException e2) {
 			        e2.printStackTrace();
 		        }
-		
-                String recipeName = recipeString[0].strip();
-                System.out.println(recipeName);
-                String recipeType = inputBox.getType();
-                String recipeIngredients = inputBox.getIngrediemts();
-                //System.out.println(recipeString[2]);
-                String recipeDirections = recipeString[1];
-
-                Recipe recipe = new Recipe(recipeDetails);
-
-                allRecipes.add(recipe);
-                recipe.setRecipeName(recipeName);
-                recipe.setRecipeType(recipeType);
-                recipe.updateText();
-
-                //! This is needed because we need to associate every single recipe
-                //! with the arraylist of total recipes
-                recipe.updateRecipeArray(allRecipes);
-                recipeList.getChildren().add(recipe);
-
-                String imageLocation = "";
-                String encodedImg = null;
-                try {
-                    imageLocation = createImage(recipeName);
-                    File img = new File(imageLocation);
-                    encodedImg = imgToBase64(img);
-                } catch (IOException | InterruptedException | URISyntaxException e1) {
-                    e1.printStackTrace();
-                }
-
-                // add recipe to MongoDB
-                addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
-                recipe.toggleSelect();
-
-                recipeDetails.showDetailsMongo(recipeName);
-
-                Stage stage = (Stage) getScene().getWindow(); // Get the current stage
-                stage.close(); // Close the window
+            	PreviewFrame root = new PreviewFrame(recipeList,allRecipes,recipeDetails,inputBox,recipeString);
+                Stage stage = new Stage();
+                stage.setTitle("Preview Recipe");
+                stage.setScene(new Scene(root, 450, 550));
+                stage.show();
+                Stage stageClose = (Stage) getScene().getWindow(); // Get the current stage
+                stageClose.close(); // Close the window
             }
             
             
@@ -122,60 +313,11 @@ class CreationFrame extends BorderPane {
 
         });
     }
-
-    private boolean addRecipe(String name, String type, String ingredients, String directions, String image) {
-        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
-    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
-        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
-			Document existingRecipe = userCollection.find(new Document("name", name)).first();
-			if (existingRecipe != null) {
-        		return false;
-        	}
-        	else {
-				Document recipe = new Document("_id", new ObjectId());
-        		recipe.append("name", name);
-        		recipe.append("type", type);
-                recipe.append("ingredients", ingredients);
-                recipe.append("directions", directions);
-                recipe.append("image", image);
-        		userCollection.insertOne(recipe);
-        		return true;            
-    		}
-		}
-    }
-
-    private String imgToBase64(File file) {
-        String encoded = null;
-
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            byte[] bytes = new byte[(int)file.length()];
-            fileInputStream.read(bytes);
-            encoded = Base64.getEncoder().encodeToString(bytes);
-            fileInputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return encoded;
-    }
-
-    private String createImage(String recipeName) throws IOException, InterruptedException, URISyntaxException {
-        String url = DallE.generateImage(recipeName);
-        //String url = "https://www.31daily.com/wp-content/uploads/2022/01/md-Chicken-Broccoli-8-1-of-1-840x480.jpg";
-        String path = "images/" + recipeName + ".jpg";
-        try(
-            InputStream in = new URI(url).toURL().openStream()
-        )
-        {
-            Files.copy(in, Paths.get(path));
-        }
-
-        return path;
-    }
     
 
 }
+
+
 class InputBox extends VBox {
     private Label typeLabel;
     private Label typeInput;
