@@ -1,12 +1,12 @@
 //package src.main.java;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.*;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,8 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.net.URI;
@@ -32,10 +30,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.MongoTimeoutException;
-import com.mongodb.MongoException;
-import javafx.scene.control.Alert;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
@@ -87,8 +81,6 @@ class CreationFrame extends BorderPane {
                 //System.out.println(recipeString[2]);
                 String recipeDirections = recipeString[1];
                 
-                // add recipe to MongoDB
-                addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections);
 		    
                 //String newRecipe = recipeName.replaceAll("\n","");
                 //System.out.println(newRecipe);
@@ -109,11 +101,17 @@ class CreationFrame extends BorderPane {
                 recipeList.getChildren().add(recipe);
 
                 String imageLocation = "";
+                String encodedImg = null;
                 try {
                     imageLocation = createImage(recipeName);
+                    File img = new File(imageLocation);
+                    encodedImg = imgToBase64(img);
                 } catch (IOException | InterruptedException | URISyntaxException e1) {
                     e1.printStackTrace();
                 }
+
+                                // add recipe to MongoDB
+                addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
 
                 /*
                 try {
@@ -151,7 +149,7 @@ class CreationFrame extends BorderPane {
         });
     }
 
-    private boolean addRecipe(String name, String type, String ingredients, String directions) {
+    private boolean addRecipe(String name, String type, String ingredients, String directions, String image) {
         try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
     		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
         	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
@@ -165,6 +163,7 @@ class CreationFrame extends BorderPane {
         		recipe.append("type", type);
                 recipe.append("ingredients", ingredients);
                 recipe.append("directions", directions);
+                recipe.append("image", image);
         		userCollection.insertOne(recipe);
         		return true;            
     		}
@@ -183,6 +182,22 @@ class CreationFrame extends BorderPane {
         }
 
         return path;
+    }
+
+    private String imgToBase64(File file) {
+        String encoded = null;
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] bytes = new byte[(int)file.length()];
+            fileInputStream.read(bytes);
+            encoded = Base64.getEncoder().encodeToString(bytes);
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return encoded;
     }
     
 
