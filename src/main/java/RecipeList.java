@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
@@ -68,13 +69,18 @@ public class RecipeList extends VBox {
     }
 
     public void loadRecipesMongo() {
-        Set<String> recipeFiles = listRecipeFilesMongo();
+        Set<String> recipeFiles_ = listRecipeFilesMongo();
+        Set<String> recipeTypes_ = listRecipeTypesMongo();
         
-        for (String recipe: recipeFiles) {
+        List<String> recipeFiles = new ArrayList<String>(recipeFiles_);
+        List<String> recipeTypes = new ArrayList<String>(recipeTypes_);
+        
+        for (int i = 0; i < recipeFiles.size(); i++) {
             Recipe currRecipe = null;
 
             currRecipe = new Recipe(localRecipeDetails);
-            currRecipe.setRecipeName(recipe);
+            currRecipe.setRecipeName(recipeFiles.get(i));
+            currRecipe.setRecipeType(recipeTypes.get(i));
             currRecipe.updateText();
 
             this.getChildren().add(currRecipe);
@@ -98,6 +104,23 @@ public class RecipeList extends VBox {
             return recipeFiles;
 		}
     }
+    
+    public Set<String> listRecipeTypesMongo() {
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {   	
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+            FindIterable<Document> documentCursor = userCollection.find();
+			
+            Set<String> recipeTypes = new HashSet<String> ();
+
+            // Iterate over collection
+            for(Document doc : documentCursor)
+            	recipeTypes.add((String)doc.get("type"));
+
+            return recipeTypes;
+		}
+    }
+    
 
     private Set<String> listRecipeFiles(String db_dir) {
         Set<String> recipeFiles = new HashSet<String> ();

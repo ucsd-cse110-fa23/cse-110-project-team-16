@@ -101,6 +101,7 @@ class CreationFrame extends BorderPane {
 
                 allRecipes.add(recipe);
                 recipe.setRecipeName(recipeName);
+                recipe.setRecipeType(recipeType);
                 recipe.updateText();
 
                 //! This is needed because we need to associate every single recipe
@@ -346,6 +347,7 @@ class EditFrame extends BorderPane {
                 
                 // System.out.println("This is the new recipe name added: " + recipeName);
                 recipe.setRecipeName(recipeName);
+                recipe.setRecipeType(recipeType);
                 recipe.updateText();
 
                 //! This is needed because we need to associate every single recipe

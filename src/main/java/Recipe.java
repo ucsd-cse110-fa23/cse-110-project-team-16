@@ -36,7 +36,9 @@ import org.bson.types.ObjectId;
 public class Recipe extends HBox {
 
     private String recipeName;
+    private String recipeType;
     private Text text;
+    private Label label;
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
     
@@ -47,6 +49,7 @@ public class Recipe extends HBox {
     	
     	this.setPrefSize(500, 40); // sets size of recipe
         this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of recipe
+        this.setSpacing(20);
         isSelected = false;
 
         text = new Text(); // create recipe name text field
@@ -55,6 +58,13 @@ public class Recipe extends HBox {
         text.setTextAlignment(TextAlignment.CENTER); // set alignment of text field
         text.setFill(Color.WHITE);
         this.getChildren().add(text); // add textlabel to recipe
+
+        label = new Label(); // create recipe name text field
+        label.setText(recipeType);
+        label.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        label.setStyle("-fx-background-color: #999999; -fx-border-width: 0;"); // set background color of texfield
+        label.setTextAlignment(TextAlignment.RIGHT); // set alignment of text field
+        this.getChildren().add(label); // add textlabel to recipe
         
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         	toggleSelect();
@@ -72,8 +82,30 @@ public class Recipe extends HBox {
         recipeName = name;
     }
     
+    public String getRecipeType() {
+        return this.recipeType;
+    }
+    
+    public void setRecipeType(String type) {
+        recipeType = type;
+    }
+    
     public void updateText() {
-
+    	// Setting label and style based on recipeType
+    	if (recipeType.equals("Breakfast")) {
+    		label.setText("B");
+    		label.setStyle("-fx-background-color: #3cb371; -fx-border-width: 0;"); // set background color of texfield
+    	}
+    	else if (recipeType.equals("Lunch")) {
+    		label.setText("L");
+    		label.setStyle("-fx-background-color: #ee82ee; -fx-border-width: 0;"); // set background color of texfield
+    	}
+    	else {
+    		label.setText("D");
+    		label.setStyle("-fx-background-color: #ff0000; -fx-border-width: 0;"); // set background color of texfield
+    	}
+ 
+    	// Setting recipe name on tabs
     	if (recipeName.length() > 20) {
             text.setText(recipeName.substring(0,20) + "...");
         } 
