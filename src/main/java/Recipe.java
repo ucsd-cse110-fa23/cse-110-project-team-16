@@ -245,7 +245,7 @@ class ActionsList extends HBox {
         this.setStyle("-fx-background-color: #996600;");
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
-        String[] recipeTypes = {"No Filters", "Breakfast", "Lunch", "Dinner"};
+        String[] recipeTypes = {"All", "Breakfast", "Lunch", "Dinner"};
         filterBox = new ComboBox(FXCollections.observableArrayList(recipeTypes));
         newRecipeButton = new Button("New Recipe");
         newRecipeButton.setStyle(defaultButtonStyle);

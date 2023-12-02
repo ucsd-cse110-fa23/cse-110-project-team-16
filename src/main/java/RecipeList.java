@@ -39,7 +39,7 @@ public class RecipeList extends VBox {
         // this.getChildren().add(actionsList);
         localRecipeDetails = details;
         allRecipes = recipeArray;
-        filterType = "No Filters";
+        filterType = "All";
         loadRecipesMongo();
         //this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         //	changeRecipeSelect();
@@ -88,7 +88,7 @@ public class RecipeList extends VBox {
             Recipe currRecipe = null;
 
             System.out.println(filterType);
-            if (!filterType.equals("No Filters")) {
+            if (!filterType.equals("All")) {
 	            if (!(filterType.equals(recipeTypes.get(i)))) {
 	            	continue;
 	            }
