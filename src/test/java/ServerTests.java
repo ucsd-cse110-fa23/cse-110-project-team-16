@@ -1,7 +1,10 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 
+import org.bson.types.ObjectId;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,8 +60,4 @@ public class ServerTests {
         assertEquals(false, login.checkLogin(username, password));
 	}
 
-    @Test
-    void createRecipeMongoDB() {
-        
-    }
 }

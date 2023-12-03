@@ -28,12 +28,14 @@ public class MongoDB {
     private static String uri = "mongodb+srv://Wumboon:Cowperson10@cluster0.wpppozd.mongodb.net/?retryWrites=true&w=majority";
     private static MongoClient mongoClient;
     private static MongoDatabase recipesDB;
+    private static String currUser;
 
     // connect to mongoDB
-    public static void startMongoDB() {
+    public static void startMongoDB(String user) {
         try {
             mongoClient = MongoClients.create(MongoDB.getURI());
             recipesDB = mongoClient.getDatabase("Recipes");
+            currUser = user;
         }
         catch(Exception e)
         {
@@ -47,8 +49,11 @@ public class MongoDB {
 
     // Add recipe to MongoDB
     public static ObjectId addRecipe(String name, String type, String ingredients, String directions, String image) {
-        MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
-        //Document existingRecipe = userCollection.find(new Document("name", name)).first();
+        MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
+
+        if(userCollection == null)
+            return null;
+
         ObjectId id = new ObjectId();
         Document recipe = new Document("_id", id);
         recipe.append("name", name);
@@ -58,12 +63,12 @@ public class MongoDB {
         recipe.append("image", image);
         userCollection.insertOne(recipe);
 
-        return id;            
+        return id;
     }
 
     // Retreive recipe from MongoDB
     public static List<String> getRecipe(ObjectId recipeID) {
-        MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+        MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
         Document recipe = userCollection.find(new Document("_id", recipeID)).first();
         if (recipe != null) {
             String name = (String)recipe.get("name");
@@ -88,7 +93,7 @@ public class MongoDB {
 
     // Change recipe on MongoDB
     public static boolean editRecipe(ObjectId id, String name, String type, String ingredients, String directions) {
-        MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+        MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
         Document existingRecipe = userCollection.find(new Document("_id", id)).first();
 
         if (existingRecipe != null) {
@@ -117,7 +122,7 @@ public class MongoDB {
 
     // delete recipe on MongoDB
     public static boolean deleteRecipe(String name) {
-        MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+        MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
         Document existingRecipe = userCollection.find(new Document("name", name)).first();
 
         if (existingRecipe != null) {
@@ -133,7 +138,7 @@ public class MongoDB {
 
     // get all recipes for current user
     public static Set<Document> listRecipes() {
-        MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+        MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
         FindIterable<Document> documentCursor = userCollection.find();
         
         Set<Document> recipeFiles = new HashSet<Document> ();
