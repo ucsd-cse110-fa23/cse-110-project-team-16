@@ -1,8 +1,5 @@
 //package src.main.java;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.*;
-
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -26,16 +23,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
+
+import org.bson.types.ObjectId;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.net.URI;
-import org.bson.Document;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
+
 class PreviewDeails extends VBox{
 	private Text displayType;
 	private Text displayName;
@@ -138,10 +132,12 @@ class PreviewFrame extends BorderPane {
                 recipeList.getChildren().add(recipe);
 
                 // add recipe to MongoDB
-                addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
+                ObjectId id = MongoDB.addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
+                recipe.setRecipeID(id);
+
                 recipe.toggleSelect();
 
-                recipeDetails.showDetailsMongo(recipeName);
+                recipeDetails.showDetailsMongo(recipe.getRecipeID());
 
                 Stage stageClose = (Stage) getScene().getWindow(); // Get the current stage
                 stageClose.close(); // Close the window                
@@ -204,27 +200,6 @@ class PreviewFrame extends BorderPane {
 
         return path;
     }
-    
-  private boolean addRecipe(String name, String type, String ingredients, String directions, String image) {
-  try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
-		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
-		MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
-		Document existingRecipe = userCollection.find(new Document("name", name)).first();
-		if (existingRecipe != null) {
-			return false;
-		}
-		else {
-			Document recipe = new Document("_id", new ObjectId());
-			recipe.append("name", name);
-			recipe.append("type", type);
-			recipe.append("ingredients", ingredients);
-			recipe.append("directions", directions);
-			recipe.append("image", image);
-			userCollection.insertOne(recipe);
-			return true;            
-			}
-		}
-}
 
   private String imgToBase64(File file) {
 	  String encoded = null;
@@ -240,20 +215,29 @@ class PreviewFrame extends BorderPane {
 	  	}
 
 	  return encoded;
-}
+    }
 
-private String createImage(String recipeName) throws IOException, InterruptedException, URISyntaxException {
-  String url = DallE.generateImage(recipeName);
-  //String url = "https://www.31daily.com/wp-content/uploads/2022/01/md-Chicken-Broccoli-8-1-of-1-840x480.jpg";
-  String path = "images/" + recipeName + ".jpg";
-  try(
-      InputStream in = new URI(url).toURL().openStream()
-  )
-  	{
-      Files.copy(in, Paths.get(path));
-  	}
+    private String createImage(String recipeName) throws IOException, InterruptedException, URISyntaxException {
+    String url = DallE.generateImage(recipeName);
+    //String url = "https://www.31daily.com/wp-content/uploads/2022/01/md-Chicken-Broccoli-8-1-of-1-840x480.jpg";
+    String path = "images/" + recipeName + ".jpg";
+    File file = new File(path);
 
-  	return path;
+    // if there is an image already in path, delete
+    try {
+        Files.deleteIfExists(file.toPath());
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    try(
+        InputStream in = new URI(url).toURL().openStream()
+    )
+        {
+        Files.copy(in, Paths.get(path));
+        }
+
+        return path;
 	}
 }
 class CreationFrame extends BorderPane {
@@ -473,7 +457,8 @@ class EditFrame extends BorderPane {
                 	allRecipes.add(recipe);
                 }
 
-                editRecipe(originalName, recipeName, recipeType, ingredients, directions);
+                // apply changes to mongoDB
+                MongoDB.editRecipe(recipe.getRecipeID(), recipeName, recipeType, ingredients, directions);
                 
                 // System.out.println("This is the new recipe name added: " + recipeName);
                 recipe.setRecipeName(recipeName);
@@ -486,33 +471,12 @@ class EditFrame extends BorderPane {
 
                 if (!exists)
                 	recipeList.getChildren().add(recipe);
-
-                
-                /*
-                // writing to recipes text files
-                try {
-                    FileWriter writer = new FileWriter(filename);
-                    writer.write(recipeName);
-                    writer.write("\n");
-                    writer.write(recipeType);
-                    writer.write("\n");
-                    writer.write(ingredients);
-                    writer.write("\n");
-                    writer.write(directions);
-
-                    writer.close();
-                    System.out.println("Created file: " + filename);
-
-                } catch (IOException e) {
-                    System.out.println("Error occured when writing to txt file");
-                }
-                */
                 
                 if (!editMode) {
                 	recipeDetails.defaultView(); 
                 }
                 else {
-                	recipeDetails.showDetailsMongo(recipeName);
+                	recipeDetails.showDetailsMongo(recipe.getRecipeID());
                 }
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
@@ -546,37 +510,6 @@ class EditFrame extends BorderPane {
 		    recipes.setDirections(recipe[2]);
         });
         */
-    }
-
-    private boolean editRecipe(String originalName, String name, String type, String ingredients, String directions) {
-        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
-    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
-        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
-			Document existingRecipe = userCollection.find(new Document("name", originalName)).first();
-
-			if (existingRecipe != null) {
-                Bson filter = eq("name", originalName);
-                Bson newName = set("name", name);
-                Bson newType = set("type", type);
-                Bson newIngredients = set("ingredients", ingredients);
-                Bson newDirections = set("directions", directions);
-
-                Bson updates = combine(newName, newType, newIngredients, newDirections);
-                System.out.println(updates);
-                userCollection.findOneAndUpdate(filter, updates);
-
-        		return true;
-        	}
-        	else {
-				Document recipe = new Document("_id", new ObjectId());
-        		recipe.append("name", name);
-        		recipe.append("type", type);
-                recipe.append("ingredients", ingredients);
-                recipe.append("directions", directions);
-        		userCollection.insertOne(recipe);
-        		return false;            
-    		}
-		}
     }
 }
 

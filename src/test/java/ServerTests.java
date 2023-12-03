@@ -56,4 +56,9 @@ public class ServerTests {
 		String password = "password";
         assertEquals(false, login.checkLogin(username, password));
 	}
+
+    @Test
+    void createRecipeMongoDB() {
+        
+    }
 }

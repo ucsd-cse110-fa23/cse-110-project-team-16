@@ -1,7 +1,5 @@
 //package src.main.java;
 
-import static com.mongodb.client.model.Filters.eq;
-
 import java.util.ArrayList;
 import java.io.*;
 
@@ -12,13 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-
-import org.bson.Document;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.bson.conversions.Bson;
 
 // Main Method - Runs application
 public class Main extends Application {
@@ -143,7 +134,7 @@ class AppFrame extends BorderPane{
     				allRecipes.remove(i);
 
                     // delete recipe on mongoDB
-                    deleteRecipeMongo(recipeName);
+                    MongoDB.deleteRecipe(recipeName);
     			}
     		}
     		recipeDetails.defaultView();
@@ -156,24 +147,6 @@ class AppFrame extends BorderPane{
     		recipeList.loadRecipesMongo();
         });
     	
-    }
-
-    private boolean deleteRecipeMongo(String name) {
-        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
-    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
-        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
-			Document existingRecipe = userCollection.find(new Document("name", name)).first();
-
-			if (existingRecipe != null) {
-                Bson filter = eq("name", name);
-                userCollection.deleteOne(filter);
-
-        		return false;
-        	}
-        	else {
-        		return false;            
-    		}
-		}
     }
 }
 

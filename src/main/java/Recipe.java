@@ -3,6 +3,8 @@
 import java.io.*;
 import java.util.*;
 
+import org.bson.types.ObjectId;
+
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,22 +23,20 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.paint.Color; 
 
-import org.bson.Document;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
 public class Recipe extends HBox {
 
     private String recipeName;
     private String recipeType;
+    private ObjectId recipeID;
     private Text text;
     private Label label;
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
     
     private boolean isSelected;
+
+    // Default Constructor
+    public Recipe(){}
 
     public Recipe(RecipeDetails _recipeDetails) {
     	recipeDetails = _recipeDetails;
@@ -74,6 +74,14 @@ public class Recipe extends HBox {
     
     public void setRecipeName(String name) {
         recipeName = name;
+    }
+
+    public ObjectId getRecipeID() {
+        return this.recipeID;
+    }
+    
+    public void setRecipeID(ObjectId id) {
+        recipeID = id;
     }
     
     public String getRecipeType() {
@@ -128,7 +136,7 @@ public class Recipe extends HBox {
             }
 
             System.out.println("Current recipe name: " + this.getRecipeName());
-            recipeDetails.showDetailsMongo(this.getRecipeName());
+            recipeDetails.showDetailsMongo(this.getRecipeID());
 
         } else {
             isSelected = false;
@@ -305,52 +313,29 @@ class RecipeDetails extends VBox {
         this.getChildren().addAll(displayImageView, displayType, displayIngredients, displayDirections);
     }
 
-    public boolean showDetailsMongo (String recipeName) {
-        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {   	
-    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
-        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
-			Document recipe = userCollection.find(new Document("name", recipeName)).first();
-			if (recipe != null) {
-                String name = (String)recipe.get("name");
-                String type = (String)recipe.get("type");
-                String ingredients = (String)recipe.get("ingredients");
-                String directions = (String)recipe.get("directions");
-                String imageLocation = base64ToImg(name, (String)recipe.get("image"));
+    public boolean showDetailsMongo (ObjectId recipeID) {
+        List<String> recipeSet = MongoDB.getRecipe(recipeID);
+        if (recipeSet != null) {
+            String name = recipeSet.get(0);
+            String type = recipeSet.get(1);
+            String ingredients = recipeSet.get(2);
+            String directions = recipeSet.get(3);
+            String imageLocation = recipeSet.get(4);
 
-                setTitleText(name);
-                setDisplayType(type);
-                setDisplayIngredients(ingredients);
-                setDisplayDirections(directions);
-                setDisplayImageView(imageLocation);
+            setTitleText(name);
+            setDisplayType(type);
+            setDisplayIngredients(ingredients);
+            setDisplayDirections(directions);
+            setDisplayImageView(imageLocation);
 
-                this.setAlignment(Pos.CENTER_LEFT);
-                this.setPadding(new Insets(10, 0, 10, 200));
+            this.setAlignment(Pos.CENTER_LEFT);
+            this.setPadding(new Insets(10, 0, 10, 200));
 
-        		return true;
-        	}
-        	else {
-        		return false;            
-    		}
-		}
-    }
-
-    private String base64ToImg(String name, String base64) {
-        if (base64 == null)
-            return null;
-
-        String path = null;
-
-        byte[] data = Base64.getDecoder().decode(base64);
-        path = "images/" + name + ".jpg";
-        File file = new File(path);
-
-        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
-            oStream.write(data);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true;
         }
-
-        return path;
+        else {
+            return false;
+        }
     }
 	
 	public void showDetails (String recipeName) {
