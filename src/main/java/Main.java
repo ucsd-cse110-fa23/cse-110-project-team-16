@@ -1,6 +1,9 @@
 //package src.main.java;
 
 import java.util.ArrayList;
+
+import org.bson.types.ObjectId;
+
 import java.io.*;
 
 import javafx.application.Application;
@@ -120,6 +123,7 @@ class AppFrame extends BorderPane{
                     // delete txt file
 
                     String recipeName = allRecipes.get(i).getRecipeName();
+                    ObjectId recipeID = allRecipes.get(i).getRecipeID();
                     String deletedFileName = db_dir + recipeName + ".txt";
                     File deletedFile = new File(deletedFileName);
                     deletedFile.delete();
@@ -134,7 +138,7 @@ class AppFrame extends BorderPane{
     				allRecipes.remove(i);
 
                     // delete recipe on mongoDB
-                    MongoDB.deleteRecipe(recipeName);
+                    MongoDB.deleteRecipe(recipeID);
     			}
     		}
     		recipeDetails.defaultView();

@@ -31,7 +31,7 @@ public class MongoDB {
     private static String currUser;
 
     // connect to mongoDB
-    public static void startMongoDB(String user) {
+    public static void start(String user) {
         try {
             mongoClient = MongoClients.create(MongoDB.getURI());
             recipesDB = mongoClient.getDatabase("Recipes");
@@ -75,7 +75,7 @@ public class MongoDB {
             String type = (String)recipe.get("type");
             String ingredients = (String)recipe.get("ingredients");
             String directions = (String)recipe.get("directions");
-            String imageLocation = base64ToImg(name, (String)recipe.get("image"));
+            String imageLocation = (String)recipe.get("image");
 
             List<String> recipeSet = new ArrayList<String>();
             recipeSet.add(name);
@@ -121,15 +121,15 @@ public class MongoDB {
     }
 
     // delete recipe on MongoDB
-    public static boolean deleteRecipe(String name) {
+    public static boolean deleteRecipe(ObjectId id) {
         MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
-        Document existingRecipe = userCollection.find(new Document("name", name)).first();
+        Document existingRecipe = userCollection.find(new Document("_id", id)).first();
 
         if (existingRecipe != null) {
-            Bson filter = eq("name", name);
+            Bson filter = eq("_id", id);
             userCollection.deleteOne(filter);
 
-            return false;
+            return true;
         }
         else {
             return false;            
@@ -148,32 +148,5 @@ public class MongoDB {
             recipeFiles.add(doc);
 
         return recipeFiles;
-    }
-
-    // Convert base64 string to jpg - helper method for retreiving recipe's image
-    private static String base64ToImg(String name, String base64) {
-        if (base64 == null)
-            return null;
-
-        String path = null;
-
-        byte[] data = Base64.getDecoder().decode(base64);
-        path = "images/" + name + ".jpg";
-        File file = new File(path);
-
-        // if there is an image already in path, delete
-        try {
-            Files.deleteIfExists(file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
-            oStream.write(data);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return path;
     }
 }

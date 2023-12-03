@@ -1,6 +1,7 @@
 //package src.main.java;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 import org.bson.types.ObjectId;
@@ -320,7 +321,10 @@ class RecipeDetails extends VBox {
             String type = recipeSet.get(1);
             String ingredients = recipeSet.get(2);
             String directions = recipeSet.get(3);
-            String imageLocation = recipeSet.get(4);
+            String image = recipeSet.get(4);
+
+            // convert img and get path
+            String imageLocation = base64ToImg(name, image);
 
             setTitleText(name);
             setDisplayType(type);
@@ -336,6 +340,32 @@ class RecipeDetails extends VBox {
         else {
             return false;
         }
+    }
+
+    private static String base64ToImg(String name, String base64) {
+        if (base64 == null)
+            return null;
+
+        String path = null;
+
+        byte[] data = Base64.getDecoder().decode(base64);
+        path = "images/" + name + ".jpg";
+        File file = new File(path);
+
+        // if there is an image already in path, delete
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
+            oStream.write(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return path;
     }
 	
 	public void showDetails (String recipeName) {

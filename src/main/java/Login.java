@@ -76,7 +76,7 @@ class LoginFrame extends BorderPane{
 				if (user.get("password").equals(password)) {
 					currentUser = username;
 					// connect to mongoDB on login
-					MongoDB.startMongoDB(currentUser);
+					MongoDB.start(currentUser);
 					return true;
 				}
 				return false;
