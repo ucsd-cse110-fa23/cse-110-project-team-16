@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -55,10 +56,10 @@ class AppFrame extends BorderPane{
     private Button deleteRecipeButton;
 
     private MenuButton sortMenuButton;
-    private MenuItem sortAtoZ;
-    private MenuItem sortZtoA;
-    private MenuItem sortNewToOld;
-    private MenuItem sortOldToNew;
+    private CheckMenuItem sortAtoZ;
+    private CheckMenuItem sortZtoA;
+    private CheckMenuItem sortNewToOld;
+    private CheckMenuItem sortOldToNew;
     private ComboBox filterBox;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
@@ -163,8 +164,9 @@ class AppFrame extends BorderPane{
         
         sortAtoZ.setOnAction(e -> {
             // System.out.println("Sorting A to Z is called");
-            // sortMenuButton.setText("A-Z");
+            // sortMenuButton.setText("A-Z");            
             
+            actionsList.uncheckOtherItems(sortAtoZ);
             recipeList.recipeSortA2Z();
             
             // System.out.println(allRecipes);
@@ -174,10 +176,8 @@ class AppFrame extends BorderPane{
         sortZtoA.setOnAction(e -> {
             // System.out.println("Sorting Z to A is called");
             // sortMenuButton.setText("Z-A");
-    	
-        // Filter button functionality
-        
-    	
+            
+            actionsList.uncheckOtherItems(sortZtoA);
             recipeList.recipeSortZ2A();
             
             // System.out.println(allRecipes);
@@ -188,12 +188,14 @@ class AppFrame extends BorderPane{
             // System.out.println("Sorting Newest to Oldest is called");
             // sortMenuButton.setText("Newest to Oldest");
 
+            actionsList.uncheckOtherItems(sortNewToOld);
             recipeList.recipeSortNewToOld();
         });
 
         sortOldToNew.setOnAction(e -> {
             // System.out.println("Sorting Oldest to Newest is called");
             // sortMenuButton.setText("Oldest to Newest");
+            actionsList.uncheckOtherItems(sortOldToNew);
             recipeList.recipeSortOldToNew();
         }); 
         
