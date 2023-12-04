@@ -34,7 +34,21 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        if (isServerAvailable("localhost", 8100)) {
+            // Server is available, start the application
+            launch(args);
+        } else {
+            // Server is not available, display a notification and exit
+            System.out.println("Server is not available. Please make sure the server is running.");
+        }
+    }
+    
+    private static boolean isServerAvailable(String host, int port) {
+        try (Socket socket = new Socket(host, port)) {
+                return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
 
