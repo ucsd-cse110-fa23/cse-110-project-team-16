@@ -176,7 +176,7 @@ class AppFrame extends BorderPane{
             // sortMenuButton.setText("Z-A");
     	
         // Filter button functionality
-        });
+        
     	
             recipeList.recipeSortZ2A();
             
