@@ -8,6 +8,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -191,6 +193,7 @@ class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private MenuButton sortMenuButton;
     
     ActionsList() {
         this.setPrefSize(300, 50);
@@ -205,7 +208,14 @@ class ActionsList extends HBox {
         deleteRecipeButton = new Button("Delete Recipe");
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton);
+        sortMenuButton = new MenuButton("Sort Recipes");
+        sortMenuButton.getItems().addAll(new MenuItem("A-Z"),
+                                        new MenuItem("Z-A"),
+                                        new MenuItem("Newest to Oldest"),
+                                        new MenuItem("Oldest to Newest"));
+        sortMenuButton.setStyle(defaultButtonStyle);
+
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -217,6 +227,9 @@ class ActionsList extends HBox {
     }
     public Button getDeleteRecipeButton() {
         return deleteRecipeButton;
+    }
+    public MenuButton getSortMenuButton() {
+        return sortMenuButton;
     }
 }
 
