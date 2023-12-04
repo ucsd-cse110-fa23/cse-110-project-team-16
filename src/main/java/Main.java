@@ -176,14 +176,8 @@ class AppFrame extends BorderPane{
             // sortMenuButton.setText("Z-A");
     	
         // Filter button functionality
-    	filterBox.setOnAction(e -> {
-            // Set Filter Type
-    		recipeList.setFilterType(filterBox.getValue().toString());
-    		recipeList.loadRecipesMongo();
         });
     	
-    }
-}
             recipeList.recipeSortZ2A();
             
             // System.out.println(allRecipes);
