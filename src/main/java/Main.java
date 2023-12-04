@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 
@@ -47,6 +48,10 @@ class AppFrame extends BorderPane{
     private Button editRecipeButton;
     private Button deleteRecipeButton;
     private MenuButton sortMenuButton;
+    private MenuItem sortAtoZ;
+    private MenuItem sortZtoA;
+    private MenuItem sortNewToOld;
+    private MenuItem sortOldToNew;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
     private String db_dir = "localDB/";
@@ -84,6 +89,10 @@ class AppFrame extends BorderPane{
         editRecipeButton = actionsList.getEditRecipeButton();
         deleteRecipeButton = actionsList.getDeleteRecipeButton();
         sortMenuButton = actionsList.getSortMenuButton();
+        sortAtoZ = actionsList.getSortAtoZ();
+        sortZtoA = actionsList.getSortZtoA();
+        sortNewToOld = actionsList.getSortNewToOld();
+        sortOldToNew = actionsList.getSortOldToNew();
         // Call Event Listeners for the Buttons
         addListeners();
     }
@@ -136,7 +145,22 @@ class AppFrame extends BorderPane{
     		}
     		recipeDetails.defaultView();
         });
-    	
+        
+        sortAtoZ.setOnAction(e -> {
+            System.out.println("Sorting A to Z is called");
+        });
+
+        sortZtoA.setOnAction(e -> {
+            System.out.println("Sorting Z to A is called");
+        });
+
+        sortNewToOld.setOnAction(e -> {
+            System.out.println("Sorting Newest to Oldest is called");
+        });
+
+        sortOldToNew.setOnAction(e -> {
+            System.out.println("Sorting Oldest to Newest is called");
+        });    	
     }
 }
 

@@ -194,6 +194,10 @@ class ActionsList extends HBox {
     private Button editRecipeButton;
     private Button deleteRecipeButton;
     private MenuButton sortMenuButton;
+    private MenuItem sortAtoZ;
+    private MenuItem sortZtoA;
+    private MenuItem sortNewToOld;
+    private MenuItem sortOldToNew;
     
     ActionsList() {
         this.setPrefSize(300, 50);
@@ -209,10 +213,11 @@ class ActionsList extends HBox {
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
         sortMenuButton = new MenuButton("Sort Recipes");
-        sortMenuButton.getItems().addAll(new MenuItem("A-Z"),
-                                        new MenuItem("Z-A"),
-                                        new MenuItem("Newest to Oldest"),
-                                        new MenuItem("Oldest to Newest"));
+        sortAtoZ = new MenuItem("A-Z");
+        sortZtoA = new MenuItem("Z-A");
+        sortNewToOld = new MenuItem("Newest to Oldest");
+        sortOldToNew = new MenuItem("Oldest to Newest");
+        sortMenuButton.getItems().addAll(sortAtoZ, sortZtoA, sortNewToOld, sortOldToNew);
         sortMenuButton.setStyle(defaultButtonStyle);
 
         this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton);
@@ -230,6 +235,18 @@ class ActionsList extends HBox {
     }
     public MenuButton getSortMenuButton() {
         return sortMenuButton;
+    }
+    public MenuItem getSortAtoZ() {
+        return sortAtoZ;
+    }
+    public MenuItem getSortZtoA() {
+        return sortZtoA;
+    }
+    public MenuItem getSortNewToOld() {
+        return sortNewToOld;
+    }
+    public MenuItem getSortOldToNew() {
+        return sortOldToNew;
     }
 }
 
