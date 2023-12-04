@@ -68,6 +68,10 @@ public class RecipeList extends VBox {
         }
     }
 
+    public void setFilterType (String _filterType) {
+    	filterType = _filterType;
+    }
+
     public ArrayList<String> getDetails (String recipeName) {
 		File file = new File(db_dir + recipeName + ".txt");
         ArrayList<String> recipeDetails = new ArrayList<String>();
@@ -197,7 +201,5 @@ class OldToNewComparator implements Comparator<Recipe> {
     } 
 
     
-    public void setFilterType (String _filterType) {
-    	filterType = _filterType;
-    }
+    
 }
