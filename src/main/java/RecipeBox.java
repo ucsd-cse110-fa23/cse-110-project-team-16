@@ -93,7 +93,7 @@ class CreationFrame extends BorderPane {
                 //! with the arraylist of total recipes
                 recipe.updateRecipeArray(allRecipes);
 
-                recipeList.getChildren().add(recipe);
+                recipeList.getChildren().add(0, recipe);;
 
                 try {
                     FileWriter writer = new FileWriter(filename);
