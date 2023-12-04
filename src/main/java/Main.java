@@ -186,7 +186,7 @@ class AppFrame extends BorderPane{
     }
 }
 
-class AtoZComparator implements Comparator<Recipe> { 
+class ZtoAComparator implements Comparator<Recipe> { 
   
     // override the compare() method 
     public int compare(Recipe r1, Recipe r2) 
@@ -195,7 +195,7 @@ class AtoZComparator implements Comparator<Recipe> {
     } 
 }
 
-class ZtoAComparator implements Comparator<Recipe> { 
+class AtoZComparator implements Comparator<Recipe> { 
   
     // override the compare() method 
     public int compare(Recipe r1, Recipe r2) 
