@@ -274,8 +274,8 @@ class ActionsList extends HBox {
         // sortMenuButton.setPrefWidth(120);
         // sortMenuButton.setMinWidth(80);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton);
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox);
+        // this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
 
