@@ -195,6 +195,13 @@ class AppFrame extends BorderPane{
             // System.out.println("Sorting Oldest to Newest is called");
             // sortMenuButton.setText("Oldest to Newest");
             recipeList.recipeSortOldToNew();
-        });    	
+        });    
+        
+        // Filter button functionality
+    	filterBox.setOnAction(e -> {
+            // Set Filter Type
+    		recipeList.setFilterType(filterBox.getValue().toString());
+    		recipeList.loadRecipesMongo();
+        });
     }
 }
