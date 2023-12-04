@@ -12,6 +12,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -238,6 +240,11 @@ class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private MenuButton sortMenuButton;
+    private MenuItem sortAtoZ;
+    private MenuItem sortZtoA;
+    private MenuItem sortNewToOld;
+    private MenuItem sortOldToNew;
     private ComboBox filterBox;
     
     ActionsList() {
@@ -255,6 +262,19 @@ class ActionsList extends HBox {
         deleteRecipeButton = new Button("Delete Recipe");
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
+        sortMenuButton = new MenuButton("Sort Recipes");
+        sortAtoZ = new MenuItem("A-Z");
+        sortZtoA = new MenuItem("Z-A");
+        sortNewToOld = new MenuItem("Newest to Oldest");
+        sortOldToNew = new MenuItem("Oldest to Newest");
+        sortMenuButton.getItems().addAll(sortAtoZ, sortZtoA, sortNewToOld, sortOldToNew);
+        sortMenuButton.setStyle(defaultButtonStyle);
+        //! If we want to reset the name of the sortMenu everytime a different sort is applied,
+        //! we should fix the size of the sortMenu
+        // sortMenuButton.setPrefWidth(120);
+        // sortMenuButton.setMinWidth(80);
+
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton);
         this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
@@ -267,6 +287,21 @@ class ActionsList extends HBox {
     }
     public Button getDeleteRecipeButton() {
         return deleteRecipeButton;
+    }
+    public MenuButton getSortMenuButton() {
+        return sortMenuButton;
+    }
+    public MenuItem getSortAtoZ() {
+        return sortAtoZ;
+    }
+    public MenuItem getSortZtoA() {
+        return sortZtoA;
+    }
+    public MenuItem getSortNewToOld() {
+        return sortNewToOld;
+    }
+    public MenuItem getSortOldToNew() {
+        return sortOldToNew;
     }
     public ComboBox getFilterBox() {
     	return filterBox;

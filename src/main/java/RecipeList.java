@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -67,6 +68,10 @@ public class RecipeList extends VBox {
         }
     }
 
+    public void setFilterType (String _filterType) {
+    	filterType = _filterType;
+    }
+
     public ArrayList<String> getDetails (String recipeName) {
 		File file = new File(db_dir + recipeName + ".txt");
         ArrayList<String> recipeDetails = new ArrayList<String>();
@@ -115,8 +120,86 @@ public class RecipeList extends VBox {
     public ArrayList<Recipe> getAllRecipes () {
 		return allRecipes;
 	}
-    
-    public void setFilterType (String _filterType) {
-    	filterType = _filterType;
+
+
+    public void sortDisplay(ArrayList<Recipe> sortedRecipes) {
+        this.getChildren().setAll(sortedRecipes);
     }
+
+    public void recipeSortA2Z() {
+        Collections.sort(allRecipes, new AtoZComparator());
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortZ2A() {
+        Collections.sort(allRecipes, new ZtoAComparator());
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortNewToOld() {
+        Collections.sort(allRecipes, new NewToOldComparator(db_dir));
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortOldToNew() {
+        Collections.sort(allRecipes, new OldToNewComparator(db_dir));
+        sortDisplay(allRecipes);
+    }
+}
+
+class ZtoAComparator implements Comparator<Recipe> { 
+  
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    { 
+        return r2.getRecipeName().compareTo(r1.getRecipeName());
+    } 
+}
+
+class AtoZComparator implements Comparator<Recipe> { 
+  
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    { 
+        return r1.getRecipeName().compareTo(r2.getRecipeName());
+    } 
+}
+
+class NewToOldComparator implements Comparator<Recipe> { 
+    String db_dir;
+    NewToOldComparator(String db_dir){
+        this.db_dir = db_dir;
+    }
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    {
+        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
+        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
+        if (file1.lastModified() < file2.lastModified()) {
+            return 1;
+        }
+
+        return -1;
+    } 
+}
+
+class OldToNewComparator implements Comparator<Recipe> { 
+    String db_dir;
+    OldToNewComparator(String db_dir){
+        this.db_dir = db_dir;
+    }
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    {
+        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
+        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
+        if (file1.lastModified() < file2.lastModified()) {
+            return -1;
+        }
+
+        return 1;
+    } 
+
+    
+    
 }

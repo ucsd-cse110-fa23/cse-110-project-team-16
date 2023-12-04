@@ -2,6 +2,10 @@
 
 import java.util.ArrayList;
 
+import java.util.Optional;
+import java.util.*;
+
+
 import org.bson.types.ObjectId;
 
 import java.io.*;
@@ -10,6 +14,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -47,6 +53,12 @@ class AppFrame extends BorderPane{
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+
+    private MenuButton sortMenuButton;
+    private MenuItem sortAtoZ;
+    private MenuItem sortZtoA;
+    private MenuItem sortNewToOld;
+    private MenuItem sortOldToNew;
     private ComboBox filterBox;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
@@ -84,6 +96,11 @@ class AppFrame extends BorderPane{
         newRecipeButton = actionsList.getNewRecipeButton();
         editRecipeButton = actionsList.getEditRecipeButton();
         deleteRecipeButton = actionsList.getDeleteRecipeButton();
+        sortMenuButton = actionsList.getSortMenuButton();
+        sortAtoZ = actionsList.getSortAtoZ();
+        sortZtoA = actionsList.getSortZtoA();
+        sortNewToOld = actionsList.getSortNewToOld();
+        sortOldToNew = actionsList.getSortOldToNew();
         filterBox = actionsList.getFilterBox();
         // Call Event Listeners for the Buttons
         addListeners();
@@ -143,14 +160,41 @@ class AppFrame extends BorderPane{
     		}
     		recipeDetails.defaultView();
         });
+        
+        sortAtoZ.setOnAction(e -> {
+            // System.out.println("Sorting A to Z is called");
+            // sortMenuButton.setText("A-Z");
+            
+            recipeList.recipeSortA2Z();
+            
+            // System.out.println(allRecipes);
+            // System.out.println("----------");
+        });
+
+        sortZtoA.setOnAction(e -> {
+            // System.out.println("Sorting Z to A is called");
+            // sortMenuButton.setText("Z-A");
     	
         // Filter button functionality
-    	filterBox.setOnAction(e -> {
-            // Set Filter Type
-    		recipeList.setFilterType(filterBox.getValue().toString());
-    		recipeList.loadRecipesMongo();
-        });
+        
     	
+            recipeList.recipeSortZ2A();
+            
+            // System.out.println(allRecipes);
+            // System.out.println("----------");
+        });
+
+        sortNewToOld.setOnAction(e -> {
+            // System.out.println("Sorting Newest to Oldest is called");
+            // sortMenuButton.setText("Newest to Oldest");
+
+            recipeList.recipeSortNewToOld();
+        });
+
+        sortOldToNew.setOnAction(e -> {
+            // System.out.println("Sorting Oldest to Newest is called");
+            // sortMenuButton.setText("Oldest to Newest");
+            recipeList.recipeSortOldToNew();
+        });    	
     }
 }
-
