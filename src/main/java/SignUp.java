@@ -1,20 +1,14 @@
 //package src.main.java;
 
-import java.util.Random;
-
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import static com.mongodb.client.model.Filters.eq;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -23,7 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 class SignUpFrame extends BorderPane{
-	 String uri = "mongodb+srv://Wumboon:Cowperson10@cluster0.wpppozd.mongodb.net/?retryWrites=true&w=majority";
 	 private Button createAccountButton;
 	 private SignUp signupinfo;
 	 private signupButtons allSignUpButtons;
@@ -58,7 +51,7 @@ class SignUpFrame extends BorderPane{
 	    }
 	
 	public boolean CreateAccount(String username,String password) {
-		try (MongoClient mongoClient = MongoClients.create(uri)) {   	
+		try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {   	
     		MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
         	MongoCollection<Document> userInfo = sampleTrainingDB.getCollection("UserInfo");
 			Document existingStudent = userInfo.find(new Document("username", username)).first();
@@ -78,7 +71,7 @@ class SignUpFrame extends BorderPane{
 	
 
 	public boolean deleteAccount(String username) {
-		try (MongoClient mongoClient = MongoClients.create(uri)) {
+		try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
         MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
         MongoCollection<Document> userInfo = sampleTrainingDB.getCollection("UserInfo");
         

@@ -4,9 +4,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 import org.bson.Document;
 
 import com.mongodb.client.MongoClient;
@@ -18,95 +15,102 @@ import com.mongodb.MongoException;
 import javafx.scene.control.Alert;
 
 
-import java.io.*;
-
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 
 class LoginFrame extends BorderPane{
-	 private Button loginButton;
-	 private Button signUpButton;
-	 private Login logininfo;
-	 private loginButtons allLoginButtons;
-	 String uri = "mongodb+srv://Wumboon:Cowperson10@cluster0.wpppozd.mongodb.net/?retryWrites=true&w=majority";
-	 Stage primaryStage;
-	 LoginFrame() {
-		
-	 }
-	 LoginFrame(Stage _primaryStage){
-		 primaryStage=_primaryStage;
-		 logininfo=new Login();
-		 allLoginButtons = new loginButtons();
-		 this.setCenter(logininfo);
-	     this.setBottom(allLoginButtons);
-	     loginButton=allLoginButtons.getLoginButton();
-	     signUpButton=allLoginButtons.getSignUpButton();
-		 addListeners();
-	 }
-	 private void addListeners() {
-		 signUpButton.setOnAction(e -> {
-			 Stage stage = new Stage();
-			 	SignUpFrame root = new SignUpFrame(stage);
-	            stage.setTitle("New User Signup");
-	            stage.setScene(new Scene(root, 450, 300));
-	            stage.show(); // Close the window
+	private static String currentUser;
+	private Button loginButton;
+	private Button signUpButton;
+	private Login logininfo;
+	private loginButtons allLoginButtons;
+	Stage primaryStage;
+	LoginFrame() {
+	
+	}
+	LoginFrame(Stage _primaryStage){
+		primaryStage=_primaryStage;
+		logininfo=new Login();
+		allLoginButtons = new loginButtons();
+		this.setCenter(logininfo);
+		this.setBottom(allLoginButtons);
+		loginButton=allLoginButtons.getLoginButton();
+		signUpButton=allLoginButtons.getSignUpButton();
+		addListeners();
+	}
+	private void addListeners() {
+		signUpButton.setOnAction(e -> {
+			Stage stage = new Stage();
+			SignUpFrame root = new SignUpFrame(stage);
+			stage.setTitle("New User Signup");
+			stage.setScene(new Scene(root, 450, 300));
+			stage.show(); // Close the window
 
-	        });
-		 loginButton.setOnAction(e -> {
-			 if(checkLogin(logininfo.getUserName(),logininfo.getUserPassword())){ //checks login info returns true if user exists	 
-			 System.out.println("Login Successful");
-			 AppFrame root = new AppFrame();
-			 Stage stage = new Stage();
-	         stage.setTitle("PantryPal");
-	         stage.setScene(new Scene(root, 1200, 600));
-	         stage.show();// Close the window
-	         primaryStage.close();
-	       }  
-	       else{
-	        System.out.println("No Account Found");                      
-	       		}
-	        });
-	    }
-public boolean checkLogin(String username, String password) {
-    try (MongoClient mongoClient = MongoClients.create(uri)) {
-        MongoDatabase sampleTrainingDB = mongoClient.getDatabase("Accounts");
-        MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("UserInfo");
-        
-        Document student1 = gradesCollection.find(new Document("username", username)).first();                
-        if (student1 != null) {
-            if (student1.get("password").equals(password)) {
-                return true;
-            }
-            return false;
-        } else {
-            return false;            
-        }
-    } catch (MongoTimeoutException e) {
-        // Handle the case where connection to the MongoDB server times out
-        System.out.println("Error: Unable to connect to the server.");
-        showAlert("Connection Error", "Unable to connect to the server. Please check your connection.");
-        return false;
-    } catch (MongoException e) {
-        // Handle other MongoDB exceptions
-        System.out.println("Database error: " + e.getMessage());
-        showAlert("Database Error", "Error occurred while accessing the database.");
-        return false;
-    }
-}
+		});
+		loginButton.setOnAction(e -> {
+			if(checkLogin(logininfo.getUserName(),logininfo.getUserPassword())){ //checks login info returns true if user exists	 
+			System.out.println("Login Successful");
+			AppFrame root = new AppFrame();
+			Stage stage = new Stage();
+			stage.setTitle("PantryPal");
+			stage.setScene(new Scene(root, 1200, 600));
+			stage.show();// Close the window
+			primaryStage.close();
+		}  
+		else{
+		System.out.println("No Account Found");                      
+			}
+		});
+	}
+	public boolean checkLogin(String username, String password) {
+		try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
+			MongoDatabase userDB = mongoClient.getDatabase("Accounts");
+			MongoCollection<Document> userCollection = userDB.getCollection("UserInfo");
+			
+			Document user = userCollection.find(new Document("username", username)).first();                
+			if (user != null) {
+				if (user.get("password").equals(password)) {
+					currentUser = username;
+					// connect to mongoDB on login
+					MongoDB.start(currentUser);
+					return true;
+				}
+				return false;
+			} else {
+				return false;            
+			}
+		} catch (MongoTimeoutException e) {
+			// Handle the case where connection to the MongoDB server times out
+			System.out.println("Error: Unable to connect to the server.");
+			showAlert("Connection Error", "Unable to connect to the server. Please check your connection.");
+			return false;
+		} catch (MongoException e) {
+			// Handle other MongoDB exceptions
+			System.out.println("Database error: " + e.getMessage());
+			showAlert("Database Error", "Error occurred while accessing the database.");
+			return false;
+		}
+	}
 
-private void showAlert(String title, String message) {
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(title);
-    alert.setHeaderText("The Server Is Down");
-    alert.setContentText(message);
-    alert.showAndWait();
-}
+	private void showAlert(String title, String message) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle(title);
+		alert.setHeaderText("The Server Is Down");
+		alert.setContentText(message);
+		alert.showAndWait();
+	}
+
+	public static void setUser(String username) {
+		currentUser = username;
+	}
+
+	public static String getUser() {
+		return currentUser;
+	}
 
 }
 
