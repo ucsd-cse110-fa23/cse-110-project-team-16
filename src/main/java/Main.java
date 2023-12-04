@@ -148,33 +148,51 @@ class AppFrame extends BorderPane{
         });
         
         sortAtoZ.setOnAction(e -> {
-            System.out.println("Sorting A to Z is called");
+            // System.out.println("Sorting A to Z is called");
             // sortMenuButton.setText("A-Z");
+            
             Collections.sort(allRecipes, new AtoZComparator());
             recipeList.sortDisplay(allRecipes);
-            System.out.println(allRecipes);
-            System.out.println("----------");
+            
+            // System.out.println(allRecipes);
+            // System.out.println("----------");
         });
 
         sortZtoA.setOnAction(e -> {
-            System.out.println("Sorting Z to A is called");
+            // System.out.println("Sorting Z to A is called");
             // sortMenuButton.setText("Z-A");
+
             Collections.sort(allRecipes, new ZtoAComparator());
             recipeList.sortDisplay(allRecipes);
-            System.out.println(allRecipes);
-            System.out.println("----------");
+            
+            // System.out.println(allRecipes);
+            // System.out.println("----------");
         });
 
         sortNewToOld.setOnAction(e -> {
-            System.out.println("Sorting Newest to Oldest is called");
+            // System.out.println("Sorting Newest to Oldest is called");
             // sortMenuButton.setText("Newest to Oldest");
+
+            Collections.sort(allRecipes, new NewToOldComparator(db_dir));
+            recipeList.sortDisplay(allRecipes);
         });
 
         sortOldToNew.setOnAction(e -> {
-            System.out.println("Sorting Oldest to Newest is called");
+            // System.out.println("Sorting Oldest to Newest is called");
             // sortMenuButton.setText("Oldest to Newest");
+            Collections.sort(allRecipes, new OldToNewComparator(db_dir));
+            recipeList.sortDisplay(allRecipes);
         });    	
     }
+}
+
+class AtoZComparator implements Comparator<Recipe> { 
+  
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    { 
+        return r2.getRecipeName().compareTo(r1.getRecipeName());
+    } 
 }
 
 class ZtoAComparator implements Comparator<Recipe> { 
@@ -186,11 +204,38 @@ class ZtoAComparator implements Comparator<Recipe> {
     } 
 }
 
-class AtoZComparator implements Comparator<Recipe> { 
-  
+class NewToOldComparator implements Comparator<Recipe> { 
+    String db_dir;
+    NewToOldComparator(String db_dir){
+        this.db_dir = db_dir;
+    }
     // override the compare() method 
     public int compare(Recipe r1, Recipe r2) 
-    { 
-        return r2.getRecipeName().compareTo(r1.getRecipeName());
+    {
+        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
+        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
+        if (file1.lastModified() < file2.lastModified()) {
+            return 1;
+        }
+
+        return -1;
     } 
-} 
+}
+
+class OldToNewComparator implements Comparator<Recipe> { 
+    String db_dir;
+    OldToNewComparator(String db_dir){
+        this.db_dir = db_dir;
+    }
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    {
+        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
+        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
+        if (file1.lastModified() < file2.lastModified()) {
+            return -1;
+        }
+
+        return 1;
+    } 
+}
