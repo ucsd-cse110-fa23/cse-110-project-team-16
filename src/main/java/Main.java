@@ -3,6 +3,7 @@
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.*;
 import java.io.*;
 
 import javafx.application.Application;
@@ -149,11 +150,19 @@ class AppFrame extends BorderPane{
         sortAtoZ.setOnAction(e -> {
             System.out.println("Sorting A to Z is called");
             // sortMenuButton.setText("A-Z");
+            Collections.sort(allRecipes, new AtoZComparator());
+            recipeList.sortDisplay(allRecipes);
+            System.out.println(allRecipes);
+            System.out.println("----------");
         });
 
         sortZtoA.setOnAction(e -> {
             System.out.println("Sorting Z to A is called");
             // sortMenuButton.setText("Z-A");
+            Collections.sort(allRecipes, new ZtoAComparator());
+            recipeList.sortDisplay(allRecipes);
+            System.out.println(allRecipes);
+            System.out.println("----------");
         });
 
         sortNewToOld.setOnAction(e -> {
@@ -168,3 +177,20 @@ class AppFrame extends BorderPane{
     }
 }
 
+class ZtoAComparator implements Comparator<Recipe> { 
+  
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    { 
+        return r1.getRecipeName().compareTo(r2.getRecipeName());
+    } 
+}
+
+class AtoZComparator implements Comparator<Recipe> { 
+  
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    { 
+        return r2.getRecipeName().compareTo(r1.getRecipeName());
+    } 
+} 
