@@ -36,6 +36,7 @@ public class Recipe extends HBox {
     private Label label;
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
+    private int creationDateRank = 1;
     
     private boolean isSelected;
 
@@ -152,6 +153,13 @@ public class Recipe extends HBox {
 
     public void updateRecipeArray(ArrayList<Recipe> arry_input) {
         recipeArray = arry_input;
+    }
+
+    public int getCreationDateRank() {
+        return creationDateRank;
+    }
+    public void updateCreationDateRank(int newRank) {
+        creationDateRank = newRank;
     }
 
     public String getDetails (String name, String whichDetail) {

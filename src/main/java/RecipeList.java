@@ -43,6 +43,7 @@ public class RecipeList extends VBox {
     	allRecipes.clear();
     	
         Set<Document> recipes = MongoDB.listRecipes();
+        int creationDateRank = 1;
 
         for (Document recipe: recipes) {
             Recipe currRecipe = null;
@@ -61,6 +62,8 @@ public class RecipeList extends VBox {
             currRecipe.setRecipeType(type);
             currRecipe.setRecipeID(id);
             currRecipe.updateText();
+            currRecipe.updateCreationDateRank(creationDateRank);
+            creationDateRank += 1;
 
             this.getChildren().add(currRecipe);
             allRecipes.add(currRecipe);
@@ -173,9 +176,8 @@ class NewToOldComparator implements Comparator<Recipe> {
     // override the compare() method 
     public int compare(Recipe r1, Recipe r2) 
     {
-        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
-        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
-        if (file1.lastModified() < file2.lastModified()) {
+
+        if (r1.getCreationDateRank() < r2.getCreationDateRank()) {
             return 1;
         }
 
@@ -191,9 +193,7 @@ class OldToNewComparator implements Comparator<Recipe> {
     // override the compare() method 
     public int compare(Recipe r1, Recipe r2) 
     {
-        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
-        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
-        if (file1.lastModified() < file2.lastModified()) {
+        if (r1.getCreationDateRank() < r2.getCreationDateRank()) {
             return -1;
         }
 

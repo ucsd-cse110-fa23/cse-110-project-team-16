@@ -129,6 +129,7 @@ class PreviewFrame extends BorderPane {
                 //! This is needed because we need to associate every single recipe
                 //! with the arraylist of total recipes
                 recipe.updateRecipeArray(allRecipes);
+                recipe.updateCreationDateRank(allRecipes.size() + 1);
                 recipeList.getChildren().add(recipe);
 
                 // add recipe to MongoDB
