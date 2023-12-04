@@ -7,11 +7,11 @@ import java.util.*;
 public class RequestHandler implements HttpHandler {
 
 
- private final Map<String, String> data;
+ private RecipeDetails recipeDetails;
 
 
- public RequestHandler(Map<String, String> data) {
-   this.data = data;
+ public RequestHandler(RecipeDetails recipeDetails) {
+   this.recipeDetails = recipeDetails;
  }
 
  public void handle(HttpExchange httpExchange) throws IOException {
@@ -21,25 +21,7 @@ public class RequestHandler implements HttpHandler {
         if (method.equals("GET")) {
           response = handleGet(httpExchange);
         } else if (method.equals("POST")) {
-          response = handlePost(httpExchange);
-        }
-        else if (method.equals("/recording")) {
-          response = handleRecording(httpExchange);
-        }
-        else if (method.equals("/whisper")) {
-          response = handlePost(httpExchange);
-        }
-        else if (method.equals("/login")) {
-          response = handlePost(httpExchange);
-        }
-        else if (method.equals("/chatGPT")) {
-          response = handlePost(httpExchange);
-        }
-        else if (method.equals("/recordings")) {
-          response = handlePost(httpExchange);
-        }
-        else if (method.equals("/recipes")) {
-          response = handlePost(httpExchange);
+          //response = handlePost(httpExchange);
         }
         else {
           throw new Exception("Not Valid Request Method");
@@ -56,28 +38,47 @@ public class RequestHandler implements HttpHandler {
     outStream.close();
  }
 
- private String handleRecording(HttpExchange httpExchange) {
-    String response = "Invalid GET request";
-    return response;
-}
 
 private String handleGet(HttpExchange httpExchange) throws IOException {
-    String response = "Invalid GET request";
-    URI uri = httpExchange.getRequestURI();
-    String query = uri.getRawQuery();
-    if (query != null) {
-      String value = query.substring(query.indexOf("=") + 1);
-      String year = data.get(value); // Retrieve data from hashmap
-      if (year != null) {
-        response = year;
-        System.out.println("Queried for " + value + " and found " + year);
-      } else {
-        response = "No data found for " + value;
-      }
-    }
-    return response;
-  }
+  if ("GET".equals(httpExchange.getRequestMethod())) {
+    // Extract query parameters from the request URI
+    String query = httpExchange.getRequestURI().getQuery();
+    String recipeName = recipeDetails.getTitleText().getText();
 
+    // Build HTML response
+    StringBuilder htmlBuilder = new StringBuilder();
+    htmlBuilder
+            .append("<html>")
+            .append("<body>")
+            .append("<h1>")
+            .append("Hello ")
+            .append(recipeName)
+            .append("</h1>")
+            .append("</body>")
+            .append("</html>");
+
+    // Encode HTML content
+    String response = htmlBuilder.toString();
+
+    // Set headers and send response
+      httpExchange.sendResponseHeaders(200, response.length());
+        try (OutputStream os = httpExchange.getResponseBody()) {
+          os.write(response.getBytes());
+        }
+        return "";
+    } else {
+    // Handle other HTTP methods if needed
+      httpExchange.sendResponseHeaders(405, 0); // Method Not Allowed
+      return "";
+    }
+}
+  
+
+  private String extractNameFromQuery(String query) {
+  return null;
+}
+
+/* 
   private String handlePost(HttpExchange httpExchange) throws IOException {
     InputStream inStream = httpExchange.getRequestBody();
     Scanner scanner = new Scanner(inStream);
@@ -100,6 +101,6 @@ private String handleGet(HttpExchange httpExchange) throws IOException {
     return response;
   }
  
- 
+ */
  
 }

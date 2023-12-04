@@ -25,9 +25,9 @@ public class Server {
     HttpServer server = HttpServer.create(
      new InetSocketAddress(SERVER_HOSTNAME, SERVER_PORT), 0);
 
-     HttpHandler handler = new RequestHandler(data);
+     //HttpHandler handler = new RequestHandler(data);
      // create the context
-     HttpContext context = server.createContext("/path", handler); // Replace "/path" with the desired context path
+     //HttpContext context = server.createContext("/", handler); // Replace "/path" with the desired context path
 
      // set the executor
      server.setExecutor(threadPoolExecutor);

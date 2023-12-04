@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.io.*;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
@@ -46,8 +48,7 @@ public class Main extends Application {
             // Server is available, start the application
             launch(args);
         } else {
-            // Server is not available, display a notification and exit
-            System.out.println("Server is not available. Please make sure the server is running.");
+            showAlert("Server Not Available", "Please make sure the server is running.");
         }
     }
     
@@ -57,6 +58,16 @@ public class Main extends Application {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private static void showAlert(String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
         
     
@@ -71,6 +82,7 @@ class AppFrame extends BorderPane{
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private Button shareRecipeButton;
     private ComboBox filterBox;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
@@ -108,6 +120,7 @@ class AppFrame extends BorderPane{
         newRecipeButton = actionsList.getNewRecipeButton();
         editRecipeButton = actionsList.getEditRecipeButton();
         deleteRecipeButton = actionsList.getDeleteRecipeButton();
+        shareRecipeButton = actionsList.getShareRecipeButton();
         filterBox = actionsList.getFilterBox();
         // Call Event Listeners for the Buttons
         addListeners();
@@ -165,6 +178,19 @@ class AppFrame extends BorderPane{
     			}
     		}
     		recipeDetails.defaultView();
+        });
+        shareRecipeButton.setOnAction(e -> {
+            for (int i = 0; i < allRecipes.size(); i++) {
+    			if (allRecipes.get(i).isSelected()) {
+                    ShareLogic shareLogic = new ShareLogic(allRecipes.get(i).getRecipeName());
+                    ShareFrame shareFrame = new ShareFrame(shareLogic);
+                    Stage stage = new Stage();
+                    stage.setTitle("Share Recipe");
+                    stage.setScene(new Scene(shareFrame,400, 100));
+                    stage.show();
+                }
+            }
+
         });
     	
         // Filter button functionality

@@ -231,6 +231,7 @@ class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private Button shareRecipeButton;
     private ComboBox filterBox;
     
     ActionsList() {
@@ -247,8 +248,10 @@ class ActionsList extends HBox {
         editRecipeButton.setStyle(defaultButtonStyle);
         deleteRecipeButton = new Button("Delete Recipe");
         deleteRecipeButton.setStyle(defaultButtonStyle);
+        shareRecipeButton = new Button("Share Recipe");
+        shareRecipeButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, shareRecipeButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -260,6 +263,9 @@ class ActionsList extends HBox {
     }
     public Button getDeleteRecipeButton() {
         return deleteRecipeButton;
+    }
+    public Button getShareRecipeButton() {
+        return shareRecipeButton;
     }
     public ComboBox getFilterBox() {
     	return filterBox;
