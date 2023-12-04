@@ -1,9 +1,8 @@
 //package src.main.java;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.util.ArrayList;
-
-import org.bson.types.ObjectId;
-
 import java.io.*;
 
 import javafx.application.Application;
@@ -13,6 +12,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import java.net.InetAddress;
+import java.net.Socket;
+import org.bson.conversions.Bson;
 
 // Main Method - Runs application
 public class Main extends Application {
@@ -50,6 +58,8 @@ public class Main extends Application {
             return false;
         }
     }
+        
+    
 }
 
 // Application - using JavaFX
@@ -137,7 +147,6 @@ class AppFrame extends BorderPane{
                     // delete txt file
 
                     String recipeName = allRecipes.get(i).getRecipeName();
-                    ObjectId recipeID = allRecipes.get(i).getRecipeID();
                     String deletedFileName = db_dir + recipeName + ".txt";
                     File deletedFile = new File(deletedFileName);
                     deletedFile.delete();
@@ -152,7 +161,7 @@ class AppFrame extends BorderPane{
     				allRecipes.remove(i);
 
                     // delete recipe on mongoDB
-                    MongoDB.deleteRecipe(recipeID);
+                    deleteRecipeMongo(recipeName);
     			}
     		}
     		recipeDetails.defaultView();
@@ -165,6 +174,24 @@ class AppFrame extends BorderPane{
     		recipeList.loadRecipesMongo();
         });
     	
+    }
+
+    private boolean deleteRecipeMongo(String name) {
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+			Document existingRecipe = userCollection.find(new Document("name", name)).first();
+
+			if (existingRecipe != null) {
+                Bson filter = eq("name", name);
+                userCollection.deleteOne(filter);
+
+        		return false;
+        	}
+        	else {
+        		return false;            
+    		}
+		}
     }
 }
 
