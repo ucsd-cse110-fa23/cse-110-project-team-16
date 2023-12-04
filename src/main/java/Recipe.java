@@ -1,12 +1,16 @@
 //package src.main.java;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
-import javafx.beans.binding.StringBinding;
+import org.bson.types.ObjectId;
+
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,22 +23,28 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.paint.Color; 
-import javafx.application.Platform;
 
 public class Recipe extends HBox {
 
     private String recipeName;
+    private String recipeType;
+    private ObjectId recipeID;
     private Text text;
+    private Label label;
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
     
-    private boolean isSelected;    
+    private boolean isSelected;
+
+    // Default Constructor
+    public Recipe(){}
 
     public Recipe(RecipeDetails _recipeDetails) {
     	recipeDetails = _recipeDetails;
     	
     	this.setPrefSize(500, 40); // sets size of recipe
         this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); // sets background color of recipe
+        this.setSpacing(20);
         isSelected = false;
 
         text = new Text(); // create recipe name text field
@@ -43,6 +53,13 @@ public class Recipe extends HBox {
         text.setTextAlignment(TextAlignment.CENTER); // set alignment of text field
         text.setFill(Color.WHITE);
         this.getChildren().add(text); // add textlabel to recipe
+
+        label = new Label(); // create recipe name text field
+        label.setText(recipeType);
+        label.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 20));
+        label.setStyle("-fx-background-color: #999999; -fx-border-width: 0;"); // set background color of texfield
+        label.setTextAlignment(TextAlignment.RIGHT); // set alignment of text field
+        this.getChildren().add(label); // add textlabel to recipe
         
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
         	toggleSelect();
@@ -59,9 +76,39 @@ public class Recipe extends HBox {
     public void setRecipeName(String name) {
         recipeName = name;
     }
+
+    public ObjectId getRecipeID() {
+        return this.recipeID;
+    }
+    
+    public void setRecipeID(ObjectId id) {
+        recipeID = id;
+    }
+    
+    public String getRecipeType() {
+        return this.recipeType;
+    }
+    
+    public void setRecipeType(String type) {
+        recipeType = type;
+    }
     
     public void updateText() {
-
+    	// Setting label and style based on recipeType
+    	if (recipeType.equals("Breakfast")) {
+    		label.setText("B");
+    		label.setStyle("-fx-background-color: #3cb371; -fx-border-width: 0;"); // set background color of texfield
+    	}
+    	else if (recipeType.equals("Lunch")) {
+    		label.setText("L");
+    		label.setStyle("-fx-background-color: #ee82ee; -fx-border-width: 0;"); // set background color of texfield
+    	}
+    	else {
+    		label.setText("D");
+    		label.setStyle("-fx-background-color: #ff0000; -fx-border-width: 0;"); // set background color of texfield
+    	}
+ 
+    	// Setting recipe name on tabs
     	if (recipeName.length() > 20) {
             text.setText(recipeName.substring(0,20) + "...");
         } 
@@ -90,7 +137,7 @@ public class Recipe extends HBox {
             }
 
             System.out.println("Current recipe name: " + this.getRecipeName());
-            recipeDetails.showDetails(this.getRecipeName());
+            recipeDetails.showDetailsMongo(this.getRecipeID());
 
         } else {
             isSelected = false;
@@ -191,6 +238,7 @@ class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private ComboBox filterBox;
     
     ActionsList() {
         this.setPrefSize(300, 50);
@@ -198,6 +246,8 @@ class ActionsList extends HBox {
         this.setStyle("-fx-background-color: #996600;");
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        String[] recipeTypes = {"All", "Breakfast", "Lunch", "Dinner"};
+        filterBox = new ComboBox(FXCollections.observableArrayList(recipeTypes));
         newRecipeButton = new Button("New Recipe");
         newRecipeButton.setStyle(defaultButtonStyle);
         editRecipeButton = new Button("Edit Recipe");
@@ -205,7 +255,7 @@ class ActionsList extends HBox {
         deleteRecipeButton = new Button("Delete Recipe");
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -217,6 +267,9 @@ class ActionsList extends HBox {
     }
     public Button getDeleteRecipeButton() {
         return deleteRecipeButton;
+    }
+    public ComboBox getFilterBox() {
+    	return filterBox;
     }
 }
 
@@ -259,6 +312,60 @@ class RecipeDetails extends VBox {
         displayImageView.setFitWidth(150);
 
         this.getChildren().addAll(displayImageView, displayType, displayIngredients, displayDirections);
+    }
+
+    public boolean showDetailsMongo (ObjectId recipeID) {
+        List<String> recipeSet = MongoDB.getRecipe(recipeID);
+        if (recipeSet != null) {
+            String name = recipeSet.get(0);
+            String type = recipeSet.get(1);
+            String ingredients = recipeSet.get(2);
+            String directions = recipeSet.get(3);
+            String image = recipeSet.get(4);
+
+            // convert img and get path
+            String imageLocation = base64ToImg(name, image);
+
+            setTitleText(name);
+            setDisplayType(type);
+            setDisplayIngredients(ingredients);
+            setDisplayDirections(directions);
+            setDisplayImageView(imageLocation);
+
+            this.setAlignment(Pos.CENTER_LEFT);
+            this.setPadding(new Insets(10, 0, 10, 200));
+
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private static String base64ToImg(String name, String base64) {
+        if (base64 == null)
+            return null;
+
+        String path = null;
+
+        byte[] data = Base64.getDecoder().decode(base64);
+        path = "images/" + name + ".jpg";
+        File file = new File(path);
+
+        // if there is an image already in path, delete
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
+            oStream.write(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return path;
     }
 	
 	public void showDetails (String recipeName) {
@@ -357,19 +464,23 @@ class RecipeDetails extends VBox {
     }
 
     public void setDisplayType (String mealType) {
-        titleText.setText(mealType);
+        displayType.setText(mealType + "\n");
+        displayType.setWrappingWidth(500);
 	}
 	
 	public void setTitleText (String mealName) {
-		titleText.setText(mealName);		
+		titleText.setText(mealName);
+        titleText.setWrappingWidth(700);
 	}
 	
 	public void setDisplayIngredients (String mealIngred) {
-		displayIngredients.setText(mealIngred);
+		displayIngredients.setText(mealIngred + "\n");
+        displayIngredients.setWrappingWidth(500);
 	}
 	
-	public void setDisplayDirections (String mealDirection) {
-		displayDirections.setText(mealDirection);
+	public void setDisplayDirections (String mealDirections) {
+		displayDirections.setText(mealDirections);
+        displayDirections.setWrappingWidth(500);
 	}
 
     public void setDisplayImageView (String path) {
