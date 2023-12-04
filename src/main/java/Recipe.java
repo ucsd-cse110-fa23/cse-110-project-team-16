@@ -66,6 +66,8 @@ public class Recipe extends HBox {
         });
 
     }
+    public Recipe() {
+    }
 
 
     public String getRecipeName() {
