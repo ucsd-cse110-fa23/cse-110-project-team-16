@@ -151,8 +151,7 @@ class AppFrame extends BorderPane{
             // System.out.println("Sorting A to Z is called");
             // sortMenuButton.setText("A-Z");
             
-            Collections.sort(allRecipes, new AtoZComparator());
-            recipeList.sortDisplay(allRecipes);
+            recipeList.recipeSortA2Z();
             
             // System.out.println(allRecipes);
             // System.out.println("----------");
@@ -162,8 +161,7 @@ class AppFrame extends BorderPane{
             // System.out.println("Sorting Z to A is called");
             // sortMenuButton.setText("Z-A");
 
-            Collections.sort(allRecipes, new ZtoAComparator());
-            recipeList.sortDisplay(allRecipes);
+            recipeList.recipeSortZ2A();
             
             // System.out.println(allRecipes);
             // System.out.println("----------");
@@ -173,15 +171,13 @@ class AppFrame extends BorderPane{
             // System.out.println("Sorting Newest to Oldest is called");
             // sortMenuButton.setText("Newest to Oldest");
 
-            Collections.sort(allRecipes, new NewToOldComparator(db_dir));
-            recipeList.sortDisplay(allRecipes);
+            recipeList.recipeSortNewToOld();
         });
 
         sortOldToNew.setOnAction(e -> {
             // System.out.println("Sorting Oldest to Newest is called");
             // sortMenuButton.setText("Oldest to Newest");
-            Collections.sort(allRecipes, new OldToNewComparator(db_dir));
-            recipeList.sortDisplay(allRecipes);
+            recipeList.recipeSortOldToNew();
         });    	
     }
 }

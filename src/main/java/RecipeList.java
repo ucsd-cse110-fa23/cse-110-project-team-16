@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.*;
 
 import javafx.scene.layout.VBox;
@@ -125,6 +122,26 @@ public class RecipeList extends VBox {
 
     public void sortDisplay(ArrayList<Recipe> sortedRecipes) {
         this.getChildren().setAll(sortedRecipes);
+    }
+
+    public void recipeSortA2Z() {
+        Collections.sort(allRecipes, new AtoZComparator());
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortZ2A() {
+        Collections.sort(allRecipes, new ZtoAComparator());
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortNewToOld() {
+        Collections.sort(allRecipes, new NewToOldComparator(db_dir));
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortOldToNew() {
+        Collections.sort(allRecipes, new OldToNewComparator(db_dir));
+        sortDisplay(allRecipes);
     }
 }
 
