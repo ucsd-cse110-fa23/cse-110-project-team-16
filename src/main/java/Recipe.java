@@ -302,6 +302,7 @@ class ActionsList extends HBox {
     }
     public MenuItem getSortOldToNew() {
         return sortOldToNew;
+    }
     public ComboBox getFilterBox() {
     	return filterBox;
     }
