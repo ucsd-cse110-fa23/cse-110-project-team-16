@@ -14,6 +14,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -241,10 +242,11 @@ class ActionsList extends HBox {
     private Button editRecipeButton;
     private Button deleteRecipeButton;
     private MenuButton sortMenuButton;
-    private MenuItem sortAtoZ;
-    private MenuItem sortZtoA;
-    private MenuItem sortNewToOld;
-    private MenuItem sortOldToNew;
+    private CheckMenuItem sortAtoZ;
+    private CheckMenuItem sortZtoA;
+    private CheckMenuItem sortNewToOld;
+    private CheckMenuItem sortOldToNew;
+    private ArrayList<CheckMenuItem> menuItemList;
     private ComboBox filterBox;
     
     ActionsList() {
@@ -263,19 +265,20 @@ class ActionsList extends HBox {
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
         sortMenuButton = new MenuButton("Sort Recipes");
-        sortAtoZ = new MenuItem("A-Z");
-        sortZtoA = new MenuItem("Z-A");
-        sortNewToOld = new MenuItem("Newest to Oldest");
-        sortOldToNew = new MenuItem("Oldest to Newest");
+        sortAtoZ = new CheckMenuItem("A-Z");
+        sortZtoA = new CheckMenuItem("Z-A");
+        sortNewToOld = new CheckMenuItem("Newest to Oldest");
+        sortOldToNew = new CheckMenuItem("Oldest to Newest");        
         sortMenuButton.getItems().addAll(sortAtoZ, sortZtoA, sortNewToOld, sortOldToNew);
         sortMenuButton.setStyle(defaultButtonStyle);
-        //! If we want to reset the name of the sortMenu everytime a different sort is applied,
-        //! we should fix the size of the sortMenu
-        // sortMenuButton.setPrefWidth(120);
-        // sortMenuButton.setMinWidth(80);
+
+        menuItemList = new ArrayList<CheckMenuItem>();
+        menuItemList.add(sortAtoZ);
+        menuItemList.add(sortZtoA);
+        menuItemList.add(sortNewToOld);
+        menuItemList.add(sortOldToNew);        
 
         this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox);
-        // this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -291,17 +294,24 @@ class ActionsList extends HBox {
     public MenuButton getSortMenuButton() {
         return sortMenuButton;
     }
-    public MenuItem getSortAtoZ() {
+    public CheckMenuItem getSortAtoZ() {
         return sortAtoZ;
     }
-    public MenuItem getSortZtoA() {
+    public CheckMenuItem getSortZtoA() {
         return sortZtoA;
     }
-    public MenuItem getSortNewToOld() {
+    public CheckMenuItem getSortNewToOld() {
         return sortNewToOld;
     }
-    public MenuItem getSortOldToNew() {
+    public CheckMenuItem getSortOldToNew() {
         return sortOldToNew;
+    }
+    public void uncheckOtherItems(CheckMenuItem checkedItem) {
+        for (CheckMenuItem entries: menuItemList) {
+            if (entries != checkedItem) {
+                entries.setSelected(false);
+            }
+        }
     }
     public ComboBox getFilterBox() {
     	return filterBox;
