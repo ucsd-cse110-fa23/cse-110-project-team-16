@@ -1,9 +1,13 @@
 //package src.main.java;
 
-
 import java.util.ArrayList;
+
 import java.util.Optional;
 import java.util.*;
+
+
+import org.bson.types.ObjectId;
+
 import java.io.*;
 
 import javafx.application.Application;
@@ -12,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 
@@ -48,11 +53,13 @@ class AppFrame extends BorderPane{
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+
     private MenuButton sortMenuButton;
     private MenuItem sortAtoZ;
     private MenuItem sortZtoA;
     private MenuItem sortNewToOld;
     private MenuItem sortOldToNew;
+    private ComboBox filterBox;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
     private String db_dir = "localDB/";
@@ -94,6 +101,7 @@ class AppFrame extends BorderPane{
         sortZtoA = actionsList.getSortZtoA();
         sortNewToOld = actionsList.getSortNewToOld();
         sortOldToNew = actionsList.getSortOldToNew();
+        filterBox = actionsList.getFilterBox();
         // Call Event Listeners for the Buttons
         addListeners();
     }
@@ -130,18 +138,24 @@ class AppFrame extends BorderPane{
     			if (allRecipes.get(i).isSelected()) {
     				recipeList.getChildren().remove(allRecipes.get(i));
                     // delete txt file
-                    String deletedFileName = db_dir + allRecipes.get(i).getRecipeName() + ".txt";
+
+                    String recipeName = allRecipes.get(i).getRecipeName();
+                    ObjectId recipeID = allRecipes.get(i).getRecipeID();
+                    String deletedFileName = db_dir + recipeName + ".txt";
                     File deletedFile = new File(deletedFileName);
                     deletedFile.delete();
                     System.out.println("Deleted this file: " + deletedFileName);
 
                     // delete jpg file
-                    String image = "images/" + allRecipes.get(i).getRecipeName() + ".jpg";
+                    String image = "images/" + recipeName + ".jpg";
                     File imageFile = new File(image);
                     imageFile.delete();
                     System.out.println("Deleted this file: " + imageFile);
                     
     				allRecipes.remove(i);
+
+                    // delete recipe on mongoDB
+                    MongoDB.deleteRecipe(recipeID);
     			}
     		}
     		recipeDetails.defaultView();
@@ -160,7 +174,16 @@ class AppFrame extends BorderPane{
         sortZtoA.setOnAction(e -> {
             // System.out.println("Sorting Z to A is called");
             // sortMenuButton.setText("Z-A");
-
+    	
+        // Filter button functionality
+    	filterBox.setOnAction(e -> {
+            // Set Filter Type
+    		recipeList.setFilterType(filterBox.getValue().toString());
+    		recipeList.loadRecipesMongo();
+        });
+    	
+    }
+}
             recipeList.recipeSortZ2A();
             
             // System.out.println(allRecipes);

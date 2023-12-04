@@ -18,7 +18,7 @@ public class RecipeTests {
 		allRecipes = new ArrayList<Recipe>();
 		
 		// Created recipe for testing use
-		recipe = new Recipe(null);
+		recipe = new Recipe();
 		recipe.setRecipeName("Ham and Cheese Sandwich");
 		recipe.updateRecipeArray(allRecipes);
 		allRecipes.add(recipe);
