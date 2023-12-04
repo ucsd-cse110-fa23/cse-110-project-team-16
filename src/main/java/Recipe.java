@@ -219,6 +219,10 @@ class ActionsList extends HBox {
         sortOldToNew = new MenuItem("Oldest to Newest");
         sortMenuButton.getItems().addAll(sortAtoZ, sortZtoA, sortNewToOld, sortOldToNew);
         sortMenuButton.setStyle(defaultButtonStyle);
+        //! If we want to reset the name of the sortMenu everytime a different sort is applied,
+        //! we should fix the size of the sortMenu
+        // sortMenuButton.setPrefWidth(120);
+        // sortMenuButton.setMinWidth(80);
 
         this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton);
         this.setAlignment(Pos.CENTER);

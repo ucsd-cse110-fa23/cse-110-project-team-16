@@ -148,18 +148,22 @@ class AppFrame extends BorderPane{
         
         sortAtoZ.setOnAction(e -> {
             System.out.println("Sorting A to Z is called");
+            // sortMenuButton.setText("A-Z");
         });
 
         sortZtoA.setOnAction(e -> {
             System.out.println("Sorting Z to A is called");
+            // sortMenuButton.setText("Z-A");
         });
 
         sortNewToOld.setOnAction(e -> {
             System.out.println("Sorting Newest to Oldest is called");
+            // sortMenuButton.setText("Newest to Oldest");
         });
 
         sortOldToNew.setOnAction(e -> {
             System.out.println("Sorting Oldest to Newest is called");
+            // sortMenuButton.setText("Oldest to Newest");
         });    	
     }
 }
