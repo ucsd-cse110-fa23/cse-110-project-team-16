@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.*;
 
 import javafx.scene.layout.VBox;
 
@@ -121,4 +122,8 @@ public class RecipeList extends VBox {
     public ArrayList<Recipe> getAllRecipes () {
 		return allRecipes;
 	}
+
+    public void sortDisplay(ArrayList<Recipe> sortedRecipes) {
+        this.getChildren().setAll(sortedRecipes);
+    }
 }
