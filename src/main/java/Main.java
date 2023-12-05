@@ -163,38 +163,37 @@ class AppFrame extends BorderPane{
         });
         
         sortAtoZ.setOnAction(e -> {
-            // System.out.println("Sorting A to Z is called");
-            // sortMenuButton.setText("A-Z");            
+            String name = "A - Z";
+            sortMenuButton.setText(name);
+            recipeList.setSortType(name);       
             
             actionsList.uncheckOtherItems(sortAtoZ);
             recipeList.recipeSortA2Z();
-            
-            // System.out.println(allRecipes);
-            // System.out.println("----------");
         });
 
         sortZtoA.setOnAction(e -> {
-            // System.out.println("Sorting Z to A is called");
-            // sortMenuButton.setText("Z-A");
+            String name = "Z - A";
+            sortMenuButton.setText(name);
+            recipeList.setSortType(name);       
             
             actionsList.uncheckOtherItems(sortZtoA);
             recipeList.recipeSortZ2A();
-            
-            // System.out.println(allRecipes);
-            // System.out.println("----------");
         });
 
         sortNewToOld.setOnAction(e -> {
-            // System.out.println("Sorting Newest to Oldest is called");
-            // sortMenuButton.setText("Newest to Oldest");
+            String name = "Newest to Oldest";
+            sortMenuButton.setText(name);
+            recipeList.setSortType(name);  
 
             actionsList.uncheckOtherItems(sortNewToOld);
             recipeList.recipeSortNewToOld();
         });
 
         sortOldToNew.setOnAction(e -> {
-            // System.out.println("Sorting Oldest to Newest is called");
-            // sortMenuButton.setText("Oldest to Newest");
+            String name = "Oldest to Newest";
+            sortMenuButton.setText(name);
+            recipeList.setSortType(name);  
+
             actionsList.uncheckOtherItems(sortOldToNew);
             recipeList.recipeSortOldToNew();
         }); 

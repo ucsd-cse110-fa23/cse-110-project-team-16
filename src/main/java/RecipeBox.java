@@ -135,13 +135,15 @@ class PreviewFrame extends BorderPane {
                 // add recipe to MongoDB
                 ObjectId id = MongoDB.addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
                 recipe.setRecipeID(id);
+                recipe.setDate(RecipeList.convertToDate(id.toString()));
 
+                recipeList.resortRecipes();
                 recipe.toggleSelect();
 
                 recipeDetails.showDetailsMongo(recipe.getRecipeID());
 
                 Stage stageClose = (Stage) getScene().getWindow(); // Get the current stage
-                stageClose.close(); // Close the window                
+                stageClose.close(); // Close the window
         });
     	refreshButton.setOnAction(e -> {
     		String image = "images/" + recipeName + ".jpg";
@@ -479,6 +481,9 @@ class EditFrame extends BorderPane {
                 else {
                 	recipeDetails.showDetailsMongo(recipe.getRecipeID());
                 }
+
+                // refresh sort method
+                recipeList.resortRecipes();
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
                 stage.close(); // Close the window

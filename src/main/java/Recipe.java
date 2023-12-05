@@ -37,6 +37,7 @@ public class Recipe extends HBox {
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
     private int creationDateRank = 1;
+    private Date creationDate;
     
     private boolean isSelected;
 
@@ -72,6 +73,13 @@ public class Recipe extends HBox {
 
     }
 
+    public Date getDate() {
+        return this.creationDate;
+    }
+
+    public void setDate(Date date) {
+        creationDate = date;
+    }
 
     public String getRecipeName() {
         return this.recipeName;
@@ -263,8 +271,13 @@ class ActionsList extends HBox {
         this.setStyle("-fx-background-color: #996600;");
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        
+        // filter dropdown menu
         String[] recipeTypes = {"All", "Breakfast", "Lunch", "Dinner"};
         filterBox = new ComboBox(FXCollections.observableArrayList(recipeTypes));
+        filterBox.getSelectionModel().selectFirst(); // set default value
+        filterBox.setStyle(defaultButtonStyle);
+
         newRecipeButton = new Button("New Recipe");
         newRecipeButton.setStyle(defaultButtonStyle);
         editRecipeButton = new Button("Edit Recipe");
@@ -273,6 +286,7 @@ class ActionsList extends HBox {
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
         sortMenuButton = new MenuButton("Sort Recipes");
+        sortMenuButton.setMinWidth(125);
         sortAtoZ = new CheckMenuItem("A-Z");
         sortZtoA = new CheckMenuItem("Z-A");
         sortNewToOld = new CheckMenuItem("Newest to Oldest");
@@ -284,7 +298,7 @@ class ActionsList extends HBox {
         menuItemList.add(sortAtoZ);
         menuItemList.add(sortZtoA);
         menuItemList.add(sortNewToOld);
-        menuItemList.add(sortOldToNew);        
+        menuItemList.add(sortOldToNew);
 
         this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox);
         this.setAlignment(Pos.CENTER);
@@ -324,12 +338,7 @@ class ActionsList extends HBox {
     public ComboBox getFilterBox() {
     	return filterBox;
     }
-}
-
-
-
-
-		
+}	
 
 class RecipeDetails extends VBox {		
 
@@ -412,7 +421,7 @@ class RecipeDetails extends VBox {
             e.printStackTrace();
         }
 
-        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
+        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))) {
             oStream.write(data);
         } catch (Exception e) {
             e.printStackTrace();
