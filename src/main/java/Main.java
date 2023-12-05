@@ -13,9 +13,11 @@ import java.io.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -55,10 +57,10 @@ class AppFrame extends BorderPane{
     private Button deleteRecipeButton;
 
     private MenuButton sortMenuButton;
-    private MenuItem sortAtoZ;
-    private MenuItem sortZtoA;
-    private MenuItem sortNewToOld;
-    private MenuItem sortOldToNew;
+    private CheckMenuItem sortAtoZ;
+    private CheckMenuItem sortZtoA;
+    private CheckMenuItem sortNewToOld;
+    private CheckMenuItem sortOldToNew;
     private ComboBox filterBox;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
@@ -122,17 +124,32 @@ class AppFrame extends BorderPane{
         });
         
     	editRecipeButton.setOnAction(e -> {
-            // Edit a new recipe
-    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
+            if (recipeDetails.getCurrRecipe() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Choose a Recipe");
+                alert.setHeaderText("Choose a Recipe");
+                alert.showAndWait();
+            }
+            else {
+                // Edit a new recipe
+                EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
 
-            Stage stage = new Stage();
-            stage.setTitle("Edit Recipe");
-            stage.setScene(new Scene(root, 450, 450));
-            stage.show();
-            
+                Stage stage = new Stage();
+                stage.setTitle("Edit Recipe");
+                stage.setScene(new Scene(root, 450, 450));
+                stage.show();
+            }
         });
 
     	deleteRecipeButton.setOnAction(e -> {
+            if (recipeDetails.getCurrRecipe() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Choose a Recipe");
+                alert.setHeaderText("Choose a Recipe");
+                alert.showAndWait();
+                return;
+            }
+
             // Delete all toggled recipes
     		for (int i = 0; i < allRecipes.size(); i++) {
     			if (allRecipes.get(i).isSelected()) {
@@ -162,38 +179,38 @@ class AppFrame extends BorderPane{
         });
         
         sortAtoZ.setOnAction(e -> {
-            // System.out.println("Sorting A to Z is called");
-            // sortMenuButton.setText("A-Z");
+            String name = "A - Z";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);       
             
+            actionsList.uncheckOtherItems(sortAtoZ);
             recipeList.recipeSortA2Z();
-            
-            // System.out.println(allRecipes);
-            // System.out.println("----------");
         });
 
         sortZtoA.setOnAction(e -> {
-            // System.out.println("Sorting Z to A is called");
-            // sortMenuButton.setText("Z-A");
-    	
-        // Filter button functionality
-        
-    	
-            recipeList.recipeSortZ2A();
+            String name = "Z - A";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);       
             
-            // System.out.println(allRecipes);
-            // System.out.println("----------");
+            actionsList.uncheckOtherItems(sortZtoA);
+            recipeList.recipeSortZ2A();
         });
 
         sortNewToOld.setOnAction(e -> {
-            // System.out.println("Sorting Newest to Oldest is called");
-            // sortMenuButton.setText("Newest to Oldest");
+            String name = "Newest to Oldest";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);  
 
+            actionsList.uncheckOtherItems(sortNewToOld);
             recipeList.recipeSortNewToOld();
         });
 
         sortOldToNew.setOnAction(e -> {
-            // System.out.println("Sorting Oldest to Newest is called");
-            // sortMenuButton.setText("Oldest to Newest");
+            String name = "Oldest to Newest";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);  
+
+            actionsList.uncheckOtherItems(sortOldToNew);
             recipeList.recipeSortOldToNew();
         }); 
         
