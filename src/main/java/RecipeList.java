@@ -221,8 +221,5 @@ class OldToNewComparator implements Comparator<Recipe> {
     public int compare(Recipe r1, Recipe r2) 
     {
         return r1.getDate().compareTo(r2.getDate());
-    } 
-
-    
-    
+    }    
 }
