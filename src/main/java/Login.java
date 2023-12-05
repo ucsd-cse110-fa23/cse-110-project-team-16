@@ -224,9 +224,12 @@ public class Login extends VBox{
 		 return rememberMe;
 	 }
 
+
 	 private void prefillCredentials() {
         File file = new File("credentials.txt");
         if (file.exists()) {
+			//change the checkbox to checked
+			rememberMe.setSelected(true);
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String username = br.readLine();
                 String password = br.readLine();
