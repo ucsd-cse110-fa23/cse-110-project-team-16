@@ -288,7 +288,7 @@ class ActionsList extends HBox {
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
         sortMenuButton = new MenuButton("Sort Recipes");
-        sortMenuButton.setMinWidth(125);
+        // sortMenuButton.setMinWidth(125);
         sortAtoZ = new CheckMenuItem("A-Z");
         sortZtoA = new CheckMenuItem("Z-A");
         sortNewToOld = new CheckMenuItem("Newest to Oldest");

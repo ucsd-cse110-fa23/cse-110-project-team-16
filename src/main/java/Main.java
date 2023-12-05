@@ -180,7 +180,7 @@ class AppFrame extends BorderPane{
         
         sortAtoZ.setOnAction(e -> {
             String name = "A - Z";
-            sortMenuButton.setText(name);
+            // sortMenuButton.setText(name);
             recipeList.setSortType(name);       
             
             actionsList.uncheckOtherItems(sortAtoZ);
@@ -189,7 +189,7 @@ class AppFrame extends BorderPane{
 
         sortZtoA.setOnAction(e -> {
             String name = "Z - A";
-            sortMenuButton.setText(name);
+            // sortMenuButton.setText(name);
             recipeList.setSortType(name);       
             
             actionsList.uncheckOtherItems(sortZtoA);
@@ -198,7 +198,7 @@ class AppFrame extends BorderPane{
 
         sortNewToOld.setOnAction(e -> {
             String name = "Newest to Oldest";
-            sortMenuButton.setText(name);
+            // sortMenuButton.setText(name);
             recipeList.setSortType(name);  
 
             actionsList.uncheckOtherItems(sortNewToOld);
@@ -207,7 +207,7 @@ class AppFrame extends BorderPane{
 
         sortOldToNew.setOnAction(e -> {
             String name = "Oldest to Newest";
-            sortMenuButton.setText(name);
+            // sortMenuButton.setText(name);
             recipeList.setSortType(name);  
 
             actionsList.uncheckOtherItems(sortOldToNew);
