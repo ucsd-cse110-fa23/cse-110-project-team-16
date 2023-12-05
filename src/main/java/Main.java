@@ -13,6 +13,7 @@ import java.io.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -123,14 +124,21 @@ class AppFrame extends BorderPane{
         });
         
     	editRecipeButton.setOnAction(e -> {
-            // Edit a new recipe
-    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
+            if (recipeDetails.getCurrRecipe() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Choose a Recipe");
+                alert.setHeaderText("Choose a Recipe");
+                alert.showAndWait();
+            }
+            else {
+                // Edit a new recipe
+                EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
 
-            Stage stage = new Stage();
-            stage.setTitle("Edit Recipe");
-            stage.setScene(new Scene(root, 450, 450));
-            stage.show();
-            
+                Stage stage = new Stage();
+                stage.setTitle("Edit Recipe");
+                stage.setScene(new Scene(root, 450, 450));
+                stage.show();
+            }
         });
 
     	deleteRecipeButton.setOnAction(e -> {

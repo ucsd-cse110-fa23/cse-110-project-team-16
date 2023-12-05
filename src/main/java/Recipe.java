@@ -150,12 +150,14 @@ public class Recipe extends HBox {
 
             System.out.println("Current recipe name: " + this.getRecipeName());
             recipeDetails.showDetailsMongo(this.getRecipeID());
+            recipeDetails.setCurrRecipe(this);
 
         } else {
             isSelected = false;
 
             this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); 
             recipeDetails.defaultView();
+            recipeDetails.setCurrRecipe(null);
         }
     }
 
@@ -348,7 +350,7 @@ class RecipeDetails extends VBox {
 	private Text displayDirections;
     private ImageView displayImageView;
     private String db_dir = "localDB/";
-	
+	private Recipe currRecipe;
 				
 
 	public RecipeDetails () {
@@ -504,6 +506,14 @@ class RecipeDetails extends VBox {
 		displayDirections.setText(" ");
         displayImageView.setImage(null);
 	}
+
+    public Recipe getCurrRecipe() {
+        return currRecipe;
+    }
+
+    public void setCurrRecipe(Recipe recipe) {
+        this.currRecipe = recipe;
+    }
 	
 	public Text getDisplayType () {
 		return displayType;

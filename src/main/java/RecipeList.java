@@ -20,7 +20,7 @@ public class RecipeList extends VBox {
     private RecipeDetails localRecipeDetails;
     private ArrayList<Recipe> allRecipes;
     private String filterType;
-    private String sortType;
+    private String sortType = "default";
 
 
     public RecipeList(RecipeDetails details, ArrayList<Recipe> recipeArray) {

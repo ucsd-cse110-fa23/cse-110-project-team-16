@@ -142,6 +142,7 @@ class PreviewFrame extends BorderPane {
 
                 recipeDetails.showDetailsMongo(recipe.getRecipeID());
 
+
                 Stage stageClose = (Stage) getScene().getWindow(); // Get the current stage
                 stageClose.close(); // Close the window
         });
@@ -398,23 +399,18 @@ class InputBox extends VBox {
 class EditFrame extends BorderPane {
 	private Button saveButton;
 	private Button cancelButton;
-	private Button chatGPTButton;
 	private DialogButtons dialogButtons;
 	private RecipeBox recipes;
-    private ArrayList<Recipe> allRecipes;
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
 	private boolean editMode;
-    private String originalName;
 	
     EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean _editMode)
     {
     	recipeList = _recipelist;
     	recipeDetails = _recipeDetails;
-    	allRecipes = _allRecipes;
     	editMode = _editMode;
     	dialogButtons = new DialogButtons();
-        originalName = recipeDetails.getTitleText().getText();
     	
     	if (!editMode)
     		recipes = new RecipeBox();
@@ -426,7 +422,6 @@ class EditFrame extends BorderPane {
     	
     	saveButton = dialogButtons.getSaveButton();
     	cancelButton = dialogButtons.getCancelButton();
-    	//chatGPTButton = dialogButtons.getChatGPTButton();
 
         addListeners();
     }
@@ -438,28 +433,16 @@ class EditFrame extends BorderPane {
             public void handle(ActionEvent event) {
                 String recipeName = recipes.getRecipeName();
                 if (recipeName.length() == 0) {
-                    recipeName = "New recipe added";
+                    recipeName = "New Recipe";
                 }
                 String recipeType = recipes.getRecipeType();
                 String ingredients = recipes.getIngredients();
                 String directions = recipes.getDirections();
-                //String filename = "localDB/" + recipeName + ".txt";
-                
-                Recipe recipe = null;
-                boolean exists = false;
-                
-                for(int i = 0; i < allRecipes.size(); i++) {
-                	if(allRecipes.get(i).getRecipeName().equals(recipeName)) {
-                		exists = true;
-                		recipe = allRecipes.get(i);
-                	}
-                }
-                
-                if (!exists) {
-                	recipe = new Recipe(recipeDetails);
-                	allRecipes.add(recipe);
-                }
 
+                Recipe recipe = recipeDetails.getCurrRecipe();
+                if (recipe == null)
+                    return;
+                
                 // apply changes to mongoDB
                 MongoDB.editRecipe(recipe.getRecipeID(), recipeName, recipeType, ingredients, directions);
                 
@@ -467,20 +450,9 @@ class EditFrame extends BorderPane {
                 recipe.setRecipeName(recipeName);
                 recipe.setRecipeType(recipeType);
                 recipe.updateText();
-
-                //! This is needed because we need to associate every single recipe
-                //! with the arraylist of total recipes
-                recipe.updateRecipeArray(allRecipes);
-
-                if (!exists)
-                	recipeList.getChildren().add(recipe);
                 
-                if (!editMode) {
-                	recipeDetails.defaultView(); 
-                }
-                else {
-                	recipeDetails.showDetailsMongo(recipe.getRecipeID());
-                }
+                // show recipe details
+                recipeDetails.showDetailsMongo(recipe.getRecipeID());
 
                 // refresh sort method
                 recipeList.resortRecipes();
@@ -494,28 +466,6 @@ class EditFrame extends BorderPane {
             Stage stage = (Stage) getScene().getWindow();
             stage.close();
         });
-
-    	/*
-    	chatGPTButton.setOnAction(e -> {
-            ChatGPT chatgpt=new ChatGPT();           
-            String[] recipe = null;
-		    try {
-
-			    recipe = chatgpt.generatedRecipe("Breakfast", "Potatos, eggs, rice");
-		    } catch (IOException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-		    } catch (InterruptedException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-		    }
-		
-		
-		    recipes.setRecipeName(recipe[0]);
-		    recipes.setIngredients(recipe[1]);
-		    recipes.setDirections(recipe[2]);
-        });
-        */
     }
 }
 
