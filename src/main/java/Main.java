@@ -142,6 +142,14 @@ class AppFrame extends BorderPane{
         });
 
     	deleteRecipeButton.setOnAction(e -> {
+            if (recipeDetails.getCurrRecipe() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Choose a Recipe");
+                alert.setHeaderText("Choose a Recipe");
+                alert.showAndWait();
+                return;
+            }
+
             // Delete all toggled recipes
     		for (int i = 0; i < allRecipes.size(); i++) {
     			if (allRecipes.get(i).isSelected()) {
