@@ -130,7 +130,7 @@ class PreviewFrame extends BorderPane {
                 //! with the arraylist of total recipes
                 recipe.updateRecipeArray(allRecipes);
                 recipe.updateCreationDateRank(allRecipes.size() + 1);
-                recipeList.getChildren().add(recipe);
+                recipeList.getChildren().add(0, recipe);
 
                 // add recipe to MongoDB
                 ObjectId id = MongoDB.addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
