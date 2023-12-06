@@ -308,7 +308,7 @@ class ActionsList extends HBox {
         menuItemList.add(sortNewToOld);
         menuItemList.add(sortOldToNew);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox, shareRecipeButton);
         this.setAlignment(Pos.CENTER);
     }
 
