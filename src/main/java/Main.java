@@ -11,14 +11,29 @@ import org.bson.types.ObjectId;
 import java.io.*;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+
+
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import java.net.InetAddress;
+import java.net.Socket;
+import org.bson.conversions.Bson;
+
+
 
 // Main Method - Runs application
 public class Main extends Application {
@@ -40,8 +55,33 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        if (isServerAvailable("localhost", 8100)) {
+            // Server is available, start the application
+            launch(args);
+        } else {
+            showAlert("Server Not Available", "Please make sure the server is running.");
+        }
     }
+    
+    private static boolean isServerAvailable(String host, int port) {
+        try (Socket socket = new Socket(host, port)) {
+                return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private static void showAlert(String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+        
+    
 }
 
 // Application - using JavaFX
@@ -50,15 +90,20 @@ class AppFrame extends BorderPane{
     private RecipeDetails recipeDetails;
     private RecipeList recipeList;
     private ArrayList<Recipe> allRecipes;
+    private RecipeManager recipeManager;
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
 
+    private Button shareRecipeButton;
+
+
     private MenuButton sortMenuButton;
-    private MenuItem sortAtoZ;
-    private MenuItem sortZtoA;
-    private MenuItem sortNewToOld;
-    private MenuItem sortOldToNew;
+    private CheckMenuItem sortAtoZ;
+    private CheckMenuItem sortZtoA;
+    private CheckMenuItem sortNewToOld;
+    private CheckMenuItem sortOldToNew;
+
     private ComboBox filterBox;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
@@ -74,6 +119,7 @@ class AppFrame extends BorderPane{
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList(recipeDetails, allRecipes);
+        recipeManager = new RecipeManager(allRecipes);
 
         actionsList = new ActionsList();
         scrollPane = new ScrollPane(recipeList);
@@ -96,6 +142,9 @@ class AppFrame extends BorderPane{
         newRecipeButton = actionsList.getNewRecipeButton();
         editRecipeButton = actionsList.getEditRecipeButton();
         deleteRecipeButton = actionsList.getDeleteRecipeButton();
+
+        shareRecipeButton = actionsList.getShareRecipeButton();
+
         sortMenuButton = actionsList.getSortMenuButton();
         sortAtoZ = actionsList.getSortAtoZ();
         sortZtoA = actionsList.getSortZtoA();
@@ -122,86 +171,96 @@ class AppFrame extends BorderPane{
         });
         
     	editRecipeButton.setOnAction(e -> {
-            // Edit a new recipe
-    		EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
+            if (recipeDetails.getCurrRecipe() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Choose a Recipe");
+                alert.setHeaderText("Choose a Recipe");
+                alert.showAndWait();
+            }
+            else {
+                // Edit a new recipe
+                EditFrame root = new EditFrame(recipeList, recipeDetails, allRecipes, true);
 
-            Stage stage = new Stage();
-            stage.setTitle("Edit Recipe");
-            stage.setScene(new Scene(root, 450, 450));
-            stage.show();
-            
+                Stage stage = new Stage();
+                stage.setTitle("Edit Recipe");
+                stage.setScene(new Scene(root, 450, 450));
+                stage.show();
+            }
         });
 
-    	deleteRecipeButton.setOnAction(e -> {
-            // Delete all toggled recipes
-    		for (int i = 0; i < allRecipes.size(); i++) {
-    			if (allRecipes.get(i).isSelected()) {
-    				recipeList.getChildren().remove(allRecipes.get(i));
-                    // delete txt file
+ 
+        deleteRecipeButton.setOnAction(e -> {
+            Recipe selectedRecipe = recipeDetails.getCurrRecipe();
+            if (selectedRecipe == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Choose a Recipe");
+                alert.setHeaderText("Choose a Recipe");
+                alert.showAndWait();
+                return;
+            }
 
-                    String recipeName = allRecipes.get(i).getRecipeName();
-                    ObjectId recipeID = allRecipes.get(i).getRecipeID();
-                    String deletedFileName = db_dir + recipeName + ".txt";
-                    File deletedFile = new File(deletedFileName);
-                    deletedFile.delete();
-                    System.out.println("Deleted this file: " + deletedFileName);
+            recipeManager.deleteRecipe(selectedRecipe);
+            recipeList.getChildren().remove(selectedRecipe);
+            recipeDetails.defaultView();
+        }); 
 
-                    // delete jpg file
-                    String image = "images/" + recipeName + ".jpg";
-                    File imageFile = new File(image);
-                    imageFile.delete();
-                    System.out.println("Deleted this file: " + imageFile);
-                    
-    				allRecipes.remove(i);
-
-                    // delete recipe on mongoDB
-                    MongoDB.deleteRecipe(recipeID);
-    			}
-    		}
-    		recipeDetails.defaultView();
-        });
         
         sortAtoZ.setOnAction(e -> {
-            // System.out.println("Sorting A to Z is called");
-            // sortMenuButton.setText("A-Z");
+            String name = "A - Z";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);       
             
+            actionsList.uncheckOtherItems(sortAtoZ);
             recipeList.recipeSortA2Z();
-            
-            // System.out.println(allRecipes);
-            // System.out.println("----------");
         });
 
         sortZtoA.setOnAction(e -> {
-            // System.out.println("Sorting Z to A is called");
-            // sortMenuButton.setText("Z-A");
-    	
-        // Filter button functionality
-        
-    	
-            recipeList.recipeSortZ2A();
+            String name = "Z - A";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);       
             
-            // System.out.println(allRecipes);
-            // System.out.println("----------");
+            actionsList.uncheckOtherItems(sortZtoA);
+            recipeList.recipeSortZ2A();
         });
 
-        sortNewToOld.setOnAction(e -> {
-            // System.out.println("Sorting Newest to Oldest is called");
-            // sortMenuButton.setText("Newest to Oldest");
+        shareRecipeButton.setOnAction(e -> {
+            for (int i = 0; i < allRecipes.size(); i++) {
+    			if (allRecipes.get(i).isSelected()) {
+                    ShareLogic shareLogic = new ShareLogic(allRecipes.get(i).getRecipeName());
+                    ShareFrame shareFrame = new ShareFrame(shareLogic);
+                    Stage stage = new Stage();
+                    stage.setTitle("Share Recipe");
+                    stage.setScene(new Scene(shareFrame,400, 100));
+                    stage.show();
+                }
+            }
 
+        });
+    	
+        sortNewToOld.setOnAction(e -> {
+            String name = "Newest to Oldest";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);  
+
+            actionsList.uncheckOtherItems(sortNewToOld);
             recipeList.recipeSortNewToOld();
         });
 
         sortOldToNew.setOnAction(e -> {
-            // System.out.println("Sorting Oldest to Newest is called");
-            // sortMenuButton.setText("Oldest to Newest");
+            String name = "Oldest to Newest";
+            // sortMenuButton.setText(name);
+            recipeList.setSortType(name);  
+
+            actionsList.uncheckOtherItems(sortOldToNew);
             recipeList.recipeSortOldToNew();
-        });    
+        }); 
         
         // Filter button functionality
     	filterBox.setOnAction(e -> {
             // Set Filter Type
     		recipeList.setFilterType(filterBox.getValue().toString());
-    		recipeList.loadRecipesMongo();
+    		// recipeList.loadRecipesMongo();
+            recipeList.changeDisplayByType();
         });
     }
 }

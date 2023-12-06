@@ -10,7 +10,7 @@ public class MongoRecipeTests {
 
     @BeforeAll
     static void setUp() {
-        MongoDB.start("testing");
+        MongoDB.startWithUser("testing");
     }
 
     @Test

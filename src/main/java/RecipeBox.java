@@ -1,5 +1,7 @@
 //package src.main.java;
-
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.set;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,7 +26,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
 
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -129,18 +138,22 @@ class PreviewFrame extends BorderPane {
                 //! This is needed because we need to associate every single recipe
                 //! with the arraylist of total recipes
                 recipe.updateRecipeArray(allRecipes);
-                recipeList.getChildren().add(recipe);
+                recipe.updateCreationDateRank(allRecipes.size() + 1);
+                recipeList.getChildren().add(0, recipe);
 
                 // add recipe to MongoDB
                 ObjectId id = MongoDB.addRecipe(recipeName, recipeType, recipeIngredients, recipeDirections, encodedImg);
                 recipe.setRecipeID(id);
+                recipe.setDate(RecipeList.convertToDate(id.toString()));
 
+                recipeList.resortRecipes();
                 recipe.toggleSelect();
 
                 recipeDetails.showDetailsMongo(recipe.getRecipeID());
 
+
                 Stage stageClose = (Stage) getScene().getWindow(); // Get the current stage
-                stageClose.close(); // Close the window                
+                stageClose.close(); // Close the window
         });
     	refreshButton.setOnAction(e -> {
     		String image = "images/" + recipeName + ".jpg";
@@ -395,23 +408,18 @@ class InputBox extends VBox {
 class EditFrame extends BorderPane {
 	private Button saveButton;
 	private Button cancelButton;
-	private Button chatGPTButton;
 	private DialogButtons dialogButtons;
 	private RecipeBox recipes;
-    private ArrayList<Recipe> allRecipes;
 	private RecipeList recipeList;
 	private RecipeDetails recipeDetails;
 	private boolean editMode;
-    private String originalName;
 	
     EditFrame(RecipeList _recipelist, RecipeDetails _recipeDetails, ArrayList<Recipe> _allRecipes, boolean _editMode)
     {
     	recipeList = _recipelist;
     	recipeDetails = _recipeDetails;
-    	allRecipes = _allRecipes;
     	editMode = _editMode;
     	dialogButtons = new DialogButtons();
-        originalName = recipeDetails.getTitleText().getText();
     	
     	if (!editMode)
     		recipes = new RecipeBox();
@@ -423,7 +431,6 @@ class EditFrame extends BorderPane {
     	
     	saveButton = dialogButtons.getSaveButton();
     	cancelButton = dialogButtons.getCancelButton();
-    	//chatGPTButton = dialogButtons.getChatGPTButton();
 
         addListeners();
     }
@@ -435,28 +442,16 @@ class EditFrame extends BorderPane {
             public void handle(ActionEvent event) {
                 String recipeName = recipes.getRecipeName();
                 if (recipeName.length() == 0) {
-                    recipeName = "New recipe added";
+                    recipeName = "New Recipe";
                 }
                 String recipeType = recipes.getRecipeType();
                 String ingredients = recipes.getIngredients();
                 String directions = recipes.getDirections();
-                //String filename = "localDB/" + recipeName + ".txt";
-                
-                Recipe recipe = null;
-                boolean exists = false;
-                
-                for(int i = 0; i < allRecipes.size(); i++) {
-                	if(allRecipes.get(i).getRecipeName().equals(recipeName)) {
-                		exists = true;
-                		recipe = allRecipes.get(i);
-                	}
-                }
-                
-                if (!exists) {
-                	recipe = new Recipe(recipeDetails);
-                	allRecipes.add(recipe);
-                }
 
+                Recipe recipe = recipeDetails.getCurrRecipe();
+                if (recipe == null)
+                    return;
+                
                 // apply changes to mongoDB
                 MongoDB.editRecipe(recipe.getRecipeID(), recipeName, recipeType, ingredients, directions);
                 
@@ -464,20 +459,12 @@ class EditFrame extends BorderPane {
                 recipe.setRecipeName(recipeName);
                 recipe.setRecipeType(recipeType);
                 recipe.updateText();
-
-                //! This is needed because we need to associate every single recipe
-                //! with the arraylist of total recipes
-                recipe.updateRecipeArray(allRecipes);
-
-                if (!exists)
-                	recipeList.getChildren().add(recipe);
                 
-                if (!editMode) {
-                	recipeDetails.defaultView(); 
-                }
-                else {
-                	recipeDetails.showDetailsMongo(recipe.getRecipeID());
-                }
+                // show recipe details
+                recipeDetails.showDetailsMongo(recipe.getRecipeID());
+
+                // refresh sort method
+                recipeList.resortRecipes();
 
                 Stage stage = (Stage) getScene().getWindow(); // Get the current stage
                 stage.close(); // Close the window
@@ -488,30 +475,55 @@ class EditFrame extends BorderPane {
             Stage stage = (Stage) getScene().getWindow();
             stage.close();
         });
-
-    	/*
-    	chatGPTButton.setOnAction(e -> {
-            ChatGPT chatgpt=new ChatGPT();           
-            String[] recipe = null;
-		    try {
-
-			    recipe = chatgpt.generatedRecipe("Breakfast", "Potatos, eggs, rice");
-		    } catch (IOException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-		    } catch (InterruptedException e1) {
-			    // TODO Auto-generated catch block
-			    e1.printStackTrace();
-		    }
-		
-		
-		    recipes.setRecipeName(recipe[0]);
-		    recipes.setIngredients(recipe[1]);
-		    recipes.setDirections(recipe[2]);
-        });
-        */
     }
 }
+
+class ShareFrame extends FlowPane {
+    private TextField url;
+    private ShareLogic shareLogic;
+
+    ShareFrame(ShareLogic shareLogic) {
+        this.shareLogic = shareLogic;
+        url = new TextField(shareLogic.getURL());
+        url.setEditable(false);
+        url.setPrefWidth(300);
+        this.getChildren().add(url);
+    }
+    
+}
+
+class ShareLogic {
+    private String url;
+    private String recipeID; private String recipeName;
+    ShareLogic(String recipeName) {
+        this.recipeName = recipeName;
+
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+			Document existingRecipe = userCollection.find(new Document("name", recipeName)).first();
+
+            Bson filter = eq("name", recipeName);
+            userCollection.find(filter).first();
+
+             if (existingRecipe != null) {
+                // Extract the _id field from the found document
+                recipeID = existingRecipe.getObjectId("_id").toString();
+                System.out.println("Recipe ID: " + recipeID);
+
+                // Assuming you want to construct a URL based on the recipe ID
+                this.url = "https://pantrypal-server-lh0e.onrender.com/id?=" + recipeID;
+            } else {
+                url = "Recipe not found.";
+            }
+		}
+    }
+    public String getURL() {
+        return url;
+    }
+
+}
+
 
 class RecipeBox extends VBox {
 	

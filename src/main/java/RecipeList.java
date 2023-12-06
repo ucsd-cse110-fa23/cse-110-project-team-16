@@ -6,11 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Set;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.bson.types.Symbol;
 
 import javafx.scene.layout.VBox;
 
@@ -21,6 +20,7 @@ public class RecipeList extends VBox {
     private RecipeDetails localRecipeDetails;
     private ArrayList<Recipe> allRecipes;
     private String filterType;
+    private String sortType = "default";
 
 
     public RecipeList(RecipeDetails details, ArrayList<Recipe> recipeArray) {
@@ -36,6 +36,12 @@ public class RecipeList extends VBox {
         loadRecipesMongo();
     }
 
+    //! For testing purposes
+    public RecipeList(ArrayList<Recipe> recipeArray) {
+        allRecipes = recipeArray;
+        filterType = "All";
+    }
+
     public void loadRecipesMongo() {
     	for (int i = 0; i < allRecipes.size(); i++) {
     		this.getChildren().remove(allRecipes.get(i));
@@ -43,6 +49,7 @@ public class RecipeList extends VBox {
     	allRecipes.clear();
     	
         Set<Document> recipes = MongoDB.listRecipes();
+        int creationDateRank = 1;
 
         for (Document recipe: recipes) {
             Recipe currRecipe = null;
@@ -62,14 +69,25 @@ public class RecipeList extends VBox {
             currRecipe.setRecipeID(id);
             currRecipe.updateText();
 
+            currRecipe.setDate(convertToDate(id.toString()));
+
             this.getChildren().add(currRecipe);
             allRecipes.add(currRecipe);
             currRecipe.updateRecipeArray(allRecipes);
         }
     }
 
+    public static Date convertToDate(String objectId) {
+        long date = Long.parseLong(objectId.substring(0, 8), 16) * 1000;
+        return new Date(date);
+    }
+
     public void setFilterType (String _filterType) {
     	filterType = _filterType;
+    }
+
+    public void setSortType (String _sortType) {
+    	sortType = _sortType;
     }
 
     public ArrayList<String> getDetails (String recipeName) {
@@ -121,9 +139,30 @@ public class RecipeList extends VBox {
 		return allRecipes;
 	}
 
+    public void changeDisplayByType() {
+        this.getChildren().clear();
+        
+        if (filterType == "All") {
+            for (Recipe entry: allRecipes) {
+                this.getChildren().add(entry);
+            }
+            return;
+        }
+        
+        // System.out.println("Current filter type:" + filterType);
+        // System.out.println("Looking through RecipeList...");
+        for (Recipe entry: allRecipes) {
+            // System.out.println("Recipe type in the list:" + entry.getRecipeType());
+            if (entry.getRecipeType().compareTo(filterType) == 0) {
+                // System.out.println("Attempted to add");
+                this.getChildren().add(entry);
+            }
+        }
+    }
 
     public void sortDisplay(ArrayList<Recipe> sortedRecipes) {
-        this.getChildren().setAll(sortedRecipes);
+        changeDisplayByType();
+        // this.getChildren().setAll(sortedRecipes);
     }
 
     public void recipeSortA2Z() {
@@ -144,6 +183,30 @@ public class RecipeList extends VBox {
     public void recipeSortOldToNew() {
         Collections.sort(allRecipes, new OldToNewComparator(db_dir));
         sortDisplay(allRecipes);
+    }
+
+    // refreshes sort based on current sort type
+    public void resortRecipes() {
+        switch (sortType) {
+            case "A - Z":
+                recipeSortA2Z();
+                break;
+            
+            case "Z - A":
+                recipeSortZ2A();
+                break;
+
+            case "Newest to Oldest":
+                recipeSortNewToOld();
+                break;
+
+            case "Oldest to Newest":
+                recipeSortOldToNew();
+                break;
+        
+            default:
+                break;
+        }
     }
 }
 
@@ -173,13 +236,7 @@ class NewToOldComparator implements Comparator<Recipe> {
     // override the compare() method 
     public int compare(Recipe r1, Recipe r2) 
     {
-        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
-        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
-        if (file1.lastModified() < file2.lastModified()) {
-            return 1;
-        }
-
-        return -1;
+        return r2.getDate().compareTo(r1.getDate());
     } 
 }
 
@@ -191,15 +248,6 @@ class OldToNewComparator implements Comparator<Recipe> {
     // override the compare() method 
     public int compare(Recipe r1, Recipe r2) 
     {
-        File file1 = new File(db_dir + r1.getRecipeName() + ".txt");
-        File file2 = new File(db_dir + r2.getRecipeName() + ".txt");
-        if (file1.lastModified() < file2.lastModified()) {
-            return -1;
-        }
-
-        return 1;
-    } 
-
-    
-    
+        return r1.getDate().compareTo(r2.getDate());
+    }    
 }
