@@ -42,7 +42,7 @@ public class Recipe extends HBox {
     private boolean isSelected;
 
     // Default Constructor
-    public Recipe(){}
+    
 
     public Recipe(RecipeDetails _recipeDetails) {
     	recipeDetails = _recipeDetails;
@@ -71,6 +71,8 @@ public class Recipe extends HBox {
         	event.consume();
         });
 
+    }
+    public Recipe() {
     }
 
     public Date getDate() {
@@ -259,6 +261,7 @@ class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private Button shareRecipeButton;
     private MenuButton sortMenuButton;
     private CheckMenuItem sortAtoZ;
     private CheckMenuItem sortZtoA;
@@ -286,7 +289,10 @@ class ActionsList extends HBox {
         editRecipeButton.setStyle(defaultButtonStyle);
         deleteRecipeButton = new Button("Delete Recipe");
         deleteRecipeButton.setStyle(defaultButtonStyle);
+        shareRecipeButton = new Button("Share Recipe");
+        shareRecipeButton.setStyle(defaultButtonStyle);
 
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, shareRecipeButton, filterBox);
         sortMenuButton = new MenuButton("Sort Recipes");
         // sortMenuButton.setMinWidth(125);
         sortAtoZ = new CheckMenuItem("A-Z");
@@ -302,7 +308,7 @@ class ActionsList extends HBox {
         menuItemList.add(sortNewToOld);
         menuItemList.add(sortOldToNew);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox, shareRecipeButton);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -314,6 +320,9 @@ class ActionsList extends HBox {
     }
     public Button getDeleteRecipeButton() {
         return deleteRecipeButton;
+    }
+    public Button getShareRecipeButton() {
+        return shareRecipeButton;
     }
     public MenuButton getSortMenuButton() {
         return sortMenuButton;
@@ -336,11 +345,13 @@ class ActionsList extends HBox {
                 entries.setSelected(false);
             }
         }
+
     }
     public ComboBox getFilterBox() {
     	return filterBox;
     }
 }	
+
 
 class RecipeDetails extends VBox {		
 

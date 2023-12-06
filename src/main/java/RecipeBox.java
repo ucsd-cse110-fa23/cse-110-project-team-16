@@ -1,5 +1,7 @@
 //package src.main.java;
-
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.set;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,7 +26,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
 
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -468,6 +477,53 @@ class EditFrame extends BorderPane {
         });
     }
 }
+
+class ShareFrame extends FlowPane {
+    private TextField url;
+    private ShareLogic shareLogic;
+
+    ShareFrame(ShareLogic shareLogic) {
+        this.shareLogic = shareLogic;
+        url = new TextField(shareLogic.getURL());
+        url.setEditable(false);
+        url.setPrefWidth(300);
+        this.getChildren().add(url);
+    }
+    
+}
+
+class ShareLogic {
+    private String url;
+    private String recipeID; private String recipeName;
+    ShareLogic(String recipeName) {
+        this.recipeName = recipeName;
+
+        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {
+    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
+        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
+			Document existingRecipe = userCollection.find(new Document("name", recipeName)).first();
+
+            Bson filter = eq("name", recipeName);
+            userCollection.find(filter).first();
+
+             if (existingRecipe != null) {
+                // Extract the _id field from the found document
+                recipeID = existingRecipe.getObjectId("_id").toString();
+                System.out.println("Recipe ID: " + recipeID);
+
+                // Assuming you want to construct a URL based on the recipe ID
+                this.url = "https://pantrypal-server-lh0e.onrender.com/id?=" + recipeID;
+            } else {
+                url = "Recipe not found.";
+            }
+		}
+    }
+    public String getURL() {
+        return url;
+    }
+
+}
+
 
 class RecipeBox extends VBox {
 	

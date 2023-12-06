@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import java.io.*;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
@@ -21,6 +22,18 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+
+
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import java.net.InetAddress;
+import java.net.Socket;
+import org.bson.conversions.Bson;
+
+
 
 // Main Method - Runs application
 public class Main extends Application {
@@ -42,8 +55,33 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        if (isServerAvailable("localhost", 8100)) {
+            // Server is available, start the application
+            launch(args);
+        } else {
+            showAlert("Server Not Available", "Please make sure the server is running.");
+        }
     }
+    
+    private static boolean isServerAvailable(String host, int port) {
+        try (Socket socket = new Socket(host, port)) {
+                return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private static void showAlert(String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+        
+    
 }
 
 // Application - using JavaFX
@@ -57,11 +95,15 @@ class AppFrame extends BorderPane{
     private Button editRecipeButton;
     private Button deleteRecipeButton;
 
+    private Button shareRecipeButton;
+
+
     private MenuButton sortMenuButton;
     private CheckMenuItem sortAtoZ;
     private CheckMenuItem sortZtoA;
     private CheckMenuItem sortNewToOld;
     private CheckMenuItem sortOldToNew;
+
     private ComboBox filterBox;
     private ScrollPane scrollPane;
     private ActionsList actionsList;
@@ -100,6 +142,9 @@ class AppFrame extends BorderPane{
         newRecipeButton = actionsList.getNewRecipeButton();
         editRecipeButton = actionsList.getEditRecipeButton();
         deleteRecipeButton = actionsList.getDeleteRecipeButton();
+
+        shareRecipeButton = actionsList.getShareRecipeButton();
+
         sortMenuButton = actionsList.getSortMenuButton();
         sortAtoZ = actionsList.getSortAtoZ();
         sortZtoA = actionsList.getSortZtoA();
@@ -178,6 +223,20 @@ class AppFrame extends BorderPane{
             recipeList.recipeSortZ2A();
         });
 
+        shareRecipeButton.setOnAction(e -> {
+            for (int i = 0; i < allRecipes.size(); i++) {
+    			if (allRecipes.get(i).isSelected()) {
+                    ShareLogic shareLogic = new ShareLogic(allRecipes.get(i).getRecipeName());
+                    ShareFrame shareFrame = new ShareFrame(shareLogic);
+                    Stage stage = new Stage();
+                    stage.setTitle("Share Recipe");
+                    stage.setScene(new Scene(shareFrame,400, 100));
+                    stage.show();
+                }
+            }
+
+        });
+    	
         sortNewToOld.setOnAction(e -> {
             String name = "Newest to Oldest";
             // sortMenuButton.setText(name);
