@@ -12,4 +12,11 @@ Please go to our GitHub project repo. Once there, please go to the branch titled
 
 ## Step 2: Getting the necessary software
 
-Before we can actually run the program, several piece of software is required.
+Before we can actually run the program, several piece of software is required:
+
+- JDK version 17 (or higher). Download here from [Oracle](https://www.oracle.com/java/technologies/downloads/)
+- Visual Studio Code (in theory Eclipse also works but VScode worked the best from our experiences). Download here from [Microsoft](https://code.visualstudio.com/download)
+- JavaFX 21. Download [here](https://gluonhq.com/products/javafx/)
+
+>Please get the versions that matches your machine's OS/platform
+
