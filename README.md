@@ -42,14 +42,7 @@ Select **Run and Debug** on the left-hand-side menu bar (or press `Ctrl + Shift 
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "Main",
-            "projectName": "cse-110-project-team-16"
-        },  
+    "configurations": [         
         {
             "type": "java",
             "name": "RecipeApp Main",
