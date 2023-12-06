@@ -52,6 +52,7 @@ class AppFrame extends BorderPane{
     private RecipeDetails recipeDetails;
     private RecipeList recipeList;
     private ArrayList<Recipe> allRecipes;
+    private RecipeManager recipeManager;
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
@@ -76,6 +77,7 @@ class AppFrame extends BorderPane{
 
         // Create a recipelist Object to hold the recipes
         recipeList = new RecipeList(recipeDetails, allRecipes);
+        recipeManager = new RecipeManager(allRecipes);
 
         actionsList = new ActionsList();
         scrollPane = new ScrollPane(recipeList);
@@ -141,8 +143,10 @@ class AppFrame extends BorderPane{
             }
         });
 
-    	deleteRecipeButton.setOnAction(e -> {
-            if (recipeDetails.getCurrRecipe() == null) {
+ 
+        deleteRecipeButton.setOnAction(e -> {
+            Recipe selectedRecipe = recipeDetails.getCurrRecipe();
+            if (selectedRecipe == null) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Choose a Recipe");
                 alert.setHeaderText("Choose a Recipe");
@@ -150,33 +154,11 @@ class AppFrame extends BorderPane{
                 return;
             }
 
-            // Delete all toggled recipes
-    		for (int i = 0; i < allRecipes.size(); i++) {
-    			if (allRecipes.get(i).isSelected()) {
-    				recipeList.getChildren().remove(allRecipes.get(i));
-                    // delete txt file
+            recipeManager.deleteRecipe(selectedRecipe);
+            recipeList.getChildren().remove(selectedRecipe);
+            recipeDetails.defaultView();
+        }); 
 
-                    String recipeName = allRecipes.get(i).getRecipeName();
-                    ObjectId recipeID = allRecipes.get(i).getRecipeID();
-                    String deletedFileName = db_dir + recipeName + ".txt";
-                    File deletedFile = new File(deletedFileName);
-                    deletedFile.delete();
-                    System.out.println("Deleted this file: " + deletedFileName);
-
-                    // delete jpg file
-                    String image = "images/" + recipeName + ".jpg";
-                    File imageFile = new File(image);
-                    imageFile.delete();
-                    System.out.println("Deleted this file: " + imageFile);
-                    
-    				allRecipes.remove(i);
-
-                    // delete recipe on mongoDB
-                    MongoDB.deleteRecipe(recipeID);
-    			}
-    		}
-    		recipeDetails.defaultView();
-        });
         
         sortAtoZ.setOnAction(e -> {
             String name = "A - Z";

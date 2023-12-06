@@ -108,18 +108,7 @@ public class MongoDB {
             userCollection.findOneAndUpdate(filter, updates);
 
             return true;
-        /*
-        /}
-        else {
-            Document recipe = new Document("_id", new ObjectId());
-            recipe.append("name", name);
-            recipe.append("type", type);
-            recipe.append("ingredients", ingredients);
-            recipe.append("directions", directions);
-            userCollection.insertOne(recipe);
-            return false;
-        }
-        */
+
     }
 
     // delete recipe on MongoDB
