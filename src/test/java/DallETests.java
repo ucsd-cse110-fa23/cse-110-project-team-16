@@ -8,14 +8,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class DallETests {
-    DallEMock testE = new DallEMock();
+    DallE testE = new DallE();
 
     @Test
 	void testGenerateImage() {
         String testPrompt = "Pizza";
         String testedURL = "wrong";
         try {
-            testedURL = DallEMock.generateImage(testPrompt);
+            testedURL = DallE.generateImageMock(testPrompt);
         } catch (IOException e) {
             
             e.printStackTrace();
@@ -32,7 +32,7 @@ public class DallETests {
 
         testPrompt = "Spaghetti";
         try {
-            testedURL = DallEMock.generateImage(testPrompt);
+            testedURL = DallE.generateImageMock(testPrompt);
         } catch (IOException e) {
             
             e.printStackTrace();
