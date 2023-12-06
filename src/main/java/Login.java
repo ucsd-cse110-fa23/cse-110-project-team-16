@@ -85,7 +85,7 @@ class LoginFrame extends BorderPane{
 			stage.show();// Close the window
 			primaryStage.close();
 		}  
-		else{
+		else {
 		System.out.println("No Account Found");                      
 			}
 		});

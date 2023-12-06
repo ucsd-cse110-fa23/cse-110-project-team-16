@@ -96,6 +96,7 @@ class AppFrame extends BorderPane{
     private Button deleteRecipeButton;
 
     private Button shareRecipeButton;
+    private Button logoutButton;
 
 
     private MenuButton sortMenuButton;
@@ -144,6 +145,7 @@ class AppFrame extends BorderPane{
         deleteRecipeButton = actionsList.getDeleteRecipeButton();
 
         shareRecipeButton = actionsList.getShareRecipeButton();
+        logoutButton = actionsList.getLogoutButton();
 
         sortMenuButton = actionsList.getSortMenuButton();
         sortAtoZ = actionsList.getSortAtoZ();
@@ -235,6 +237,19 @@ class AppFrame extends BorderPane{
                 }
             }
 
+        });
+
+        logoutButton.setOnAction(e -> {
+            Stage stage = (Stage) getScene().getWindow(); // Get the current stage
+            LoginFrame root = new LoginFrame(stage);
+            // Set the title of the app
+            stage.setTitle("Login");
+            // Create scene of mentioned size with the border pane
+            stage.setScene(new Scene(root, 450, 200));
+            // Make window non-resizable
+            stage.setResizable(false);
+            // Show the app
+            stage.show();
         });
     	
         sortNewToOld.setOnAction(e -> {
