@@ -1,7 +1,10 @@
 //package src.main.java;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
+
+import org.bson.types.ObjectId;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -9,6 +12,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -21,22 +27,22 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.paint.Color; 
 
-import org.bson.Document;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
 public class Recipe extends HBox {
 
     private String recipeName;
     private String recipeType;
+    private ObjectId recipeID;
     private Text text;
     private Label label;
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
+    private int creationDateRank = 1;
+    private Date creationDate;
     
     private boolean isSelected;
+
+    // Default Constructor
+    public Recipe(){}
 
     public Recipe(RecipeDetails _recipeDetails) {
     	recipeDetails = _recipeDetails;
@@ -69,6 +75,13 @@ public class Recipe extends HBox {
     public Recipe() {
     }
 
+    public Date getDate() {
+        return this.creationDate;
+    }
+
+    public void setDate(Date date) {
+        creationDate = date;
+    }
 
     public String getRecipeName() {
         return this.recipeName;
@@ -76,6 +89,14 @@ public class Recipe extends HBox {
     
     public void setRecipeName(String name) {
         recipeName = name;
+    }
+
+    public ObjectId getRecipeID() {
+        return this.recipeID;
+    }
+    
+    public void setRecipeID(ObjectId id) {
+        recipeID = id;
     }
     
     public String getRecipeType() {
@@ -130,18 +151,27 @@ public class Recipe extends HBox {
             }
 
             System.out.println("Current recipe name: " + this.getRecipeName());
-            recipeDetails.showDetailsMongo(this.getRecipeName());
+            recipeDetails.showDetailsMongo(this.getRecipeID());
+            recipeDetails.setCurrRecipe(this);
 
         } else {
             isSelected = false;
 
             this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); 
             recipeDetails.defaultView();
+            recipeDetails.setCurrRecipe(null);
         }
     }
 
     public void updateRecipeArray(ArrayList<Recipe> arry_input) {
         recipeArray = arry_input;
+    }
+
+    public int getCreationDateRank() {
+        return creationDateRank;
+    }
+    public void updateCreationDateRank(int newRank) {
+        creationDateRank = newRank;
     }
 
     public String getDetails (String name, String whichDetail) {
@@ -232,6 +262,12 @@ class ActionsList extends HBox {
     private Button editRecipeButton;
     private Button deleteRecipeButton;
     private Button shareRecipeButton;
+    private MenuButton sortMenuButton;
+    private CheckMenuItem sortAtoZ;
+    private CheckMenuItem sortZtoA;
+    private CheckMenuItem sortNewToOld;
+    private CheckMenuItem sortOldToNew;
+    private ArrayList<CheckMenuItem> menuItemList;
     private ComboBox filterBox;
     
     ActionsList() {
@@ -240,8 +276,13 @@ class ActionsList extends HBox {
         this.setStyle("-fx-background-color: #996600;");
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        
+        // filter dropdown menu
         String[] recipeTypes = {"All", "Breakfast", "Lunch", "Dinner"};
         filterBox = new ComboBox(FXCollections.observableArrayList(recipeTypes));
+        filterBox.getSelectionModel().selectFirst(); // set default value
+        filterBox.setStyle(defaultButtonStyle);
+
         newRecipeButton = new Button("New Recipe");
         newRecipeButton.setStyle(defaultButtonStyle);
         editRecipeButton = new Button("Edit Recipe");
@@ -252,6 +293,22 @@ class ActionsList extends HBox {
         shareRecipeButton.setStyle(defaultButtonStyle);
 
         this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, shareRecipeButton, filterBox);
+        sortMenuButton = new MenuButton("Sort Recipes");
+        // sortMenuButton.setMinWidth(125);
+        sortAtoZ = new CheckMenuItem("A-Z");
+        sortZtoA = new CheckMenuItem("Z-A");
+        sortNewToOld = new CheckMenuItem("Newest to Oldest");
+        sortOldToNew = new CheckMenuItem("Oldest to Newest");        
+        sortMenuButton.getItems().addAll(sortAtoZ, sortZtoA, sortNewToOld, sortOldToNew);
+        sortMenuButton.setStyle(defaultButtonStyle);
+
+        menuItemList = new ArrayList<CheckMenuItem>();
+        menuItemList.add(sortAtoZ);
+        menuItemList.add(sortZtoA);
+        menuItemList.add(sortNewToOld);
+        menuItemList.add(sortOldToNew);
+
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -266,16 +323,33 @@ class ActionsList extends HBox {
     }
     public Button getShareRecipeButton() {
         return shareRecipeButton;
+    public MenuButton getSortMenuButton() {
+        return sortMenuButton;
+    }
+    public CheckMenuItem getSortAtoZ() {
+        return sortAtoZ;
+    }
+    public CheckMenuItem getSortZtoA() {
+        return sortZtoA;
+    }
+    public CheckMenuItem getSortNewToOld() {
+        return sortNewToOld;
+    }
+    public CheckMenuItem getSortOldToNew() {
+        return sortOldToNew;
+    }
+    public void uncheckOtherItems(CheckMenuItem checkedItem) {
+        for (CheckMenuItem entries: menuItemList) {
+            if (entries != checkedItem) {
+                entries.setSelected(false);
+            }
+        }
+
     }
     public ComboBox getFilterBox() {
     	return filterBox;
     }
-}
-
-
-
-
-		
+}	
 
 class RecipeDetails extends VBox {		
 
@@ -285,7 +359,7 @@ class RecipeDetails extends VBox {
 	private Text displayDirections;
     private ImageView displayImageView;
     private String db_dir = "localDB/";
-	
+	private Recipe currRecipe;
 				
 
 	public RecipeDetails () {
@@ -313,36 +387,35 @@ class RecipeDetails extends VBox {
         this.getChildren().addAll(displayImageView, displayType, displayIngredients, displayDirections);
     }
 
-    public boolean showDetailsMongo (String recipeName) {
-        try (MongoClient mongoClient = MongoClients.create(MongoDB.getURI())) {   	
-    		MongoDatabase recipesDB = mongoClient.getDatabase("Recipes");
-        	MongoCollection<Document> userCollection = recipesDB.getCollection(LoginFrame.getUser());
-			Document recipe = userCollection.find(new Document("name", recipeName)).first();
-			if (recipe != null) {
-                String name = (String)recipe.get("name");
-                String type = (String)recipe.get("type");
-                String ingredients = (String)recipe.get("ingredients");
-                String directions = (String)recipe.get("directions");
-                String imageLocation = base64ToImg(name, (String)recipe.get("image"));
+    public boolean showDetailsMongo (ObjectId recipeID) {
+        List<String> recipeSet = MongoDB.getRecipe(recipeID);
+        if (recipeSet != null) {
+            String name = recipeSet.get(0);
+            String type = recipeSet.get(1);
+            String ingredients = recipeSet.get(2);
+            String directions = recipeSet.get(3);
+            String image = recipeSet.get(4);
 
-                setTitleText(name);
-                setDisplayType(type);
-                setDisplayIngredients(ingredients);
-                setDisplayDirections(directions);
-                setDisplayImageView(imageLocation);
+            // convert img and get path
+            String imageLocation = base64ToImg(name, image);
 
-                this.setAlignment(Pos.CENTER_LEFT);
-                this.setPadding(new Insets(10, 0, 10, 200));
+            setTitleText(name);
+            setDisplayType(type);
+            setDisplayIngredients(ingredients);
+            setDisplayDirections(directions);
+            setDisplayImageView(imageLocation);
 
-        		return true;
-        	}
-        	else {
-        		return false;            
-    		}
-		}
+            this.setAlignment(Pos.CENTER_LEFT);
+            this.setPadding(new Insets(10, 0, 10, 200));
+
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
-    private String base64ToImg(String name, String base64) {
+    private static String base64ToImg(String name, String base64) {
         if (base64 == null)
             return null;
 
@@ -352,7 +425,14 @@ class RecipeDetails extends VBox {
         path = "images/" + name + ".jpg";
         File file = new File(path);
 
-        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
+        // if there is an image already in path, delete
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))) {
             oStream.write(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -435,6 +515,14 @@ class RecipeDetails extends VBox {
 		displayDirections.setText(" ");
         displayImageView.setImage(null);
 	}
+
+    public Recipe getCurrRecipe() {
+        return currRecipe;
+    }
+
+    public void setCurrRecipe(Recipe recipe) {
+        this.currRecipe = recipe;
+    }
 	
 	public Text getDisplayType () {
 		return displayType;
@@ -480,5 +568,7 @@ class RecipeDetails extends VBox {
         Image image = new Image("file:" + path);
         displayImageView.setImage(image);
     }
+
+    
 
 }

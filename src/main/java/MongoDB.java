@@ -32,10 +32,12 @@ public class MongoDB {
     private static String currUser;
 
     // connect to mongoDB
+
     public static void start() {
         try {
             mongoClient = MongoClients.create(MongoDB.getURI());
             recipesDB = mongoClient.getDatabase("Recipes");
+
         }
         catch(Exception e)
         {
@@ -69,6 +71,7 @@ public class MongoDB {
     // Retreive recipe from MongoDB
     public static List<String> getRecipe(ObjectId recipeID) {
 
+
         Document recipe = null;
         for(String db : recipesDB.listCollectionNames())
         {
@@ -80,6 +83,7 @@ public class MongoDB {
 
         //MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
         //Document recipe = userCollection.find(new Document("_id", recipeID)).first();
+
         if (recipe != null) {
             String name = (String)recipe.get("name");
             String type = (String)recipe.get("type");
@@ -105,6 +109,7 @@ public class MongoDB {
     public static boolean editRecipe(ObjectId id, String name, String type, String ingredients, String directions) {
         MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
 
+
         Bson filter = eq("_id", id);
         Bson newName = set("name", name);
         Bson newType = set("type", type);
@@ -116,6 +121,7 @@ public class MongoDB {
         userCollection.findOneAndUpdate(filter, updates);
 
         return true;
+
     }
 
     // delete recipe on MongoDB
@@ -147,4 +153,6 @@ public class MongoDB {
 
         return recipeFiles;
     }
+
 }
+
