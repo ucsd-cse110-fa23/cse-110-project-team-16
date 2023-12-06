@@ -1,5 +1,7 @@
 //package src.main.java;
-
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.set;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,7 +26,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
 
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;

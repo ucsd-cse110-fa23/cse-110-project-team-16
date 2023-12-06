@@ -42,7 +42,7 @@ public class Recipe extends HBox {
     private boolean isSelected;
 
     // Default Constructor
-    public Recipe(){}
+    
 
     public Recipe(RecipeDetails _recipeDetails) {
     	recipeDetails = _recipeDetails;
@@ -323,6 +323,7 @@ class ActionsList extends HBox {
     }
     public Button getShareRecipeButton() {
         return shareRecipeButton;
+    }
     public MenuButton getSortMenuButton() {
         return sortMenuButton;
     }
@@ -350,6 +351,7 @@ class ActionsList extends HBox {
     	return filterBox;
     }
 }	
+
 
 class RecipeDetails extends VBox {		
 

@@ -45,6 +45,18 @@ public class MongoDB {
         }
     }
 
+    public static void startWithUser(String user) {
+        try {
+            mongoClient = MongoClients.create(MongoDB.getURI());
+            recipesDB = mongoClient.getDatabase("Recipes");
+            currUser = user;
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+    }
+
     public static String getURI() {
         return uri;
     }
