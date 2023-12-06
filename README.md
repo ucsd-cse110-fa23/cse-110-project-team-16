@@ -62,6 +62,14 @@ E.g. If you moved the JavaFX folder to somewhere like `C:/example/path`, then th
 
 Please remember to put quotes `"` around that path.
 
+Also, go to the **Extensions** menu and download **Extension Pack for Java** (by Microsoft). This contain a lot of useful functions for running Java on VSCode.
+
 ## Step 4: Running the code
 
-You should be all set right now. Go to the **Run and Debug** menu, change the running option to `RecipeApp Main`, and click the green arrow to run the Recipe App.
+You should be all set right now. 
+
+First, click on `server.java` and run it (using the play button on top right).
+
+After it is running, go to the **Run and Debug** menu, change the running option to `RecipeApp Main`, and click the green arrow to run the Recipe App.
+
+(If you don't run the server prior, then you would get an error)
