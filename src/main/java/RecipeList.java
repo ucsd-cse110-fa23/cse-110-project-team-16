@@ -139,8 +139,30 @@ public class RecipeList extends VBox {
 		return allRecipes;
 	}
 
+    public void changeDisplayByType() {
+        this.getChildren().clear();
+        
+        if (filterType == "All") {
+            for (Recipe entry: allRecipes) {
+                this.getChildren().add(entry);
+            }
+            return;
+        }
+        
+        // System.out.println("Current filter type:" + filterType);
+        // System.out.println("Looking through RecipeList...");
+        for (Recipe entry: allRecipes) {
+            // System.out.println("Recipe type in the list:" + entry.getRecipeType());
+            if (entry.getRecipeType().compareTo(filterType) == 0) {
+                // System.out.println("Attempted to add");
+                this.getChildren().add(entry);
+            }
+        }
+    }
+
     public void sortDisplay(ArrayList<Recipe> sortedRecipes) {
-        this.getChildren().setAll(sortedRecipes);
+        changeDisplayByType();
+        // this.getChildren().setAll(sortedRecipes);
     }
 
     public void recipeSortA2Z() {

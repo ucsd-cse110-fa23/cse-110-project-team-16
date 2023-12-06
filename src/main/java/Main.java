@@ -259,7 +259,8 @@ class AppFrame extends BorderPane{
     	filterBox.setOnAction(e -> {
             // Set Filter Type
     		recipeList.setFilterType(filterBox.getValue().toString());
-    		recipeList.loadRecipesMongo();
+    		// recipeList.loadRecipesMongo();
+            recipeList.changeDisplayByType();
         });
     }
 }
