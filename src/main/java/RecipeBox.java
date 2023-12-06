@@ -614,7 +614,7 @@ class ShareLogic {
                 System.out.println("Recipe ID: " + recipeID);
 
                 // Assuming you want to construct a URL based on the recipe ID
-                this.url = "https://localhost:8100/id?=" + recipeID;
+                this.url = "https://pantrypal-server-lh0e.onrender.com/id?=" + recipeID;
             } else {
                 url = "Recipe not found.";
             }
