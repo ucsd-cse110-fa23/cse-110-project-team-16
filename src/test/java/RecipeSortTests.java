@@ -13,8 +13,7 @@ public class RecipeSortTests {
 	private Recipe recipe3;
 	private Recipe recipe4;
 	private ArrayList<Recipe> allRecipes;
-	private RecipeDetails blankDetails;
-	private RecipeListMock testRecipeList;
+	private RecipeList testRecipeList;
 	
 	@BeforeEach
 	void setUp() {
@@ -47,8 +46,7 @@ public class RecipeSortTests {
 		recipe3.updateRecipeArray(allRecipes);
 		recipe4.updateRecipeArray(allRecipes);
 
-		blankDetails = new RecipeDetails();
-		testRecipeList = new RecipeListMock(blankDetails, allRecipes);
+		testRecipeList = new RecipeList(allRecipes);
 	}
 	
 	@Test
