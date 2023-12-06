@@ -5,11 +5,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.bson.types.Symbol;
 
 import javafx.scene.layout.VBox;
 
@@ -20,6 +20,7 @@ public class RecipeList extends VBox {
     private RecipeDetails localRecipeDetails;
     private ArrayList<Recipe> allRecipes;
     private String filterType;
+    private String sortType = "default";
 
 
     public RecipeList(RecipeDetails details, ArrayList<Recipe> recipeArray) {
@@ -42,6 +43,7 @@ public class RecipeList extends VBox {
     	allRecipes.clear();
     	
         Set<Document> recipes = MongoDB.listRecipes();
+        int creationDateRank = 1;
 
         for (Document recipe: recipes) {
             Recipe currRecipe = null;
@@ -61,10 +63,25 @@ public class RecipeList extends VBox {
             currRecipe.setRecipeID(id);
             currRecipe.updateText();
 
+            currRecipe.setDate(convertToDate(id.toString()));
+
             this.getChildren().add(currRecipe);
             allRecipes.add(currRecipe);
             currRecipe.updateRecipeArray(allRecipes);
         }
+    }
+
+    public static Date convertToDate(String objectId) {
+        long date = Long.parseLong(objectId.substring(0, 8), 16) * 1000;
+        return new Date(date);
+    }
+
+    public void setFilterType (String _filterType) {
+    	filterType = _filterType;
+    }
+
+    public void setSortType (String _sortType) {
+    	sortType = _sortType;
     }
 
     public ArrayList<String> getDetails (String recipeName) {
@@ -115,8 +132,97 @@ public class RecipeList extends VBox {
     public ArrayList<Recipe> getAllRecipes () {
 		return allRecipes;
 	}
-    
-    public void setFilterType (String _filterType) {
-    	filterType = _filterType;
+
+    public void sortDisplay(ArrayList<Recipe> sortedRecipes) {
+        this.getChildren().setAll(sortedRecipes);
     }
+
+    public void recipeSortA2Z() {
+        Collections.sort(allRecipes, new AtoZComparator());
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortZ2A() {
+        Collections.sort(allRecipes, new ZtoAComparator());
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortNewToOld() {
+        Collections.sort(allRecipes, new NewToOldComparator(db_dir));
+        sortDisplay(allRecipes);
+    }
+
+    public void recipeSortOldToNew() {
+        Collections.sort(allRecipes, new OldToNewComparator(db_dir));
+        sortDisplay(allRecipes);
+    }
+
+    // refreshes sort based on current sort type
+    public void resortRecipes() {
+        switch (sortType) {
+            case "A - Z":
+                recipeSortA2Z();
+                break;
+            
+            case "Z - A":
+                recipeSortZ2A();
+                break;
+
+            case "Newest to Oldest":
+                recipeSortNewToOld();
+                break;
+
+            case "Oldest to Newest":
+                recipeSortOldToNew();
+                break;
+        
+            default:
+                break;
+        }
+    }
+}
+
+class ZtoAComparator implements Comparator<Recipe> { 
+  
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    { 
+        return r2.getRecipeName().compareTo(r1.getRecipeName());
+    } 
+}
+
+class AtoZComparator implements Comparator<Recipe> { 
+  
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    { 
+        return r1.getRecipeName().compareTo(r2.getRecipeName());
+    } 
+}
+
+class NewToOldComparator implements Comparator<Recipe> { 
+    String db_dir;
+    NewToOldComparator(String db_dir){
+        this.db_dir = db_dir;
+    }
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    {
+        return r2.getDate().compareTo(r1.getDate());
+    } 
+}
+
+class OldToNewComparator implements Comparator<Recipe> { 
+    String db_dir;
+    OldToNewComparator(String db_dir){
+        this.db_dir = db_dir;
+    }
+    // override the compare() method 
+    public int compare(Recipe r1, Recipe r2) 
+    {
+        return r1.getDate().compareTo(r2.getDate());
+    } 
+
+    
+    
 }

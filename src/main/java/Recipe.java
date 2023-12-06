@@ -12,6 +12,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -33,6 +36,8 @@ public class Recipe extends HBox {
     private Label label;
     private RecipeDetails recipeDetails;
     private ArrayList<Recipe> recipeArray;
+    private int creationDateRank = 1;
+    private Date creationDate;
     
     private boolean isSelected;
 
@@ -68,6 +73,13 @@ public class Recipe extends HBox {
 
     }
 
+    public Date getDate() {
+        return this.creationDate;
+    }
+
+    public void setDate(Date date) {
+        creationDate = date;
+    }
 
     public String getRecipeName() {
         return this.recipeName;
@@ -138,17 +150,26 @@ public class Recipe extends HBox {
 
             System.out.println("Current recipe name: " + this.getRecipeName());
             recipeDetails.showDetailsMongo(this.getRecipeID());
+            recipeDetails.setCurrRecipe(this);
 
         } else {
             isSelected = false;
 
             this.setStyle("-fx-background-color: #266024; -fx-border-width: 0; -fx-font-weight: bold;"); 
             recipeDetails.defaultView();
+            recipeDetails.setCurrRecipe(null);
         }
     }
 
     public void updateRecipeArray(ArrayList<Recipe> arry_input) {
         recipeArray = arry_input;
+    }
+
+    public int getCreationDateRank() {
+        return creationDateRank;
+    }
+    public void updateCreationDateRank(int newRank) {
+        creationDateRank = newRank;
     }
 
     public String getDetails (String name, String whichDetail) {
@@ -238,6 +259,12 @@ class ActionsList extends HBox {
     private Button newRecipeButton;
     private Button editRecipeButton;
     private Button deleteRecipeButton;
+    private MenuButton sortMenuButton;
+    private CheckMenuItem sortAtoZ;
+    private CheckMenuItem sortZtoA;
+    private CheckMenuItem sortNewToOld;
+    private CheckMenuItem sortOldToNew;
+    private ArrayList<CheckMenuItem> menuItemList;
     private ComboBox filterBox;
     
     ActionsList() {
@@ -246,8 +273,13 @@ class ActionsList extends HBox {
         this.setStyle("-fx-background-color: #996600;");
 
         String defaultButtonStyle = "-fx-font-style: italic; -fx-background-color: #FFFFFF;  -fx-font-weight: bold; -fx-font: 11 arial;";
+        
+        // filter dropdown menu
         String[] recipeTypes = {"All", "Breakfast", "Lunch", "Dinner"};
         filterBox = new ComboBox(FXCollections.observableArrayList(recipeTypes));
+        filterBox.getSelectionModel().selectFirst(); // set default value
+        filterBox.setStyle(defaultButtonStyle);
+
         newRecipeButton = new Button("New Recipe");
         newRecipeButton.setStyle(defaultButtonStyle);
         editRecipeButton = new Button("Edit Recipe");
@@ -255,7 +287,22 @@ class ActionsList extends HBox {
         deleteRecipeButton = new Button("Delete Recipe");
         deleteRecipeButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, filterBox);
+        sortMenuButton = new MenuButton("Sort Recipes");
+        // sortMenuButton.setMinWidth(125);
+        sortAtoZ = new CheckMenuItem("A-Z");
+        sortZtoA = new CheckMenuItem("Z-A");
+        sortNewToOld = new CheckMenuItem("Newest to Oldest");
+        sortOldToNew = new CheckMenuItem("Oldest to Newest");        
+        sortMenuButton.getItems().addAll(sortAtoZ, sortZtoA, sortNewToOld, sortOldToNew);
+        sortMenuButton.setStyle(defaultButtonStyle);
+
+        menuItemList = new ArrayList<CheckMenuItem>();
+        menuItemList.add(sortAtoZ);
+        menuItemList.add(sortZtoA);
+        menuItemList.add(sortNewToOld);
+        menuItemList.add(sortOldToNew);
+
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -268,15 +315,32 @@ class ActionsList extends HBox {
     public Button getDeleteRecipeButton() {
         return deleteRecipeButton;
     }
+    public MenuButton getSortMenuButton() {
+        return sortMenuButton;
+    }
+    public CheckMenuItem getSortAtoZ() {
+        return sortAtoZ;
+    }
+    public CheckMenuItem getSortZtoA() {
+        return sortZtoA;
+    }
+    public CheckMenuItem getSortNewToOld() {
+        return sortNewToOld;
+    }
+    public CheckMenuItem getSortOldToNew() {
+        return sortOldToNew;
+    }
+    public void uncheckOtherItems(CheckMenuItem checkedItem) {
+        for (CheckMenuItem entries: menuItemList) {
+            if (entries != checkedItem) {
+                entries.setSelected(false);
+            }
+        }
+    }
     public ComboBox getFilterBox() {
     	return filterBox;
     }
-}
-
-
-
-
-		
+}	
 
 class RecipeDetails extends VBox {		
 
@@ -286,7 +350,7 @@ class RecipeDetails extends VBox {
 	private Text displayDirections;
     private ImageView displayImageView;
     private String db_dir = "localDB/";
-	
+	private Recipe currRecipe;
 				
 
 	public RecipeDetails () {
@@ -359,7 +423,7 @@ class RecipeDetails extends VBox {
             e.printStackTrace();
         }
 
-        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))){
+        try (OutputStream oStream = new BufferedOutputStream(new FileOutputStream(file))) {
             oStream.write(data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -442,6 +506,14 @@ class RecipeDetails extends VBox {
 		displayDirections.setText(" ");
         displayImageView.setImage(null);
 	}
+
+    public Recipe getCurrRecipe() {
+        return currRecipe;
+    }
+
+    public void setCurrRecipe(Recipe recipe) {
+        this.currRecipe = recipe;
+    }
 	
 	public Text getDisplayType () {
 		return displayType;

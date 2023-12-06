@@ -96,7 +96,7 @@ public class MongoDB {
         MongoCollection<Document> userCollection = recipesDB.getCollection(currUser);
         Document existingRecipe = userCollection.find(new Document("_id", id)).first();
 
-        if (existingRecipe != null) {
+        //if (existingRecipe != null) {
             Bson filter = eq("_id", id);
             Bson newName = set("name", name);
             Bson newType = set("type", type);
@@ -108,7 +108,8 @@ public class MongoDB {
             userCollection.findOneAndUpdate(filter, updates);
 
             return true;
-        }
+        /*
+        /}
         else {
             Document recipe = new Document("_id", new ObjectId());
             recipe.append("name", name);
@@ -118,6 +119,7 @@ public class MongoDB {
             userCollection.insertOne(recipe);
             return false;
         }
+        */
     }
 
     // delete recipe on MongoDB
