@@ -8,13 +8,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class DallE {
+public class DallEMock {
 	
 	private static final String API_ENDPOINT = "https://api.openai.com/v1/images/generations";
 	private static final String API_KEY = "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";
 	private static final String MODEL = "dall-e-2";
-	
-	public static String generateImage(String prompt)
+		
+	public static String generateImageMock(String prompt)
 		throws IOException, InterruptedException, URISyntaxException {
 		
 		// Set request parameters
@@ -42,40 +42,24 @@ public class DallE {
 		
 		
 		// Send the request and receive the response
-		HttpResponse<String> response = client.send(
-			request,
-			HttpResponse.BodyHandlers.ofString()
-		);
+		// HttpResponse<String> response = client.send(
+		// 	request,
+		// 	HttpResponse.BodyHandlers.ofString()
+		// );
 		
-		
+		//! Mock the responseBody for testing purposes
 		// Process the response
-		String responseBody = response.body();
+		String responseBody = "{'data': [{'url': https://" + prompt +".com}]}";
 		//System.out.println("========================");
         //System.out.println("DALL-E Response:");
         //System.out.println(responseBody);
 		//System.out.println("========================");
 		
 		JSONObject responseJson = new JSONObject(responseBody);
-        
+        // 
         JSONArray data = responseJson.getJSONArray("data");
-        String generatedImageURL = data.getJSONObject(0).getString("url");
-		//System.out.println("========================");
-        //System.out.println("DALL-E Response:");
-        //System.out.println(generatedImageURL);
-		//System.out.println("========================");
+        String generatedImageURL = data.getJSONObject(0).getString("url");		
 
 		return generatedImageURL;
-
-        // Download the Generated Image to Current Directory
-		/*
-        try(
-            InputStream in = new URI(generatedImageURL).toURL().openStream()
-        )
-        {
-            Files.copy(in, Paths.get("image.jpg"));
-        }
-		*/
-
 	}
-
 }
