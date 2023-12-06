@@ -614,7 +614,7 @@ class ShareLogic {
                 System.out.println("Recipe ID: " + recipeID);
 
                 // Assuming you want to construct a URL based on the recipe ID
-                this.url = "https://localhost:8100/" + recipeID;
+                this.url = "https://localhost:8100/id?=" + recipeID;
             } else {
                 url = "Recipe not found.";
             }
