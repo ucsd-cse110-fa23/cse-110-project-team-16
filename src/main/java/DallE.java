@@ -66,16 +66,44 @@ public class DallE {
 
 		return generatedImageURL;
 
-        // Download the Generated Image to Current Directory
-		/*
-        try(
-            InputStream in = new URI(generatedImageURL).toURL().openStream()
-        )
-        {
-            Files.copy(in, Paths.get("image.jpg"));
-        }
-		*/
-
 	}
 
+	public static String generateImageMock(String prompt)
+		throws IOException, InterruptedException, URISyntaxException {
+		
+		// Set request parameters
+		//String prompt = "Ham and Cheese Sandwich";
+		int n = 1;
+		
+		// Create a request body which you will pass into request object
+		JSONObject requestBody = new JSONObject();
+		requestBody.put("model", MODEL);
+		requestBody.put("prompt", prompt);
+		requestBody.put("n", n);
+		requestBody.put("size", "256x256");
+		
+		// Create the HTTP client
+		HttpClient client = HttpClient.newHttpClient();
+		
+		// Create the request object
+		HttpRequest request = HttpRequest
+			.newBuilder()
+			.uri(URI.create(API_ENDPOINT))
+			.header("Content-Type", "application/json")
+			.header("Authorization", String.format("Bearer %s", API_KEY))
+			.POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+			.build();
+
+		
+		//! Mock the responseBody for testing purposes
+		// Process the response
+		String responseBody = "{\"data\": [{\"url\": \"https://" + prompt + ".com\"}]}";
+
+		JSONObject responseJson = new JSONObject(responseBody);
+        
+        JSONArray data = responseJson.getJSONArray("data");
+        String generatedImageURL = data.getJSONObject(0).getString("url");
+
+		return generatedImageURL;
+	}
 }
