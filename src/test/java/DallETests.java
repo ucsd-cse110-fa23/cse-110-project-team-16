@@ -8,23 +8,43 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class DallETests {
-    DallE testE = new DallE();
+    DallEMock testE = new DallEMock();
 
     @Test
 	void testGenerateImage() {
+        String testPrompt = "Pizza";
         String testedURL = "wrong";
         try {
-            testedURL = DallE.generateImageMock("whatever");
+            testedURL = DallEMock.generateImage(testPrompt);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
-		assertEquals("https://testing.com", testedURL);
+
+        String expectedRes = "https://" + testPrompt + ".com";
+		assertEquals(expectedRes, testedURL);
+
+        testPrompt = "Spaghetti";
+        try {
+            testedURL = DallEMock.generateImage(testPrompt);
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            
+            e.printStackTrace();
+        }
+
+        expectedRes = "https://" + testPrompt + ".com";
+		assertEquals(expectedRes, testedURL);
 	}
 }
