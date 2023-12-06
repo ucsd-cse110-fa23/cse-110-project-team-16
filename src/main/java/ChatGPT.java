@@ -20,10 +20,7 @@ public class ChatGPT extends Application {
 	private static String prompt="I want a recipe made from ";
 	private static int maxTokens = 1000;
 	private static String[] recipeDeconstructed={" ", " ", " "};
-//	ChatGPT(String _prompt){
-//		System.out.println(" IN CONSTRUCTOR");
-//		prompt+=_prompt;
-//	}
+
 	public String[] generatedRecipe(String type, String ingredients)  throws IOException, InterruptedException{
 		String prompt = "Using the following format: Recipe Name;; Recipe Steps" + "\n" +
 		"I want to make " + type + "using these ingredients: " + ingredients + 
@@ -34,7 +31,7 @@ public class ChatGPT extends Application {
 		requestBody.put("prompt", prompt);
 		requestBody.put("max_tokens", maxTokens);
 		requestBody.put("temperature", 1.0);
-		//System.out.println(prompt);
+
 		HttpClient client = HttpClient.newHttpClient();
 		// Create the request object
 		URI myUri = URI.create(API_ENDPOINT);
@@ -65,19 +62,13 @@ public class ChatGPT extends Application {
 		System.out.println("==== ChatGPT Response ====");
 		System.out.println(generatedText);
 		System.out.println("==========================");
-		//System.out.println(generatedText);
 		String[] returnString= {" "," "};
 		String[] arr=generatedText.split(";;");
-		//System.out.println(arr[0]);
-		//System.out.println(arr[1]);
-		//System.out.println(arr[2]);
+
 		 
 		 returnString[0]=arr[0];
 		 returnString[1]=arr[1];
-		 //returnString[2]=arr[2];
-//		 System.out.println(title+" TITLE ");
-//		 System.out.println(ingredients+" INGREDIENTS ");
-//		 System.out.println(instructions+" INSTRUCTIONS ");
+
 		return returnString;
 	}
 
