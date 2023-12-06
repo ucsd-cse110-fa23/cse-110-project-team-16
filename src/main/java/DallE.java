@@ -50,19 +50,11 @@ public class DallE {
 		
 		// Process the response
 		String responseBody = response.body();
-		//System.out.println("========================");
-        //System.out.println("DALL-E Response:");
-        //System.out.println(responseBody);
-		//System.out.println("========================");
-		
+
 		JSONObject responseJson = new JSONObject(responseBody);
         
         JSONArray data = responseJson.getJSONArray("data");
         String generatedImageURL = data.getJSONObject(0).getString("url");
-		//System.out.println("========================");
-        //System.out.println("DALL-E Response:");
-        //System.out.println(generatedImageURL);
-		//System.out.println("========================");
 
 		return generatedImageURL;
 

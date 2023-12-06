@@ -4,6 +4,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.bson.Document;
 
 import com.mongodb.client.MongoClient;
@@ -20,6 +27,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
 class LoginFrame extends BorderPane{
@@ -52,6 +60,22 @@ class LoginFrame extends BorderPane{
 
 		});
 		loginButton.setOnAction(e -> {
+			//create credentials.txt file
+			if(logininfo.getRememberMe().isSelected()) {
+				try {
+					BufferedWriter myWriter = new BufferedWriter(new FileWriter("credentials.txt"));
+					//clear file
+					myWriter.write("");
+					myWriter.write(logininfo.getUserName() + "\n");
+					myWriter.write(logininfo.getUserPassword());
+					myWriter.close();
+				} catch (IOException ex) {
+					System.out.println("An error occurred.");
+					ex.printStackTrace();
+				}
+			}
+
+
 			if(checkLogin(logininfo.getUserName(),logininfo.getUserPassword())){ //checks login info returns true if user exists	 
 			System.out.println("Login Successful");
 			AppFrame root = new AppFrame();
@@ -149,6 +173,7 @@ class loginButtons extends HBox{
 public class Login extends VBox{
 	 private TextField loginUsername;
 	 private TextField loginPassword;
+	 private CheckBox rememberMe;
 	 Login(){
 		 this.setSpacing(5); // sets spacing between tasks
 	        this.setPrefSize(400, 560);
@@ -168,7 +193,14 @@ public class Login extends VBox{
 	        
 	        loginPassword.setPadding(new Insets(10, 0, 10, 0)); // adds some padding to the text field
 	        loginPassword.setPromptText("Input password here");
-	        this.getChildren().addAll(loginUsername,loginPassword);
+
+			rememberMe = new CheckBox("Remember Me");
+			rememberMe.setStyle("-fx-font-style: italic; -fx-font-weight: bold; -fx-font: 11 arial;");
+
+			prefillCredentials();
+
+
+	        this.getChildren().addAll(loginUsername,loginPassword, rememberMe);
 	        this.setSpacing(15);
 	        this.setAlignment(Pos.CENTER); 
 	        
@@ -179,4 +211,36 @@ public class Login extends VBox{
 	 public String getUserPassword() {
 		 return loginPassword.getText();
 	 }
+
+	 public String setUserName(String username) {
+		 return loginUsername.getText();
+	 }
+
+	 public String setUserPassword(String password) {
+		 return loginPassword.getText();
+	 }
+
+	 public CheckBox getRememberMe() {
+		 return rememberMe;
+	 }
+
+
+	 private void prefillCredentials() {
+        File file = new File("credentials.txt");
+        if (file.exists()) {
+			//change the checkbox to checked
+			rememberMe.setSelected(true);
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String username = br.readLine();
+                String password = br.readLine();
+
+                if (username != null && password != null) {
+                    loginUsername.setText(username);
+                    loginPassword.setText(password);
+                }
+            } catch (IOException e) {
+                System.out.println("Error reading credentials: " + e.getMessage());
+            }
+        }
+    }
 }

@@ -1,9 +1,14 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +62,13 @@ public class ServerTests {
 	void userAccountLoginisNotValid() {
 		String username = "Caitlin1";
 		String password = "password";
+        assertEquals(false, login.checkLogin(username, password));
+	}
+
+    @Test 
+	void userLoginPrefillTest() {
+		String username = "PrefilledUser";
+		String password = "PrefillUserPassword";
         assertEquals(false, login.checkLogin(username, password));
 	}
 

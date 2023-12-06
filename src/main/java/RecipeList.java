@@ -36,6 +36,12 @@ public class RecipeList extends VBox {
         loadRecipesMongo();
     }
 
+    //! For testing purposes
+    public RecipeList(ArrayList<Recipe> recipeArray) {
+        allRecipes = recipeArray;
+        filterType = "All";
+    }
+
     public void loadRecipesMongo() {
     	for (int i = 0; i < allRecipes.size(); i++) {
     		this.getChildren().remove(allRecipes.get(i));
@@ -221,8 +227,5 @@ class OldToNewComparator implements Comparator<Recipe> {
     public int compare(Recipe r1, Recipe r2) 
     {
         return r1.getDate().compareTo(r2.getDate());
-    } 
-
-    
-    
+    }    
 }
