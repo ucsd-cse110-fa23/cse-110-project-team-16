@@ -14,7 +14,7 @@ public class DallEMock {
 	private static final String API_KEY = "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";
 	private static final String MODEL = "dall-e-2";
 		
-	public static String generateImageMock(String prompt)
+	public static String generateImage(String prompt)
 		throws IOException, InterruptedException, URISyntaxException {
 		
 		// Set request parameters
@@ -49,14 +49,11 @@ public class DallEMock {
 		
 		//! Mock the responseBody for testing purposes
 		// Process the response
-		String responseBody = "{'data': [{'url': https://" + prompt +".com}]}";
-		//System.out.println("========================");
-        //System.out.println("DALL-E Response:");
-        //System.out.println(responseBody);
-		//System.out.println("========================");
+		String responseBody = "{'data': [{'url': 'https://" + prompt +".com'}]}";	
+		  		
 		
 		JSONObject responseJson = new JSONObject(responseBody);
-        // 
+         
         JSONArray data = responseJson.getJSONArray("data");
         String generatedImageURL = data.getJSONObject(0).getString("url");		
 
