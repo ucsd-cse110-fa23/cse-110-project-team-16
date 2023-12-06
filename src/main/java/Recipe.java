@@ -262,6 +262,7 @@ class ActionsList extends HBox {
     private Button editRecipeButton;
     private Button deleteRecipeButton;
     private Button shareRecipeButton;
+    private Button logoutButton;
     private MenuButton sortMenuButton;
     private CheckMenuItem sortAtoZ;
     private CheckMenuItem sortZtoA;
@@ -291,8 +292,10 @@ class ActionsList extends HBox {
         deleteRecipeButton.setStyle(defaultButtonStyle);
         shareRecipeButton = new Button("Share Recipe");
         shareRecipeButton.setStyle(defaultButtonStyle);
+        logoutButton = new Button("Log Out");
+        logoutButton.setStyle(defaultButtonStyle);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, shareRecipeButton, filterBox);
+        //this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, shareRecipeButton, filterBox);
         sortMenuButton = new MenuButton("Sort Recipes");
         // sortMenuButton.setMinWidth(125);
         sortAtoZ = new CheckMenuItem("A-Z");
@@ -308,7 +311,7 @@ class ActionsList extends HBox {
         menuItemList.add(sortNewToOld);
         menuItemList.add(sortOldToNew);
 
-        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox, shareRecipeButton);
+        this.getChildren().setAll(newRecipeButton, editRecipeButton, deleteRecipeButton, sortMenuButton, filterBox, shareRecipeButton, logoutButton);
         this.setAlignment(Pos.CENTER);
     }
 
@@ -323,6 +326,9 @@ class ActionsList extends HBox {
     }
     public Button getShareRecipeButton() {
         return shareRecipeButton;
+    }
+    public Button getLogoutButton() {
+        return logoutButton;
     }
     public MenuButton getSortMenuButton() {
         return sortMenuButton;
@@ -455,7 +461,6 @@ class RecipeDetails extends VBox {
 		}
 	 
 	    try {
-
 			String mealName = br.readLine();
             String imageLocation = br.readLine();
             String mealType = br.readLine();
