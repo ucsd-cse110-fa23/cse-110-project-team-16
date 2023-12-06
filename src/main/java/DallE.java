@@ -89,9 +89,12 @@ public class DallE {
 		
 		//! Mock the responseBody for testing purposes
 		// Process the response
-		String responseBody = "{'data': }";
+		String responseBody = "{\"data\": [{\"url\": \"https://" + prompt + ".com\"}]}";
 
-		String generatedImageURL = "https://testing.com";
+		JSONObject responseJson = new JSONObject(responseBody);
+        
+        JSONArray data = responseJson.getJSONArray("data");
+        String generatedImageURL = data.getJSONObject(0).getString("url");
 
 		return generatedImageURL;
 	}

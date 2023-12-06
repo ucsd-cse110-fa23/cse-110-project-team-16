@@ -12,19 +12,39 @@ public class DallETests {
 
     @Test
 	void testGenerateImage() {
+        String testPrompt = "Pizza";
         String testedURL = "wrong";
         try {
-            testedURL = DallE.generateImageMock("whatever");
+            testedURL = DallE.generateImageMock(testPrompt);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
-		assertEquals("https://testing.com", testedURL);
+
+        String expectedRes = "https://" + testPrompt + ".com";
+		assertEquals(expectedRes, testedURL);
+
+        testPrompt = "Spaghetti";
+        try {
+            testedURL = DallE.generateImageMock(testPrompt);
+        } catch (IOException e) {
+            
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            
+            e.printStackTrace();
+        }
+
+        expectedRes = "https://" + testPrompt + ".com";
+		assertEquals(expectedRes, testedURL);
 	}
 }
