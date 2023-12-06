@@ -36,6 +36,12 @@ public class RecipeList extends VBox {
         loadRecipesMongo();
     }
 
+    //! For testing purposes
+    public RecipeList(ArrayList<Recipe> recipeArray) {
+        allRecipes = recipeArray;
+        filterType = "All";
+    }
+
     public void loadRecipesMongo() {
     	for (int i = 0; i < allRecipes.size(); i++) {
     		this.getChildren().remove(allRecipes.get(i));
