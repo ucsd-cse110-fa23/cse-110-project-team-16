@@ -560,4 +560,6 @@ class RecipeDetails extends VBox {
         displayImageView.setImage(image);
     }
 
+    
+
 }
